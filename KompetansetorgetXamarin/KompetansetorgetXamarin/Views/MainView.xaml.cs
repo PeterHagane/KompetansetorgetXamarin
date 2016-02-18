@@ -11,7 +11,7 @@ namespace KompetansetorgetXamarin.Views
     {
         public MainView()
         {
-            InitializeComponent();
+            InitializeComponent();            
         }
 
         private async void StudentButton_OnClicked(object sender, EventArgs e)
@@ -30,6 +30,7 @@ namespace KompetansetorgetXamarin.Views
             }
             TextBox.Text = sb.ToString();
         }
+
         /*
               private async void FagButton_OnClicked(object sender, EventArgs e)
               {
