@@ -10,14 +10,23 @@ namespace KompetansetorgetXamarin.Droid
     [Service(Exported = false), IntentFilter(new[] { "com.google.android.c2dm.intent.RECEIVE" })]
     public class MyGcmListenerService : GcmListenerService
     {
+
+        /// <summary>
+        /// Receives a Message from GCM. The method exctracts a message from the Bundle data,
+        /// and calls SendNotification
+        /// </summary>
         public override void OnMessageReceived(string from, Bundle data)
-        {
+        {    
             var message = data.GetString("message");
             Log.Debug("MyGcmListenerService", "From:    " + from);
             Log.Debug("MyGcmListenerService", "Message: " + message);
             SendNotification(message);
         }
 
+        /// <summary>
+        /// This method builds a local notifaction and lauches it to the user with NotificationManager.
+        /// </summary>
+        /// <param name="message">The message in the Notification</param>
         void SendNotification(string message)
         {
             var intent = new Intent(this, typeof(MainActivity));
@@ -26,7 +35,7 @@ namespace KompetansetorgetXamarin.Droid
 
             var notificationBuilder = new Notification.Builder(this)
                 .SetSmallIcon(Resource.Drawable.icon)
-                .SetContentTitle("GCM Message")
+                .SetContentTitle("GCM Message") // can probably be extracted from the Bundle the same way as message.
                 .SetContentText(message)
                 .SetAutoCancel(true)
                 .SetContentIntent(pendingIntent);

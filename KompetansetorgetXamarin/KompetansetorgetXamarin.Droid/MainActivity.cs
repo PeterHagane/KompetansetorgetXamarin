@@ -25,9 +25,9 @@ namespace KompetansetorgetXamarin.Droid
             global::Xamarin.Forms.Forms.Init(this, bundle);
             LoadApplication(new App());
 
+            // This check get run once every startup
             if (IsPlayServicesAvailable())
             {
-                RegistrationIntentService s = new RegistrationIntentService();
                 var intent = new Intent(this, typeof(RegistrationIntentService));
                 StartService(intent);
 
@@ -35,6 +35,13 @@ namespace KompetansetorgetXamarin.Droid
 
         }
 
+        /// <summary>
+        /// This method checks that Google Play services are available on the device
+        /// Without these available there is no point trying to obtain contact with GCM
+        /// </summary>
+        /// <returns>
+        /// If Google play services available the method retuns true, if not false.
+        /// </returns>
         public bool IsPlayServicesAvailable()
         {
             int resultCode = GoogleApiAvailability.Instance.IsGooglePlayServicesAvailable(this);

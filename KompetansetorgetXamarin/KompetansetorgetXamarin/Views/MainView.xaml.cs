@@ -31,6 +31,7 @@ namespace KompetansetorgetXamarin.Views
             TextBox.Text = sb.ToString();
         }
 
+
         /*
               private async void FagButton_OnClicked(object sender, EventArgs e)
               {

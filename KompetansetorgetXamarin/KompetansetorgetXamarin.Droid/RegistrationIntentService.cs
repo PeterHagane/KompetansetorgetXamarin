@@ -14,6 +14,11 @@ namespace KompetansetorgetXamarin.Droid
 
         public RegistrationIntentService() : base("RegistrationIntentService") { }
 
+        
+        /// <summary>
+        /// Requests a unique token/registration Id for the specific projectId registered
+        /// on Google Developers Console
+        /// </summary>
         protected override void OnHandleIntent(Intent intent)
         {
             try
@@ -21,9 +26,10 @@ namespace KompetansetorgetXamarin.Droid
                 Log.Info("RegistrationIntentService", "Calling InstanceID.GetToken");
                 lock (locker)
                 {
+                    var projectId = "976073814766";
                     var instanceID = InstanceID.GetInstance(this);
                     var token = instanceID.GetToken(
-                        "976073814766", GoogleCloudMessaging.InstanceIdScope, null);
+                        projectId, GoogleCloudMessaging.InstanceIdScope, null);
 
                     Log.Info("RegistrationIntentService", "GCM Registration Token: " + token);
                     SendRegistrationToAppServer(token);
@@ -37,11 +43,22 @@ namespace KompetansetorgetXamarin.Droid
             }
         }
 
+        /// <summary>
+        /// An implementation of this method can be used to send the token to the server so 
+        /// that the token can be registered to a specific user. 
+        /// </summary>
+        /// <param name="token">The registration id of the app device provided by GCM</param>
         void SendRegistrationToAppServer(string token)
         {
             // Add custom implementation here as needed.
         }
 
+
+        /// <summary>
+        /// Subscribes to the topics global, global can be changed to any thing, the
+        /// only thing that is important is that server sends the message under the same topics.
+        /// </summary>
+        /// <param name="token">Registration id of the app device provided by GCM</param>
         void Subscribe(string token)
         {
             var pubSub = GcmPubSub.GetInstance(this);

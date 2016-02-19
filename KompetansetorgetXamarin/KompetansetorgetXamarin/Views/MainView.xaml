@@ -7,6 +7,7 @@
      <Button Clicked="StudentButton_OnClicked" x:Name="Button" Text="Hent Studenter"/>
      <Button x:Name="FagButton1" Text="Hent Fagområder"/>
      <Label x:Name="TextBox" Text="Information"/>
+     <Button Clicked="NavigateToPage1" x:Name="Page1Button" Text="Gå til ny side"/>
    </StackLayout>
  </ContentPage.Content>
 </ContentPage>
