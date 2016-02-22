@@ -4,6 +4,7 @@ using Android.Content;
 using Android.Util;
 using Android.Gms.Gcm;
 using Android.Gms.Gcm.Iid;
+using KompetansetorgetXamarin.CRUD;
 
 namespace KompetansetorgetXamarin.Droid
 {
@@ -11,7 +12,7 @@ namespace KompetansetorgetXamarin.Droid
     class RegistrationIntentService : IntentService
     {
         static object locker = new object();
-        private MainActivity reference;
+       // private MainActivity reference;
 
         public RegistrationIntentService() : base("RegistrationIntentService") { }
 
@@ -35,7 +36,6 @@ namespace KompetansetorgetXamarin.Droid
                     Log.Info("RegistrationIntentService", "GCM Registration Token: " + token);
                     
                     Subscribe(token);
-                    // error when activating this hack method
                     SendRegistrationToAppServer(token);
 
                 }
@@ -55,7 +55,9 @@ namespace KompetansetorgetXamarin.Droid
         void SendRegistrationToAppServer(string token)
         {
             Log.Debug("SendRegistrationToAppServer", "token");
-            reference.CheckAppToken(token);
+            TokenHandler th = new TokenHandler();
+            string aSerial = Android.OS.Build.Serial;
+            th.CheckToken(token);
         }
 
 
@@ -70,9 +72,5 @@ namespace KompetansetorgetXamarin.Droid
             pubSub.Subscribe(token, "/topics/global", null);
         }
 
-        public void SetReference(MainActivity reference)
-        {
-            this.reference = reference;
-        }
     }
 }

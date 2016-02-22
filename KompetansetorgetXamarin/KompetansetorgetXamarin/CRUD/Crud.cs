@@ -16,7 +16,7 @@ namespace KompetansetorgetXamarin.CRUD
     /// <summary>
     /// Handles CRUD operations on local files
     /// </summary>
-    class Crud
+    public class Crud
     {
 
         /// <summary>
@@ -36,8 +36,7 @@ namespace KompetansetorgetXamarin.CRUD
                 System.Diagnostics.Debug.WriteLine(ex);
             }
         }
-
-
+      
         /// <summary>
         /// Writes to an existing file.
         /// </summary>
@@ -47,8 +46,6 @@ namespace KompetansetorgetXamarin.CRUD
         {
             try
             {
-                // example for json
-                //  @"{ Token: 'cvi1LZzRdZ4:APA91bERsfF7kNNMmXV_4qhcwEg7_D5tQCIJhua-QbrGnyIBIsF0K7ovqVcZi9kWRRgheERodLCwbNDwXtNmZWXimZzDbwAPboR3CKcl4OkT6BeHMSSvnpgA9yvgknbqOhEFQjH4eO6Z' }";
 
                 IFolder path = FileSystem.Current.LocalStorage;
                 IFile file = path.GetFileAsync(Path.Combine(path.Path, filename)).Result;
@@ -61,11 +58,11 @@ namespace KompetansetorgetXamarin.CRUD
         }   
     }
 
-    class TokenHandler
+    public class TokenHandler
     {
         private Crud crudster = new Crud();
 
-        public async void CheckToken(string newToken)
+        public async void CheckToken(string newToken, string deviceId)
         {
             IFolder path = FileSystem.Current.LocalStorage;
             string filename = "token.json";
@@ -120,6 +117,21 @@ namespace KompetansetorgetXamarin.CRUD
         public void AlertServerOfNewToken(string newToken)
         {
             // TODO Contact correct REST API REFERENCE
+            if (Device.OS == TargetPlatform.iOS)
+            {
+                string deviceType = "ios";
+            }
+
+            else if (Device.OS == TargetPlatform.Android)
+            {
+                string deviceType = "android";
+
+            }
+
+            else if (Device.OS == TargetPlatform.WinPhone)
+            {
+                string deviceType = "winphone";
+            }
         }
 
     }
