@@ -57,7 +57,11 @@ namespace KompetansetorgetXamarin.Droid
             Log.Debug("SendRegistrationToAppServer", "token");
             TokenHandler th = new TokenHandler();
             string aSerial = Android.OS.Build.Serial;
-            th.CheckToken(token);
+            Log.Debug("Serial", aSerial);
+            Log.Debug("Serial", aSerial);
+            Log.Debug("Serial", aSerial);
+
+            th.CheckToken(token, aSerial);
         }
 
 

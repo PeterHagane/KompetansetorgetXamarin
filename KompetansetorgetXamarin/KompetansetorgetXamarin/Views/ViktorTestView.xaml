@@ -8,6 +8,7 @@
      <Button x:Name="FagButton1" Text="Hent Fagområder"/>
      <Button Clicked="PathButton_OnClicked" x:Name= "PathButton" Text="Get Path" />
      <Button Clicked="TokenButton_OnClicked"  x:Name="TokenButton" Text="Hent token fra fil" />
+     <Button Clicked="DeviceIdButton_OnClicked"  x:Name="DeviceIdButton" Text="Hent device id fra fil" />
      <Label x:Name="TextBox" Text="Information"/>
    </StackLayout>
  </ContentPage.Content>

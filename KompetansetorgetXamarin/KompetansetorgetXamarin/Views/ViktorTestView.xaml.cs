@@ -55,5 +55,11 @@ namespace KompetansetorgetXamarin.Views
             string token = await th.GetToken();
             TextBox.Text = token;
         }
+        private async void DeviceIdButton_OnClicked(object sender, EventArgs e)
+        {
+            TokenHandler th = new TokenHandler();
+            string deviceId = await th.GetDeviceId();
+            TextBox.Text = deviceId;
+        }
     }
 }

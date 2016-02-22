@@ -74,7 +74,7 @@ namespace KompetansetorgetXamarin.CRUD
                 string token = (jsonToken["Token"]).ToString();
                 if (!token.Equals(newToken))
                 {
-                    crudster.WriteToFile(filename, BuildTokenJson(newToken));
+                    crudster.WriteToFile(filename, BuildTokenJson(newToken, deviceId));
                     AlertServerOfNewToken(newToken);
                 }
 
@@ -83,7 +83,40 @@ namespace KompetansetorgetXamarin.CRUD
             {
                 System.Diagnostics.Debug.WriteLine("File containing token doesn't exist");
                 crudster.CreateNewFile(filename);
-                crudster.WriteToFile(filename, BuildTokenJson(newToken));
+                crudster.WriteToFile(filename, BuildTokenJson(newToken, deviceId));
+            }
+        }
+
+
+
+        public string BuildTokenJson(string token, string deviceId)
+        {
+            return @"{ Token: '" + token + "', "+ "DeviceId: '" + deviceId + "' }";
+        }
+
+        public async void AlertServerOfNewToken(string newToken)
+        {
+            // TODO Contact correct REST API REFERENCE
+            if (Device.OS == TargetPlatform.iOS)
+            {
+                string deviceType = "ios";
+                string token = await GetToken();
+                string deviceId = await GetDeviceId();
+            }
+
+            else if (Device.OS == TargetPlatform.Android)
+            {
+                string deviceType = "android";
+                string token = await GetToken();
+                string deviceId = await GetDeviceId();
+            }
+
+            else if (Device.OS == TargetPlatform.WinPhone)
+            {
+                string deviceType = "winphone";
+                string token = await GetToken();
+                string deviceId = await GetDeviceId();
+
             }
         }
 
@@ -104,33 +137,30 @@ namespace KompetansetorgetXamarin.CRUD
                 return token;
             }
             catch (Exception e)
-            { 
+            {
                 return e.Message;
             }
         }
 
-        public string BuildTokenJson(string token)
+        public async Task<string> GetDeviceId()
         {
-            return @"{ Token: '" + token + "' }";
-        }
-
-        public void AlertServerOfNewToken(string newToken)
-        {
-            // TODO Contact correct REST API REFERENCE
-            if (Device.OS == TargetPlatform.iOS)
+            IFolder path = FileSystem.Current.LocalStorage;
+            string filename = "token.json";
+            try
             {
-                string deviceType = "ios";
+                IFile file = path.GetFileAsync(filename).Result;
+                string json = await file.ReadAllTextAsync();
+                System.Diagnostics.Debug.WriteLine(json);
+                // json = { Token: cvi1LZzRdZ4:APA91bERsfF7kNNMm }
+                var jsonToken = JObject.Parse(json);
+                string deviceId = (jsonToken["DeviceId"]).ToString();
+                // token = error
+                System.Diagnostics.Debug.WriteLine("deviceId : " + deviceId);
+                return deviceId;
             }
-
-            else if (Device.OS == TargetPlatform.Android)
+            catch (Exception e)
             {
-                string deviceType = "android";
-
-            }
-
-            else if (Device.OS == TargetPlatform.WinPhone)
-            {
-                string deviceType = "winphone";
+                return e.Message;
             }
         }
 
