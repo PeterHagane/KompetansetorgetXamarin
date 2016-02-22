@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<CarouselPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:StillingView;assembly=StillingView"
+             x:Class="KompetansetorgetXamarin.Views.StillingView">
+  <CarouselPage.Children>
+    <local:MyPage1 />
+    <local:MyPage2 />
+    <local:MyPage3 />
+  </CarouselPage.Children>
+</CarouselPage>
