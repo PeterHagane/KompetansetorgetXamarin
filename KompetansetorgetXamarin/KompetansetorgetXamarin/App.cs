@@ -13,7 +13,7 @@ namespace KompetansetorgetXamarin
         public App()
         {
             // The root page of your application
-            MainPage = new ViktorTestView();
+            MainPage = new NavigationPage(new MainView());
         }
 
         protected override void OnStart()
