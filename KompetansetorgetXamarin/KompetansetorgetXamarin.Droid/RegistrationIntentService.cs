@@ -12,7 +12,6 @@ namespace KompetansetorgetXamarin.Droid
     class RegistrationIntentService : IntentService
     {
         static object locker = new object();
-       // private MainActivity reference;
 
         public RegistrationIntentService() : base("RegistrationIntentService") { }
 
@@ -34,9 +33,10 @@ namespace KompetansetorgetXamarin.Droid
                         projectId, GoogleCloudMessaging.InstanceIdScope, null);
 
                     Log.Info("RegistrationIntentService", "GCM Registration Token: " + token);
-                    
-                    Subscribe(token);
+
                     SendRegistrationToAppServer(token);
+                    Subscribe(token);
+
 
                 }
             }
@@ -57,10 +57,6 @@ namespace KompetansetorgetXamarin.Droid
             Log.Debug("SendRegistrationToAppServer", "token");
             TokenHandler th = new TokenHandler();
             string aSerial = Android.OS.Build.Serial;
-            Log.Debug("Serial", aSerial);
-            Log.Debug("Serial", aSerial);
-            Log.Debug("Serial", aSerial);
-
             th.CheckToken(token, aSerial);
         }
 
