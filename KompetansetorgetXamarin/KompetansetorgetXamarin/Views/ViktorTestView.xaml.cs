@@ -2,14 +2,16 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
+using KompetansetorgetXamarin.CRUD;
 using Xamarin.Forms;
 using KompetansetorgetXamarin.Models;
+using PCLStorage;
 
 namespace KompetansetorgetXamarin.Views
 {
-    public partial class MainView : ContentPage
+    public partial class ViktorTestView : ContentPage
     {
-        public MainView()
+        public ViktorTestView()
         {
             InitializeComponent();            
         }
@@ -32,13 +34,26 @@ namespace KompetansetorgetXamarin.Views
         }
 
 
-        /*
-              private async void FagButton_OnClicked(object sender, EventArgs e)
-              {
+       
+       private void PathButton_OnClicked(object sender, EventArgs e)
+       {
+           try
+           {
+               IFolder rootFolder = FileSystem.Current.LocalStorage;
+               TextBox.Text = rootFolder.Path;
+                
+            }
+            catch (Exception ex)
+           {
+               TextBox.Text = ex.Message;
+           }
+       }
 
-                  var client = new HttpClient();
-                  var response = await client.GetAsync("http://kompetansetorgetserverapp.azurewebsites.net/api/proficiencies1");
-                  var results = await response.Content.ReadAsAsync<IEnumerable<Proficiency>>();
-              }*/
+        private async void TokenButton_OnClicked(object sender, EventArgs e)
+        {
+            TokenHandler th = new TokenHandler();
+            string token = await th.GetToken();
+            TextBox.Text = token;
+        }
     }
 }

@@ -11,6 +11,7 @@ namespace KompetansetorgetXamarin.Droid
     class RegistrationIntentService : IntentService
     {
         static object locker = new object();
+        private MainActivity reference;
 
         public RegistrationIntentService() : base("RegistrationIntentService") { }
 
@@ -32,8 +33,11 @@ namespace KompetansetorgetXamarin.Droid
                         projectId, GoogleCloudMessaging.InstanceIdScope, null);
 
                     Log.Info("RegistrationIntentService", "GCM Registration Token: " + token);
-                    SendRegistrationToAppServer(token);
+                    
                     Subscribe(token);
+                    // error when activating this hack method
+                    SendRegistrationToAppServer(token);
+
                 }
             }
             catch (Exception e)
@@ -50,7 +54,8 @@ namespace KompetansetorgetXamarin.Droid
         /// <param name="token">The registration id of the app device provided by GCM</param>
         void SendRegistrationToAppServer(string token)
         {
-            // Add custom implementation here as needed.
+            Log.Debug("SendRegistrationToAppServer", "token");
+            reference.CheckAppToken(token);
         }
 
 
@@ -63,6 +68,11 @@ namespace KompetansetorgetXamarin.Droid
         {
             var pubSub = GcmPubSub.GetInstance(this);
             pubSub.Subscribe(token, "/topics/global", null);
+        }
+
+        public void SetReference(MainActivity reference)
+        {
+            this.reference = reference;
         }
     }
 }

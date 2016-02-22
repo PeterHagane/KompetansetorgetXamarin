@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.IO;
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
@@ -11,6 +11,7 @@ using Android.Gms.Common;
 using Android.Util;
 //using KompetansetorgetXamarin.Views;
 using Xamarin.Forms;
+using PCLStorage;
 
 namespace KompetansetorgetXamarin.Droid
 {
@@ -18,16 +19,21 @@ namespace KompetansetorgetXamarin.Droid
         ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsApplicationActivity
     {
+        private App app;
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
 
             global::Xamarin.Forms.Forms.Init(this, bundle);
-            LoadApplication(new App());
+            app = new App();
+            
+            LoadApplication(app);
 
             // This check get run once every startup
             if (IsPlayServicesAvailable())
             {
+                RegistrationIntentService rs = new RegistrationIntentService();
+
                 var intent = new Intent(this, typeof(RegistrationIntentService));
                 StartService(intent);
 
@@ -63,6 +69,11 @@ namespace KompetansetorgetXamarin.Droid
                 Console.WriteLine("Google Play Services is available.");
                 return true;
             }
+        }
+
+        public void CheckAppToken(string token)
+        {
+            app.CheckToken(token);
         }
     }
 }
