@@ -38,6 +38,8 @@ namespace KompetansetorgetXamarin.Droid
                 .SetContentTitle("GCM Message") // can probably be extracted from the Bundle the same way as message.
                 .SetContentText(message)
                 .SetAutoCancel(true)
+                .SetDefaults(NotificationDefaults.Sound | NotificationDefaults.Vibrate | NotificationDefaults.Lights)
+                //.SetLights(16737792, 300, 100)
                 .SetContentIntent(pendingIntent);
 
             var notificationManager = (NotificationManager)GetSystemService(Context.NotificationService);
