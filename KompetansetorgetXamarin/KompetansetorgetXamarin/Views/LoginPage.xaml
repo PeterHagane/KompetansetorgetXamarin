@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="KompetansetorgetXamarin.Views.LoginPage">
+<StackLayout VerticalOptions="StartAndExpand" Padding="30">
+  <Label Text="Brukernavn" />
+  <Entry x:Name="usernameEntry" Text="" />
+
+  <Label Text="Passord" />
+  <Entry x:Name="passwordEntry" Text="" />
+
+
+  <Button x:Name="LoginButton" Text="Login" Clicked="LoginClicked" />
+
+  <Button x:Name="ForgotButton" Text="Glemt Passord?" Clicked="GlemtPassord" />
+
+  <Label x:Name="Resultat" Text="" />
+
+  <TextBlock>
+    <Hyperlink RequestNavigate="Hyperlink_RequestNavigate"
+               NavigateUri="http://kompetansetorget.uia.no/user/forgotpassword"></Hyperlink>
+  </TextBlock>
+
+</StackLayout>
+
+</ContentPage>

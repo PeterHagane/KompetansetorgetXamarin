@@ -1,0 +1,43 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+using Xamarin.Forms;
+
+namespace KompetansetorgetXamarin.Views
+{
+    public partial class LoginPage : ContentPage
+    {
+
+        public LoginPage()
+        {
+            InitializeComponent();
+        }
+
+
+        public void LoginClicked(object sender, EventArgs e)
+        {
+            string username = "nadia";
+            string password = "1234";
+
+
+            if (username.Equals(usernameEntry.Text) && password.Equals(passwordEntry.Text))
+            {
+                Resultat.Text = "Velkommen";
+
+
+            }
+            else {
+                Resultat.Text = "Feil, prøv igjen";
+            }
+        }
+
+
+        private void GlemtPassord(object sender, EventArgs e)
+        {
+
+        }
+    }
+}
