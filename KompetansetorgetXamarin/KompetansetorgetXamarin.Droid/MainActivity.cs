@@ -25,6 +25,7 @@ namespace KompetansetorgetXamarin.Droid
             base.OnCreate(bundle);
 
             global::Xamarin.Forms.Forms.Init(this, bundle);
+            UAuth.Auth.auth = new UAuthImpl.Auth(this);
             LoadApplication(new App());
 
             // This check get run once every startup

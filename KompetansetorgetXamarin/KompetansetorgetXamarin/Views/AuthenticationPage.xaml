@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="KompetansetorgetXamarin.Views.AuthenticationPage">
+   <ContentPage.Content>
+   <StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Orientation="Vertical" Spacing="15">
+     <Label x:Name="RequestLabel" Text=""/>
+     <Label x:Name="ResponseLabel" Text=""/>
+     <Label x:Name="ErrorLabel" Text=""/>
+
+   </StackLayout>
+ </ContentPage.Content>
+</ContentPage>
+

@@ -4,6 +4,7 @@ using KompetansetorgetXamarin.Views;
 using System.IO;
 using PCLStorage;
 using KompetansetorgetXamarin.CRUD;
+using UAuth;
 
 namespace KompetansetorgetXamarin
 {
@@ -13,7 +14,9 @@ namespace KompetansetorgetXamarin
         public App()
         {
             // The root page of your application
-            MainPage = new NavigationPage(new MainPage());  //ViktorTestView();
+            //MainPage = new NavigationPage(new MainPage());  //ViktorTestView();
+            
+            MainPage = new AuthenticationPage();
         }
 
         protected override void OnStart()
