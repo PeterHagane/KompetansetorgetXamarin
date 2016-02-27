@@ -15,11 +15,16 @@
   <Button x:Name="ForgotButton" Text="Glemt Passord?" Clicked="GlemtPassord" />
 
   <Label x:Name="Resultat" Text="" />
-
+  <!--
   <TextBlock>
     <Hyperlink RequestNavigate="Hyperlink_RequestNavigate"
                NavigateUri="http://kompetansetorget.uia.no/user/forgotpassword"></Hyperlink>
-  </TextBlock>
+  </TextBlock> 
+  --> 
+  <Button x:Name="Login" Text="Login gjennom Google" Clicked="OnLoginClicked" />
+  <Button x:Name="Bypass" Text="Hopp over" Clicked="OnBypassLogin" />
+
+  
 
 </StackLayout>
 

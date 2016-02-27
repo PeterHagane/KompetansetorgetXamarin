@@ -39,5 +39,20 @@ namespace KompetansetorgetXamarin.Views
         {
 
         }
+
+        private void OnBypassLogin(object sender, EventArgs e)
+        {
+            Navigation.InsertPageBefore(new MainPage(), Navigation.NavigationStack.First());
+            Navigation.PopToRootAsync();
+        }
+
+        private void OnLoginClicked(object sender, EventArgs e)
+        {
+            // vi blir stuck inni den pagen så lenge vi ikke har server
+            Navigation.PushModalAsync(new AuthenticationPage());
+           
+
+        }
+
     }
 }

@@ -2,21 +2,27 @@
 using Xamarin.Forms;
 using KompetansetorgetXamarin.Views;
 using System.IO;
+using System.Linq;
 using PCLStorage;
 using KompetansetorgetXamarin.CRUD;
+using KompetansetorgetXamarin.Models;
 using UAuth;
 
 namespace KompetansetorgetXamarin
 {
     public class App : Application
     {
-        
+        private static NavigationPage NavPage;
+
+
         public App()
         {
             // The root page of your application
             //MainPage = new NavigationPage(new MainPage());  //ViktorTestView();
-            
-            MainPage = new AuthenticationPage();
+
+            NavPage = new NavigationPage(new LoginPage());
+            //NavPage = new NavigationPage(new MainPage());
+            MainPage = NavPage;
         }
 
         protected override void OnStart()
@@ -47,4 +53,39 @@ namespace KompetansetorgetXamarin
             // Handle when your app resumes
         }
     }
+
+
+    //public static Student Student { get; set; }
+
+    /*
+    public static bool IsLoggedIn
+    {
+        get
+        {
+            if (Student != null)
+            {
+                return !string.IsNullOrWhiteSpace(Student.Mail);
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
+
+    public static Action SuccessfulLoginAction
+    {
+        get
+        {
+            return new Action(() => {
+                NavPage.Navigation.PopModalAsync();
+
+                if (IsLoggedIn)
+                {
+                    NavPage.Navigation.InsertPageBefore(new MainPage(), NavPage.Navigation.NavigationStack.First());
+                    NavPage.Navigation.PopToRootAsync();
+                }
+            });
+        }
+    }*/
 }

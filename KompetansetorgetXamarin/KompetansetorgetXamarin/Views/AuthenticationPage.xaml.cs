@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UAuth;
 using Xamarin.Forms;
 
@@ -52,9 +53,18 @@ namespace KompetansetorgetXamarin.Views
                 };
                 try
                 {
+                    // Uten en fungerende server blir vi stuck her i mellomtiden.
                     auth.OAuth2Authenticator(AuthProvider.ClientId, AuthProvider.Scope,
                         new Uri(AuthProvider.AuthorizeUrl), new Uri(AuthProvider.RedirectUrl));
+                    
+                    // Ingenting under her funker som en mellomtids løsning:
+                    //Navigation.PopModalAsync();
+                    //Navigation.InsertPageBefore(new MainPage(), Navigation.NavigationStack.First());
+                    //Navigation.PushModalAsync(new MainPage());
 
+                    //Navigation.PopToRootAsync();
+                    
+                    
                 }
                 catch (Exception ex)
                 {
@@ -63,6 +73,7 @@ namespace KompetansetorgetXamarin.Views
                     {
                         ErrorLabel.Text += "Message:" + inner.Message + "\n";
                     }
+                    // Denne vil kaste en ny exception
                     foreach (KeyValuePair<string, string> p in accounts[0].Properties)
                         ErrorLabel.Text += "Key:" + p.Key + " Value:" + p.Value + "\n";
                 }
