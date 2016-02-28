@@ -8,18 +8,24 @@ namespace KompetansetorgetXamarin
 {
     public class Authenticater
     {
-        private App app;
-        public Authenticater(App app)
+        public Authenticater()
         {
-            this.app = app;
             IAuth auth = Auth.auth;
+
             Authenticate(auth.auth2, AccountStore.Create().FindAccountsForService(AuthProvider.Name));
         }
 
+        /// <summary>
+        /// Handles the logic of the authentication with the OAuth2 Authentication provider
+        /// </summary>
+        /// <param name="auth">The authenticater</param>
+        /// <param name="accounts">List of registered accounts for the choosen Service</param>
         void Authenticate(IOAuth2Authenticator auth, List<Account> accounts)
         {
+            // Checks if there any accounts stored.
             if (accounts.Count == 0)
             {
+                // EventHandler: When an auth is completed this will be executed.
                 auth.Completed += (sender, eventArgs) =>
                 {
                     if (eventArgs.IsAuthenticated)
@@ -52,25 +58,11 @@ namespace KompetansetorgetXamarin
                 };
                 try
                 {
-                    // Uten en fungerende server blir vi stuck her i mellomtiden.
+                    // This is were the user will meet the OAuth2 providers interface
+                    // When the auth is complete the EventHandler under the IF-statement will be run.
                     auth.OAuth2Authenticator(AuthProvider.ClientId, AuthProvider.Scope,
                         new Uri(AuthProvider.AuthorizeUrl), new Uri(AuthProvider.RedirectUrl));
-                    System.Diagnostics.Debug.WriteLine("IT RUNS IT RUNS");
-                    System.Diagnostics.Debug.WriteLine("IT RUNS IT RUNS");
-                    System.Diagnostics.Debug.WriteLine("IT RUNS IT RUNS");
-                    System.Diagnostics.Debug.WriteLine("IT RUNS IT RUNS");
-
-                    System.Diagnostics.Debug.WriteLine("IT RUNS IT RUNS");
-
-                    // Navigation.InsertPageBefore(new MainPage(), Navigation.NavigationStack.First());
-                    //  Navigation.PopToRootAsync();
-                    // Ingenting under her funker som en mellomtids løsning:
-                    //Navigation.PopModalAsync();
-                    //Navigation.InsertPageBefore(new MainPage(), Navigation.NavigationStack.First());
-                    //Navigation.PushModalAsync(new MainPage());
-
-                    //Navigation.PopToRootAsync();
-
+                    // Code in this try block will run even if user is in the auth providers interface.
 
                 }
                 catch (Exception ex)
@@ -80,22 +72,31 @@ namespace KompetansetorgetXamarin
                     {
                         System.Diagnostics.Debug.WriteLine("Message:" + inner.Message);
                     }
-                    // Denne vil kaste en ny exception
+                    // Denne vil kaste en ny exception?
                     foreach (KeyValuePair<string, string> p in accounts[0].Properties)
                             System.Diagnostics.Debug.WriteLine("Key:" + p.Key + " Value:" + p.Value);
                 }
             }
+
+            // If there is a registered account the manual login will not be needed and this 
+            // and this else statement will be executed instead.
             else
                 PerformAuth2TestRequests(accounts[0]);
             // TODO: implement error handling. If error is caused by expired token, renew token.
         }
 
+
+        /// <summary>
+        /// This method is called after authentication is successfull.
+        /// Implement functionality that is useful as initial server communication. 
+        /// </summary>
+        /// <param name="account"></param>
         async void PerformAuth2TestRequests(Account account)
         {
             try
             {
                 //await Navigation.PushModalAsync(new ViktorTestView());
-                app.SuccessfulLoginAction();
+
                 /*
                 foreach (KeyValuePair<string, string> p in account.Properties)
                 {
@@ -117,6 +118,11 @@ namespace KompetansetorgetXamarin
                 System.Diagnostics.Debug.WriteLine(r);
                 */
                 //await Navigation.PushModalAsync(new ViktorTestView());
+
+
+                // TODO Implement relevant GET, PUT or POST Requests
+                // Notifies the app that the login was successful and that its safe to shift page.
+                App.SuccessfulLoginAction();
             }
             catch (Exception ex)
             {

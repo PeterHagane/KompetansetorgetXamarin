@@ -18,10 +18,7 @@ namespace KompetansetorgetXamarin
         public App()
         {
             // The root page of your application
-            //MainPage = new NavigationPage(new MainPage());  //ViktorTestView();
-
-            NavPage = new NavigationPage(new LoginPage(this));
-            //NavPage = new NavigationPage(new MainPage());
+            NavPage = new NavigationPage(new LoginPage());
             MainPage = NavPage;
         }
 
@@ -53,7 +50,12 @@ namespace KompetansetorgetXamarin
             // Handle when your app resumes
         }
 
-        public void SuccessfulLoginAction()
+
+        /// <summary>
+        /// Activate this method when a login is successful to navigate to a MainPage and remove the 
+        /// Former pages for the Navigation Stack
+        /// </summary>
+        public static void SuccessfulLoginAction()
         {
            // NavPage.Navigation.PopModalAsync();
             NavPage.Navigation.InsertPageBefore(new MainPage(), NavPage.Navigation.NavigationStack.First());

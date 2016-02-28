@@ -10,10 +10,8 @@ namespace KompetansetorgetXamarin.Views
 {
     public partial class LoginPage : ContentPage
     {
-        private App app;
-        public LoginPage(App app)
+        public LoginPage()
         {
-            this.app = app;
             InitializeComponent();
         }
 
@@ -49,10 +47,7 @@ namespace KompetansetorgetXamarin.Views
 
         private void OnLoginClicked(object sender, EventArgs e)
         {
-            // vi blir stuck inni den pagen så lenge vi ikke har server
-            //Navigation.PushModalAsync(new AuthenticationPage());
-            new Authenticater(app);
-
+            new Authenticater();
         }
 
     }
