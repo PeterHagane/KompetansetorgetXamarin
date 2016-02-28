@@ -56,15 +56,23 @@ namespace KompetansetorgetXamarin.Views
                     // Uten en fungerende server blir vi stuck her i mellomtiden.
                     auth.OAuth2Authenticator(AuthProvider.ClientId, AuthProvider.Scope,
                         new Uri(AuthProvider.AuthorizeUrl), new Uri(AuthProvider.RedirectUrl));
-                    
+                    System.Diagnostics.Debug.WriteLine("IT RUNS IT RUNS");
+                    System.Diagnostics.Debug.WriteLine("IT RUNS IT RUNS");
+                    System.Diagnostics.Debug.WriteLine("IT RUNS IT RUNS");
+                    System.Diagnostics.Debug.WriteLine("IT RUNS IT RUNS");
+
+                    System.Diagnostics.Debug.WriteLine("IT RUNS IT RUNS");
+
+                    // Navigation.InsertPageBefore(new MainPage(), Navigation.NavigationStack.First());
+                    //  Navigation.PopToRootAsync();
                     // Ingenting under her funker som en mellomtids løsning:
                     //Navigation.PopModalAsync();
                     //Navigation.InsertPageBefore(new MainPage(), Navigation.NavigationStack.First());
                     //Navigation.PushModalAsync(new MainPage());
 
                     //Navigation.PopToRootAsync();
-                    
-                    
+
+
                 }
                 catch (Exception ex)
                 {
