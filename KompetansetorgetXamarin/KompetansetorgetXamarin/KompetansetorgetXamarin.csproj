@@ -36,6 +36,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="App.cs" />
+    <Compile Include="Authenticater.cs" />
     <Compile Include="AuthProvider.cs" />
     <Compile Include="CRUD\Crud.cs" />
     <Compile Include="DataPassed.cs" />

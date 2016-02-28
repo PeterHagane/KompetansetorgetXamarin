@@ -20,7 +20,7 @@ namespace KompetansetorgetXamarin
             // The root page of your application
             //MainPage = new NavigationPage(new MainPage());  //ViktorTestView();
 
-            NavPage = new NavigationPage(new LoginPage());
+            NavPage = new NavigationPage(new LoginPage(this));
             //NavPage = new NavigationPage(new MainPage());
             MainPage = NavPage;
         }
@@ -52,10 +52,17 @@ namespace KompetansetorgetXamarin
         {
             // Handle when your app resumes
         }
+
+        public void SuccessfulLoginAction()
+        {
+           // NavPage.Navigation.PopModalAsync();
+            NavPage.Navigation.InsertPageBefore(new MainPage(), NavPage.Navigation.NavigationStack.First());
+            NavPage.Navigation.PopToRootAsync();
+        }
     }
+}
 
-
-    //public static Student Student { get; set; }
+//public static Student Student { get; set; }
 
     /*
     public static bool IsLoggedIn
@@ -72,7 +79,7 @@ namespace KompetansetorgetXamarin
             }
         }
     }
-
+    /
     public static Action SuccessfulLoginAction
     {
         get
@@ -87,5 +94,6 @@ namespace KompetansetorgetXamarin
                 }
             });
         }
-    }*/
+    }
 }
+*/

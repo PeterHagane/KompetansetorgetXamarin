@@ -2,17 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using UAuth;
-using Xamarin.Forms;
+//using Xamarin.Forms;
 
-
-namespace KompetansetorgetXamarin.Views
+namespace KompetansetorgetXamarin
 {
-    public partial class AuthenticationPage : ContentPage
+    public class Authenticater
     {
-
-        public AuthenticationPage()
+        private App app;
+        public Authenticater(App app)
         {
-            InitializeComponent();
+            this.app = app;
             IAuth auth = Auth.auth;
             Authenticate(auth.auth2, AccountStore.Create().FindAccountsForService(AuthProvider.Name));
         }
@@ -32,22 +31,22 @@ namespace KompetansetorgetXamarin.Views
                         }
                         catch (Exception ex)
                         {
-                            ErrorLabel.Text = ex.Message;
+                            System.Diagnostics.Debug.WriteLine(ex.Message);
                         }
                     }
                     else
                     {
-                        ErrorLabel.Text = "Authenticate: Not Authenticated";
+                        System.Diagnostics.Debug.WriteLine("Authenticate: Not Authenticated");
                         return;
                     }
                 };
                 auth.Error += (sender, eventArgs) =>
                 {
-                    ErrorLabel.Text += "Authenticate: Error:" + eventArgs.Message + "\n";
+                    System.Diagnostics.Debug.WriteLine("Authenticate: Error:" + eventArgs.Message);
                     Exception ex = eventArgs.Exception;
                     for (Exception inner = eventArgs.Exception; inner != null; inner = inner.InnerException)
                     {
-                        ErrorLabel.Text += "Message:" + inner.Message + "\n";
+                        System.Diagnostics.Debug.WriteLine("Message:" + inner.Message);
                     }
                     return;
                 };
@@ -76,19 +75,19 @@ namespace KompetansetorgetXamarin.Views
                 }
                 catch (Exception ex)
                 {
-                    ErrorLabel.Text = "Authenticate: Exception:";
+                        System.Diagnostics.Debug.WriteLine("Authenticate: Exception:");
                     for (Exception inner = ex.InnerException; inner != null; inner = inner.InnerException)
                     {
-                        ErrorLabel.Text += "Message:" + inner.Message + "\n";
+                        System.Diagnostics.Debug.WriteLine("Message:" + inner.Message);
                     }
                     // Denne vil kaste en ny exception
                     foreach (KeyValuePair<string, string> p in accounts[0].Properties)
-                        ErrorLabel.Text += "Key:" + p.Key + " Value:" + p.Value + "\n";
+                            System.Diagnostics.Debug.WriteLine("Key:" + p.Key + " Value:" + p.Value);
                 }
             }
             else
                 PerformAuth2TestRequests(accounts[0]);
-                    // TODO: implement error handling. If error is caused by expired token, renew token.
+            // TODO: implement error handling. If error is caused by expired token, renew token.
         }
 
         async void PerformAuth2TestRequests(Account account)
@@ -96,14 +95,14 @@ namespace KompetansetorgetXamarin.Views
             try
             {
                 //await Navigation.PushModalAsync(new ViktorTestView());
-                
-                ResponseLabel.Text = ""; // clear response display string
+                app.SuccessfulLoginAction();
+                /*
                 foreach (KeyValuePair<string, string> p in account.Properties)
                 {
                     System.Diagnostics.Debug.WriteLine("Property: Key:" + p.Key + " Value:" + p.Value);
                 }
                 System.Diagnostics.Debug.WriteLine("PerformAuth2TestRequests: Url:" + AuthProvider.ApiRequests);
-                ResponseLabel.Text += "Request Url:" + AuthProvider.ApiRequests + "\n";
+                System.Diagnostics.Debug.WriteLine("Request Url:" + AuthProvider.ApiRequests);
                 OAuth2Request request = new OAuth2Request("GET", new Uri(AuthProvider.ApiRequests), null, account);
                 IResponse response = await request.GetResponseAsync();
                 System.Diagnostics.Debug.WriteLine("PerformAuth2TestRequests: StatusCode:" + response.StatusCode +
@@ -113,20 +112,20 @@ namespace KompetansetorgetXamarin.Views
                 {
                     System.Diagnostics.Debug.WriteLine("Header: Key:" + h.Key + " Value:" + h.Value);
                 }
-                ResponseLabel.Text += "Response(" + response.StatusCode + "):";
+                System.Diagnostics.Debug.WriteLine("Response(" + response.StatusCode);
                 string r = response.GetResponseText();
-                ResponseLabel.Text += r + "\n";
-               
+                System.Diagnostics.Debug.WriteLine(r);
+                */
                 //await Navigation.PushModalAsync(new ViktorTestView());
             }
             catch (Exception ex)
             {
-                ErrorLabel.Text += "Exception: PerformAuth2TestRequests: Message:" + ex.Message + "\n";
+                System.Diagnostics.Debug.WriteLine("Exception: PerformAuth2TestRequests: Message:" + ex.Message);
                 foreach (KeyValuePair<string, string> p in account.Properties)
                 {
-                    ErrorLabel.Text += "Key:" + p.Key + " Value:" + p.Value + "\n";
+                        System.Diagnostics.Debug.WriteLine("Key:" + p.Key + " Value:" + p.Value);
                 }
             }
         }
     }
-}
+}   

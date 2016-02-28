@@ -11,9 +11,7 @@ namespace KompetansetorgetXamarin
         // OAuth
         // For Google login, configure at https://console.developers.google.com/
         public static string Name = "Google";
-        //public static string ClientId = "976073814766-kpv0giko30e7s8u3gd15s7238a2hqesl.apps.googleusercontent.com";
         public static string ClientId = "976073814766-r22dv36d9ge8dh2l6sq270d7ujv9hkqo.apps.googleusercontent.com";
-        //public static string ClientId = "232694463747-kvgavlaaekt3jj6vb934koptl6rsv1q2.apps.googleusercontent.com";
         public static string ClientSecret = "";
 
         // These values do not need changing
