@@ -27,5 +27,10 @@ namespace KompetansetorgetXamarin.Views
             await Navigation.PushAsync(ViktorTestView);
         }
 
+        private async void CarouselButton_OnClicked(object sender, EventArgs e)
+        {
+            var ListsCarouselPage = new ListsCarouselPage();
+            await Navigation.PushAsync(ListsCarouselPage);
+        }
     }
 }
