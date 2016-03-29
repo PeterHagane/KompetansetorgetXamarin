@@ -35,6 +35,13 @@ namespace KompetansetorgetXamarin.Droid
                 StartService(intent);
             }
 
+            SetActionBar();
+
+        }
+
+        public void SetActionBar() {
+
+            ActionBar.SetIcon(Android.Resource.Color.Transparent);
         }
 
         /// <summary>
