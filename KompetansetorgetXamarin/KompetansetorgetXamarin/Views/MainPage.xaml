@@ -3,11 +3,21 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="KompetansetorgetXamarin.Views.MainPage">
   <ContentPage.Content>
-   <StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Orientation="Vertical" Spacing="15">
+   <StackLayout VerticalOptions="FillAndExpand"
+                Orientation="Vertical"
+                >
+
+     
      <Label x:Name="KTLabel" Text="Kompetansetorget" TextColor="#ffa31a" FontSize="30"/>
-     <Button Clicked="VarselButton_OnClicked" x:Name="VarselButton" Text="Vis varsler"/>
-     <Button Clicked="ViktorButton_OnClicked" x:Name="ViktorButton" Text="Goto ViktorTestPage"/>
-     <Button Clicked="CarouselButton_OnClicked" x:Name="CaourselButton" Text="Goto ListsCarouselPage"/>
+     <Button Clicked="VarselButton_OnClicked" x:Name="VarselButton" Text="Vis varsler" Style="{DynamicResource buttonStyle}"/>
+     <Button Clicked="ViktorButton_OnClicked" x:Name="ViktorButton" Text="Goto ViktorTestPage" Style="{DynamicResource buttonStyle}"/>
+     <Button Clicked="CarouselButton_OnClicked" x:Name="CaourselButton" Text="Goto ListsCarouselPage" Style="{DynamicResource buttonStyle}"/>
+   
    </StackLayout>
   </ContentPage.Content>
 </ContentPage>
+
+<!--HorizontalOptions="FillAndExpand"
+                Spacing="15"
+                
+                Padding="0,0,0,0"-->

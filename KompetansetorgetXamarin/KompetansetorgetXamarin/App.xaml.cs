@@ -10,13 +10,16 @@ using UAuth;
 
 namespace KompetansetorgetXamarin
 {
-    public class App : Application
+    public partial class App : Application
     {
         private static NavigationPage NavPage;
 
 
+
         public App()
         {
+            InitializeComponent();   //must be included in order to initialise global xaml styles
+
             // The root page of your application
             NavPage = new NavigationPage(new LoginPage());
             //NavPage.BarBackgroundColor = Color.FromHex("ec7a08");

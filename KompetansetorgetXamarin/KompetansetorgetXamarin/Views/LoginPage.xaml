@@ -2,7 +2,7 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="KompetansetorgetXamarin.Views.LoginPage">
-<StackLayout VerticalOptions="StartAndExpand" Padding="30">
+<StackLayout VerticalOptions="StartAndExpand" >
   <Label Text="Brukernavn" />
   <Entry x:Name="usernameEntry" Text="" />
 
@@ -11,8 +11,7 @@
 
 
   <Button x:Name="LoginButton" Text="Login" Clicked="LoginClicked" />
-
-  <Button x:Name="ForgotButton" Text="Glemt Passord?" Clicked="GlemtPassord" />
+  <Button x:Name="ForgotButton" Text="Glemt Passord?" Clicked="GlemtPassord"/>
 
   <Label x:Name="Resultat" Text="" />
   <!--
@@ -22,6 +21,7 @@
   </TextBlock> 
   --> 
   <Button x:Name="Login" Text="Login gjennom Google" Clicked="OnLoginClicked" />
+  
   <Button x:Name="Bypass" Text="Hopp over" Clicked="OnBypassLogin" />
 
   
@@ -29,3 +29,10 @@
 </StackLayout>
 
 </ContentPage>
+
+
+<!--Style="{StaticResource buttonStyle}"
+        <Setter Property="BorderRadius" Value="10" />
+        <Setter Property="BorderWidth" Value="10" />
+        Padding="5,5,5,5"
+-->

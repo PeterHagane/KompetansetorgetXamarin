@@ -1,4 +1,46 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<Application xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="Photos.App">
+<Application xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             x:Class="KompetansetorgetXamarin.App">
+  
+  <Application.Resources>
+    <ResourceDictionary>
+      <Style x:Key="buttonStyle" TargetType="Button">
+        <Setter Property="HorizontalOptions" Value="Center" />
+        <Setter Property="BorderColor" Value="#CE6904" />
+        <Setter Property="BorderRadius" Value="10" />
+        <Setter Property="BorderWidth" Value="10" />
+        <Setter Property="WidthRequest" Value="300" />
+        <Setter Property="TextColor" Value="#000000" />
+      </Style>
+    </ResourceDictionary>
+  </Application.Resources>
+
+
 
 </Application>
+
+
+
+<!--STYLE NOTES FOR POSTERITY:
+White:   #FFFFFF   used on buttons and orange button text
+Orange:  #EC7A08   used on buttons and headers
+Or. 2:   #CE6904   dark orange used for orange button shaders
+Grey 1:  #F2F5F7   paragraph box/content box colour
+Grey 2:  #E4EBEE   body colour
+Grey 3:  #A6BCC6   dark blueish grey used for white button shaders
+Grey 4:  #818A8F   Used on content text
+Grey 5:  #333333   Used on footer
+Grey 6:  #424242   Used on ancillary footer (cookies notification)
+Black:   #000000   Used on H1, H2 and white button text
+Blue:    #00759A   Used on links
+
+IN THE RESPECTIVE XAML PAGE FILES USE:
+Style="{DynamicResource buttonStyle}
+to apply a global style to views as defined in this file
+OR
+Style="{StaticResource buttonStyle}
+to apply a local style as defined locally IN THAT XAML FILE
+
+
+-->

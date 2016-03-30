@@ -2,11 +2,9 @@
 <CarouselPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="KompetansetorgetXamarin.Views.ListsCarouselPage">
-  
-  <!-- page 1-->
-<ContentPage>
 
-    
+  <!-- page 1-->
+<ContentPage >
 		<ContentPage.Padding>
 			<OnPlatform x:TypeArguments="Thickness" iOS="0,40,0,0" Android="0,40,0,0" />
 		</ContentPage.Padding>
