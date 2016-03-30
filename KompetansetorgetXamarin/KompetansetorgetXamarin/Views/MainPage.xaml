@@ -20,4 +20,6 @@
 <!--HorizontalOptions="FillAndExpand"
                 Spacing="15"
                 
+                "{DynamicResource buttonStyle}" for global styles
+                
                 Padding="0,0,0,0"-->
