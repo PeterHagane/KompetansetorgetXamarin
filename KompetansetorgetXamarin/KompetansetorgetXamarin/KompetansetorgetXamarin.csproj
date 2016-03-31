@@ -41,6 +41,7 @@
     <Compile Include="Authenticater.cs" />
     <Compile Include="AuthProvider.cs" />
     <Compile Include="CRUD\Crud.cs" />
+    <Compile Include="BaseContentPage.cs" />
     <Compile Include="DataPassed.cs" />
     <Compile Include="Models\Student.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
