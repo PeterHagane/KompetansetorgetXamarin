@@ -10,8 +10,8 @@
   <Entry x:Name="passwordEntry" Text="" />
 
 
-  <Button x:Name="LoginButton" Text="Login" Clicked="LoginClicked" />
-  <Button x:Name="ForgotButton" Text="Glemt Passord?" Clicked="GlemtPassord"/>
+  <Button x:Name="LoginButton" Text="Login" Clicked="LoginClicked" Style="{DynamicResource baseButtonStyle}"/>
+  <Button x:Name="ForgotButton" Text="Glemt Passord?" Clicked="GlemtPassord" Style="{DynamicResource baseButtonStyle}"/>
 
   <Label x:Name="Resultat" Text="" />
   <!--
@@ -19,10 +19,10 @@
     <Hyperlink RequestNavigate="Hyperlink_RequestNavigate"
                NavigateUri="http://kompetansetorget.uia.no/user/forgotpassword"></Hyperlink>
   </TextBlock> 
-  --> 
-  <Button x:Name="Login" Text="Login gjennom Google" Clicked="OnLoginClicked" />
-  
-  <Button x:Name="Bypass" Text="Hopp over" Clicked="OnBypassLogin" />
+  -->
+  <Button x:Name="Login" Text="Login gjennom Google" Clicked="OnLoginClicked" Style="{DynamicResource baseButtonStyle}" />
+
+  <Button x:Name="Bypass" Text="Hopp over" Clicked="OnBypassLogin" Style="{DynamicResource baseButtonStyle}" />
 
   
 
