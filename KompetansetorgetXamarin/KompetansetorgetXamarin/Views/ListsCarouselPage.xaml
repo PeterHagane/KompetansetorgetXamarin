@@ -1,57 +1,58 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <CarouselPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:KompetansetorgetXamarin.Renderers;assembly=KompetansetorgetXamarin"
              x:Class="KompetansetorgetXamarin.Views.ListsCarouselPage">
 
   <!-- page 1-->
-<ContentPage >
-		<ContentPage.Padding>
-			<OnPlatform x:TypeArguments="Thickness" iOS="0,40,0,0" Android="0,40,0,0" />
-		</ContentPage.Padding>
-  
-		<StackLayout>
-			<Label Text="Red" FontSize="Medium" HorizontalOptions="Center" />
-			<BoxView Color="Red" WidthRequest="200" HeightRequest="200" HorizontalOptions="Center" VerticalOptions="CenterAndExpand" />
-		</StackLayout>
-	</ContentPage>
+  <local:BaseContentPage >
+    <ContentPage.Padding>
+      <OnPlatform x:TypeArguments="Thickness" iOS="0,40,0,0" Android="0,40,0,0" />
+    </ContentPage.Padding>
 
-  
-     <!-- page 2-->
-<ContentPage>
-		<ContentPage.Padding>
-			<OnPlatform x:TypeArguments="Thickness" iOS="0,40,0,0" Android="0,40,0,0" />
-		</ContentPage.Padding>
-  
-		<StackLayout>
-			<Label Text="Green" FontSize="Medium" HorizontalOptions="Center" />
-			<BoxView Color="Green" WidthRequest="200" HeightRequest="200" HorizontalOptions="Center" VerticalOptions="CenterAndExpand" />
-		</StackLayout>
-	</ContentPage>
+    <StackLayout>
+      <Label Text="Red" FontSize="Medium" HorizontalOptions="Center" />
+      <BoxView Color="Red" WidthRequest="200" HeightRequest="200" HorizontalOptions="Center" VerticalOptions="CenterAndExpand" />
+    </StackLayout>
+  </local:BaseContentPage>
+
+
+  <!-- page 2-->
+    <local:BaseContentPage>
+    <ContentPage.Padding>
+      <OnPlatform x:TypeArguments="Thickness" iOS="0,40,0,0" Android="0,40,0,0" />
+    </ContentPage.Padding>
+
+    <StackLayout>
+      <Label Text="Green" FontSize="Medium" HorizontalOptions="Center" />
+      <BoxView Color="Green" WidthRequest="200" HeightRequest="200" HorizontalOptions="Center" VerticalOptions="CenterAndExpand" />
+    </StackLayout>
+  </local:BaseContentPage>
 
   <!-- page 3-->
-<ContentPage>
-		<ContentPage.Padding>
-			<OnPlatform x:TypeArguments="Thickness" iOS="0,40,0,0" Android="0,40,0,0" />
-		</ContentPage.Padding>
-  
-		<StackLayout>
+  <local:BaseContentPage>
+    <ContentPage.Padding>
+      <OnPlatform x:TypeArguments="Thickness" iOS="0,40,0,0" Android="0,40,0,0" />
+    </ContentPage.Padding>
+
+    <StackLayout>
       <ListView x:Name="listView">
         <ViewCell>
           <Grid>
-			        <Grid.ColumnDefinitions>
-			          <ColumnDefinition Width="1.0*"/>
-              </Grid.ColumnDefinitions>
-              
-              <Label Grid.Column="1" Text="Green" FontSize="Medium" />
-			    </Grid>  
-      </ViewCell>
-    </ListView>		
-</StackLayout>
-	</ContentPage>
-  
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="1.0*"/>
+            </Grid.ColumnDefinitions>
+
+            <Label Grid.Column="1" Text="Green" FontSize="Medium" />
+          </Grid>
+        </ViewCell>
+      </ListView>
+    </StackLayout>
+  </local:BaseContentPage>
+
+
 
 </CarouselPage>
 
 
 <!--<BoxView Color="Green" WidthRequest="200" HeightRequest="200" HorizontalOptions="Center" VerticalOptions="CenterAndExpand" />-->
-      

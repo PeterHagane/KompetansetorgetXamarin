@@ -1,34 +1,35 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+<local:BaseContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:KompetansetorgetXamarin.Renderers;assembly=KompetansetorgetXamarin"
              x:Class="KompetansetorgetXamarin.Views.LoginPage">
-<StackLayout VerticalOptions="StartAndExpand" >
-  <Label Text="Brukernavn" />
-  <Entry x:Name="usernameEntry" Text="" />
+  <StackLayout VerticalOptions="StartAndExpand" >
+    <Label Text="Brukernavn" />
+    <Entry x:Name="usernameEntry" Text="" />
 
-  <Label Text="Passord" />
-  <Entry x:Name="passwordEntry" Text="" />
+    <Label Text="Passord" />
+    <Entry x:Name="passwordEntry" Text="" />
 
 
-  <Button x:Name="LoginButton" Text="Login" Clicked="LoginClicked" Style="{DynamicResource baseButtonStyle}"/>
-  <Button x:Name="ForgotButton" Text="Glemt Passord?" Clicked="GlemtPassord" Style="{DynamicResource baseButtonStyle}"/>
+    <Button x:Name="LoginButton" Text="Login" Clicked="LoginClicked" Style="{DynamicResource baseButtonStyle}"/>
+    <Button x:Name="ForgotButton" Text="Glemt Passord?" Clicked="GlemtPassord" Style="{DynamicResource baseButtonStyle}"/>
 
-  <Label x:Name="Resultat" Text="" />
-  <!--
+    <Label x:Name="Resultat" Text="" />
+    <!--
   <TextBlock>
     <Hyperlink RequestNavigate="Hyperlink_RequestNavigate"
                NavigateUri="http://kompetansetorget.uia.no/user/forgotpassword"></Hyperlink>
   </TextBlock> 
   -->
-  <Button x:Name="Login" Text="Login gjennom Google" Clicked="OnLoginClicked" Style="{DynamicResource baseButtonStyle}" />
+    <Button x:Name="Login" Text="Login gjennom Google" Clicked="OnLoginClicked" Style="{DynamicResource baseButtonStyle}" />
 
-  <Button x:Name="Bypass" Text="Hopp over" Clicked="OnBypassLogin" Style="{DynamicResource baseButtonStyle}" />
+    <Button x:Name="Bypass" Text="Hopp over" Clicked="OnBypassLogin" Style="{DynamicResource baseButtonStyle}" />
 
-  
 
-</StackLayout>
 
-</ContentPage>
+  </StackLayout>
+
+</local:BaseContentPage>
 
 
 <!--Style="{StaticResource buttonStyle}"

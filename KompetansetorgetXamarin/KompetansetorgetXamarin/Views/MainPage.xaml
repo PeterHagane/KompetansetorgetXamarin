@@ -9,8 +9,8 @@
 
       <Label x:Name="KTLabel" Text="Kompetansetorget" TextColor="#ffa31a" FontSize="30"/>
       <Button Clicked="VarselButton_OnClicked" x:Name="VarselButton" Text="Vis varsler" Style="{DynamicResource baseButtonStyle}" />
-      <Button Clicked="ViktorButton_OnClicked" x:Name="ViktorButton" Text="Goto ViktorTestPage" Style="{DynamicResource baseButtonStyle}"/>
-      <Button Clicked="CarouselButton_OnClicked" x:Name="CaourselButton" Text="Goto ListsCarouselPage" Style="{DynamicResource baseButtonStyle}"/>
+      <Button Clicked="ViktorButton_OnClicked" x:Name="ViktorButton" Text="Goto ViktorTestPage" Style="{DynamicResource baseButtonStyle}"  />
+      <Button Clicked="CarouselButton_OnClicked" x:Name="CaourselButton" Text="Goto ListsCarouselPage" Style="{DynamicResource baseButtonStyle}" />
 
     </StackLayout>
   </ContentPage.Content>
@@ -18,7 +18,7 @@
 
 <!--HorizontalOptions="FillAndExpand"
                 Spacing="15"
-                
+                Style="{DynamicResource baseButtonStyle}" 
                 add Style="{DynamicResource myStyle}" to override specific styles at control level
                 
                 Padding="0,0,0,0"-->

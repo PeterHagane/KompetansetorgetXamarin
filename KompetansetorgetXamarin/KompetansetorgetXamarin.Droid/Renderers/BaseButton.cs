@@ -19,10 +19,9 @@ using System.ComponentModel;
 
 //This is one of two classes that renders custom buttons for android. (Both WP and ios would need their own custom button renderer) 
 //This is necessary because the button class used by forms has limited capabilities for customisation
-//The other BaseButton.cs is located in the forms project's Renderer folder, which gets its styles from the resource library in App.xaml
 
 
-[assembly: ExportRenderer(typeof(KompetansetorgetXamarin.Controls.BaseButton), typeof(BaseButton))]
+[assembly: ExportRenderer(typeof(Xamarin.Forms.Button), typeof(BaseButton))]
 namespace KompetansetorgetXamarin.Droid
 {
     public class BaseButton : ButtonRenderer
@@ -36,16 +35,16 @@ namespace KompetansetorgetXamarin.Droid
             if (Control != null)
             {
                 var button = e.NewElement;
-                var buttonGrey = "#FFA6BCC6";
-
-                int paddingPixel = 5;
+                var buttonGrey = "#FFA6BCC6"; //NOTE: THE TWO FIRST ARE ALPHA
+                var buttonWhite = "#FFFFFFFF";
+                //int paddingPixel = 5;
 
 
                 // Create a drawable for the button's normal state
                 _normal = new Android.Graphics.Drawables.GradientDrawable();
 
                 if (button.BackgroundColor.R == -1.0 && button.BackgroundColor.G == -1.0 && button.BackgroundColor.B == -1.0)
-                    _normal.SetColor(Android.Graphics.Color.ParseColor("#FFFFFFFF"));  //NOTE: THE TWO FIRST ARE ALPHA
+                    _normal.SetColor(Android.Graphics.Color.ParseColor(buttonWhite));  
                 else
                     _normal.SetColor(button.BackgroundColor.ToAndroid());
 

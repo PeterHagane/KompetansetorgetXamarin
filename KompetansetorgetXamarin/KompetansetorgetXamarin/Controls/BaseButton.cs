@@ -9,9 +9,6 @@ namespace KompetansetorgetXamarin.Controls
 {
     public class BaseButton : Button
     {
-        public BaseButton()
-        {
 
-        }
     }
 }
