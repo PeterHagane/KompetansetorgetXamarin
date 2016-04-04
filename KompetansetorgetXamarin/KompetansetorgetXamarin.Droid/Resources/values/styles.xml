@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<resources>
+  <style name="Theme.Splash" parent="android:Theme.Light">
+    <item name="android:windowBackground">@drawable/layersplash</item>
+    <item name="android:windowNoTitle">true</item>
+    <item name="android:layout_marginLeft">5dp</item>
+    <item name="android:layout_marginRight">5dp</item>
+    <!--<item name="android:background">#FF0000</item>-->
+    <!--<item name="android:colorBackground">#0000FF</item>-->
+  </style>
+
+  <style name="Theme.Toolbar" parent="android:Theme.Light">
+  </style>
+</resources>

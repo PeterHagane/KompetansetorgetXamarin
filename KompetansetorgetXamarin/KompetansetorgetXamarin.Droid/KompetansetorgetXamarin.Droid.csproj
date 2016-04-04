@@ -113,6 +113,7 @@
     <Compile Include="Renderers\BaseButton.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SplashScreen.cs" />
     <Compile Include="uauthimpl.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -131,6 +132,15 @@
     <Content Include="Properties\AndroidManifest.xml">
       <SubType>Designer</SubType>
     </Content>
+    <AndroidResource Include="Resources\values\styles.xml" />
+    <AndroidResource Include="Resources\values\colors.xml" />
+    <AndroidResource Include="Resources\drawable\logoninepatch.xml" />
+    <AndroidResource Include="Resources\drawable\layersplash.xml" />
+    <AndroidResource Include="Resources\drawable\E4EBEE.png" />
+    <AndroidResource Include="Resources\drawable\kompetansetorget_logo_dark.9.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\kompetansetorget_logo_dark.9.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\kompetansetorget_logo_dark.9.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\kompetansetorget_logo_dark.9.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\KompetansetorgetXamarin\KompetansetorgetXamarin.csproj">

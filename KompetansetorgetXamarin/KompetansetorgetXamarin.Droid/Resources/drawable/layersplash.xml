@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+  <item>
+    <bitmap android:src="@drawable/E4EBEE"
+      android:gravity="fill" />
+  </item>
+  <item >
+    <bitmap android:src="@drawable/kompetansetorget_logo_dark"
+     android:gravity="fill_horizontal"
+     />
+  </item>
+</layer-list>
+
+
+<!--android:left="10dp" android:right="10dp"-->

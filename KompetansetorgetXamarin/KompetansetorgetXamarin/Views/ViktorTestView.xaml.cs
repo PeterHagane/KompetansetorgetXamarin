@@ -5,11 +5,12 @@ using System.Text;
 using KompetansetorgetXamarin.CRUD;
 using Xamarin.Forms;
 using KompetansetorgetXamarin.Models;
+using KompetansetorgetXamarin.Renderers;
 using PCLStorage;
 
 namespace KompetansetorgetXamarin.Views
 {
-    public partial class ViktorTestView : ContentPage
+    public partial class ViktorTestView : BaseContentPage
     {
         public ViktorTestView()
         {

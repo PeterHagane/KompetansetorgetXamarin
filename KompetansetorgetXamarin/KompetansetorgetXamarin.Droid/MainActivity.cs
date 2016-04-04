@@ -14,8 +14,8 @@ using Xamarin.Forms;
 using PCLStorage;
 
 namespace KompetansetorgetXamarin.Droid
-{
-    [Activity(Label = "KompetansetorgetXamarin", Icon = "@drawable/icon", MainLauncher = true,
+{                                                                           //MainLauncher = true
+    [Activity(Label = "KompetansetorgetXamarin", Icon = "@drawable/icon",
         ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsApplicationActivity
     {
