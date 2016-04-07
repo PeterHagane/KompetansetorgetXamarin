@@ -110,7 +110,8 @@
     <Compile Include="InstanceIdListenerService.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="RegistrationIntentService.cs" />
-    <Compile Include="Renderers\BaseButton.cs" />
+    <Compile Include="Renderers\DroidBaseButton.cs" />
+    <Compile Include="Renderers\DroidRoundBox.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SplashScreen.cs" />

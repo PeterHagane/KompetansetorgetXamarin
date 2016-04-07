@@ -1,19 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <local:BaseContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:local="clr-namespace:KompetansetorgetXamarin.Renderers;assembly=KompetansetorgetXamarin"
+             xmlns:local="clr-namespace:KompetansetorgetXamarin.Controls;assembly=KompetansetorgetXamarin"
              x:Class="KompetansetorgetXamarin.Views.LoginPage">
-  <StackLayout VerticalOptions="StartAndExpand" >
+  <StackLayout VerticalOptions="StartAndExpand" Spacing="20">
     <Label Text="Brukernavn" />
     <Entry x:Name="usernameEntry" Text="" />
 
     <Label Text="Passord" />
     <Entry x:Name="passwordEntry" Text="" />
 
-
-    <Button x:Name="LoginButton" Text="Login" Clicked="LoginClicked" Style="{DynamicResource baseButtonStyle}"/>
-    <Button x:Name="ForgotButton" Text="Glemt Passord?" Clicked="GlemtPassord" Style="{DynamicResource baseButtonStyle}"/>
-
+    <local:RoundBox CornerRadius="7" WidthRequest="300" HeightRequest="40">
+    <local:BaseButton x:Name="LoginButton" Text="Login" Clicked="LoginClicked" Padding="0,0,0,20" Style="{DynamicResource baseButtonStyle}"/>
+    </local:RoundBox>
+    
+    
+    <local:BaseButton x:Name="ForgotButton" Text="Glemt Passord?" Clicked="GlemtPassord" Style="{DynamicResource baseButtonStyle}"/>
     <Label x:Name="Resultat" Text="" />
     <!--
   <TextBlock>
@@ -21,9 +23,9 @@
                NavigateUri="http://kompetansetorget.uia.no/user/forgotpassword"></Hyperlink>
   </TextBlock> 
   -->
-    <Button x:Name="Login" Text="Login gjennom Google" Clicked="OnLoginClicked" Style="{DynamicResource baseButtonStyle}" />
+    <local:BaseButton x:Name="Login" Text="Login gjennom Google" Clicked="OnLoginClicked" Style="{DynamicResource baseButtonStyle}" />
 
-    <Button x:Name="Bypass" Text="Hopp over" Clicked="OnBypassLogin" Style="{DynamicResource baseButtonStyle}" />
+    <local:BaseButton x:Name="Bypass" Text="Hopp over" Clicked="OnBypassLogin" Style="{DynamicResource baseButtonStyle}" />
 
 
 

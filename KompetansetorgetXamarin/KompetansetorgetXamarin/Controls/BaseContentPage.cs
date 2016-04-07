@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
-namespace KompetansetorgetXamarin.Renderers
+namespace KompetansetorgetXamarin.Controls
 {
     public class BaseContentPage : ContentPage
     {

@@ -1,16 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <local:BaseContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:local="clr-namespace:KompetansetorgetXamarin.Renderers;assembly=KompetansetorgetXamarin"
+             xmlns:local="clr-namespace:KompetansetorgetXamarin.Controls;assembly=KompetansetorgetXamarin"
              x:Class="KompetansetorgetXamarin.Views.MainPage">
   <ContentPage.Content>
     <StackLayout VerticalOptions="FillAndExpand"
-                 Orientation="Vertical">
+                 Orientation="Vertical"
+                 Spacing="20">
 
       <Label x:Name="KTLabel" Text="Kompetansetorget" TextColor="#ffa31a" FontSize="30"/>
-      <Button Clicked="VarselButton_OnClicked" x:Name="VarselButton" Text="Vis varsler" Style="{DynamicResource baseButtonStyle}" />
-      <Button Clicked="ViktorButton_OnClicked" x:Name="ViktorButton" Text="Goto ViktorTestPage" Style="{DynamicResource baseButtonStyle}"  />
-      <Button Clicked="CarouselButton_OnClicked" x:Name="CaourselButton" Text="Goto ListsCarouselPage" Style="{DynamicResource baseButtonStyle}" />
+      <local:BaseButton Clicked="VarselButton_OnClicked" x:Name="VarselButton" Text="Vis varsler" Style="{DynamicResource baseButtonStyle}" />
+      <local:BaseButton Clicked="ViktorButton_OnClicked" x:Name="ViktorButton" Text="Goto ViktorTestPage" Style="{DynamicResource baseButtonStyle}"  />
+      <local:BaseButton Clicked="CarouselButton_OnClicked" x:Name="CaourselButton" Text="Goto ListsCarouselPage" Style="{DynamicResource baseButtonStyle}" />
 
     </StackLayout>
   </ContentPage.Content>

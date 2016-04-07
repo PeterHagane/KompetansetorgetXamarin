@@ -5,7 +5,7 @@ using System.Text;
 using KompetansetorgetXamarin.CRUD;
 using Xamarin.Forms;
 using KompetansetorgetXamarin.Models;
-using KompetansetorgetXamarin.Renderers;
+using KompetansetorgetXamarin.Controls;
 using PCLStorage;
 
 namespace KompetansetorgetXamarin.Views

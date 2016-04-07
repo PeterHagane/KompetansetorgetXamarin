@@ -1,44 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
+﻿using Android.Content;
 using Xamarin.Forms.Platform.Android;
 using Xamarin.Forms;
 using KompetansetorgetXamarin.Droid;
-using KompetansetorgetXamarin;
 using Android.Graphics.Drawables;
 using System.ComponentModel;
+using KompetansetorgetXamarin.Controls;
 
 
 //This is one of two classes that renders custom buttons for android. (Both WP and ios would need their own custom button renderer) 
 //This is necessary because the button class used by forms has limited capabilities for customisation
 
 
-[assembly: ExportRenderer(typeof(Xamarin.Forms.Button), typeof(BaseButton))]
+[assembly: ExportRenderer(typeof(KompetansetorgetXamarin.Controls.BaseButton), typeof(DroidBaseButton))]
 namespace KompetansetorgetXamarin.Droid
 {
-    public class BaseButton : ButtonRenderer
+    public class DroidBaseButton : ButtonRenderer
     {
         private GradientDrawable _normal, _pressed;
 
         protected override void OnElementChanged(ElementChangedEventArgs<Xamarin.Forms.Button> e)
         {
             base.OnElementChanged(e);
+            UpdatePadding();
+            //UpdateMargin();
 
             if (Control != null)
             {
                 var button = e.NewElement;
                 var buttonGrey = "#FFA6BCC6"; //NOTE: THE TWO FIRST ARE ALPHA
                 var buttonWhite = "#FFFFFFFF";
-                //int paddingPixel = 5;
-
 
                 // Create a drawable for the button's normal state
                 _normal = new Android.Graphics.Drawables.GradientDrawable();
@@ -67,10 +57,48 @@ namespace KompetansetorgetXamarin.Droid
             }
         }
 
+
+        //private void UpdateMargin()
+        //{
+        //    var element = this.Element as BaseButton;
+        //    if (element != null)
+        //    {
+                
+        //        Control.SetMargin(
+        //            (int)element.Margin.Left,
+        //            (int)element.Margin.Top,
+        //            (int)element.Margin.Right,
+        //            (int)element.Margin.Bottom
+        //        );
+        //    }
+        //}
+
+        private void UpdatePadding()
+        {
+            var element = this.Element as BaseButton;
+            if (element != null)
+            {
+
+                Control.SetPadding(
+                    (int)element.Padding.Left,
+                    (int)element.Padding.Top,
+                    (int)element.Padding.Right,
+                    (int)element.Padding.Bottom
+                );
+            }
+        }
+
+
         protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             base.OnElementPropertyChanged(sender, e);
+
             var button = (Xamarin.Forms.Button)sender;
+
+            if (e.PropertyName == "Margin")
+            {
+                UpdateMargin();
+            }
 
             if (_normal != null && _pressed != null)
             {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using KompetansetorgetXamarin.Renderers;
+using KompetansetorgetXamarin.Controls;
 
 using Xamarin.Forms;
 
