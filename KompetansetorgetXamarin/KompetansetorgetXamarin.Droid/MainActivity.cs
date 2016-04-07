@@ -12,6 +12,8 @@ using Android.Util;
 //using KompetansetorgetXamarin.Views;
 using Xamarin.Forms;
 using PCLStorage;
+using SQLite.Net.Interop;
+using SQLite.Net.Platform.XamarinAndroid;
 
 namespace KompetansetorgetXamarin.Droid
 {                                                                           //MainLauncher = true
@@ -27,7 +29,6 @@ namespace KompetansetorgetXamarin.Droid
             global::Xamarin.Forms.Forms.Init(this, bundle);
             UAuth.Auth.auth = new UAuthImpl.Auth(this);
             LoadApplication(new App());
-
             // This check get run once every startup
             if (IsPlayServicesAvailable())
             {
@@ -36,6 +37,7 @@ namespace KompetansetorgetXamarin.Droid
             }
 
             SetActionBar();
+            ISQLitePlatform platform = new SQLitePlatformAndroid();
 
         }
 

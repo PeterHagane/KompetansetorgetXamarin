@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using KompetansetorgetXamarin.CRUD;
+using KompetansetorgetXamarin.DAL;
 using Xamarin.Forms;
 using KompetansetorgetXamarin.Models;
 using KompetansetorgetXamarin.Renderers;
@@ -22,7 +23,7 @@ namespace KompetansetorgetXamarin.Views
             var client = new HttpClient();
             var response = await client.GetAsync("http://kompetansetorgetserverapp.azurewebsites.net/api/students");
             var results = await response.Content.ReadAsAsync<IEnumerable<Student>>();
-
+            /*
             var sb = new StringBuilder();
             foreach (var student in results)
             {
@@ -32,6 +33,7 @@ namespace KompetansetorgetXamarin.Views
 
             }
             TextBox.Text = sb.ToString();
+            */
         }
 
 
@@ -62,5 +64,8 @@ namespace KompetansetorgetXamarin.Views
             string deviceId = await th.GetDeviceId();
             TextBox.Text = deviceId;
         }
+
+
+        
     }
 }
