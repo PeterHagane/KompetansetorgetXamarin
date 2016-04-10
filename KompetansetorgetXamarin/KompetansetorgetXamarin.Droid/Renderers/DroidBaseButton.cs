@@ -97,7 +97,7 @@ namespace KompetansetorgetXamarin.Droid
 
             if (e.PropertyName == "Margin")
             {
-                UpdateMargin();
+                UpdatePadding();
             }
 
             if (_normal != null && _pressed != null)
