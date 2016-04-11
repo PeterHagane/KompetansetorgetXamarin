@@ -10,16 +10,32 @@
       <Style x:Key="baseButtonStyle" TargetType="Button">
         <Setter Property="HorizontalOptions" Value="Center" />
         <Setter Property="BorderColor" Value="#00000000" />
-        <Setter Property="BorderRadius" Value="7" />
+        <Setter Property="BorderRadius" Value="10" />
         <Setter Property="BorderWidth" Value="0" />
-        <Setter Property="WidthRequest" Value="300" />
+        <Setter Property="WidthRequest" Value="500" />
         <Setter Property="TextColor" Value="#000000" />
       </Style>
 
-      <Style x:Key="basePageStyle" TargetType="ContentPage">
-        <Setter Property="BackgroundColor" Value="#E4EBEE"/>
+
+      <Style x:Key="buttonShadowStyle" TargetType="Frame">
+        <Setter Property="BackgroundColor" Value="#A6BCC6" />
+        
+        <Setter Property="WidthRequest" Value="300" />
+
       </Style>
 
+      <!--
+              <Setter Property="Padding" Value="3,7,3,3"></Setter>
+      <Setter Property="VerticalOptions" Value="Fill" />
+      <Setter Property="WidthRequest" Value="300" />
+      -->
+      
+      <Style x:Key="basePageStyle" TargetType="ContentPage">
+        <Setter Property="BackgroundColor" Value="#E4EBEE"/>
+        <Setter Property="Padding" Value="35,35,35,35"/>
+      </Style>
+
+     
       <Style x:Key="baseBoxStyle" TargetType="BoxView">
         <Setter Property="BackgroundColor" Value="#A6BCC6"/>
       </Style>
@@ -34,6 +50,9 @@
 
 
 <!--STYLE NOTES FOR POSTERITY:
+ORDER FOR PADDING IS: LEFT, TOP, RIGHT, BOTTOM (0,0,0,0)
+
+
 White:   #FFFFFF   used on buttons and orange button text
 Orange:  #EC7A08   used on buttons and headers
 Or. 2:   #CE6904   dark orange used for orange button shaders

@@ -10,9 +10,11 @@
     <Label Text="Passord" />
     <Entry x:Name="passwordEntry" Text="" />
 
-    <local:RoundBox CornerRadius="7" WidthRequest="300" HeightRequest="40"/>
-    <local:BaseButton x:Name="LoginButton" Text="Login" Clicked="LoginClicked" Padding="0,0,0,20" Style="{DynamicResource baseButtonStyle}"/>
     
+    <local:ButtonShadow BorderRadius="10" Padding ="3,3,3,7" Style="{DynamicResource buttonShadowStyle}">
+    <local:BaseButton x:Name="LoginButton" Text="Login" Clicked="LoginClicked" Padding="0,0,0,0" Style="{DynamicResource baseButtonStyle}"/>
+    </local:ButtonShadow>
+      
     <local:BaseButton x:Name="ForgotButton" Text="Glemt Passord?" Clicked="GlemtPassord" Style="{DynamicResource baseButtonStyle}"/>
     <Label x:Name="Resultat" Text="" />
     <!--

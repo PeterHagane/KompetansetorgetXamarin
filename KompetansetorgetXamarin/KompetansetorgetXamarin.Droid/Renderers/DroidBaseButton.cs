@@ -7,8 +7,9 @@ using System.ComponentModel;
 using KompetansetorgetXamarin.Controls;
 
 
-//This is one of two classes that renders custom buttons for android. (Both WP and ios would need their own custom button renderer) 
+//This is one of two classes that ensure the ability to render custom buttons for android. (Both WP and ios would need their own custom button renderer) 
 //This is necessary because the button class used by forms has limited capabilities for customisation
+//The other class is the BaseButton class in the forms project
 
 
 [assembly: ExportRenderer(typeof(KompetansetorgetXamarin.Controls.BaseButton), typeof(DroidBaseButton))]
@@ -95,7 +96,7 @@ namespace KompetansetorgetXamarin.Droid
 
             var button = (Xamarin.Forms.Button)sender;
 
-            if (e.PropertyName == "Margin")
+            if (e.PropertyName == "Padding")
             {
                 UpdatePadding();
             }
