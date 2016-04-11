@@ -3,6 +3,7 @@ using Android.Content;
 using Android.OS;
 using Android.Gms.Gcm;
 using Android.Util;
+using KompetansetorgetXamarin.Controllers;
 using XamarinTest.Droid;
 
 namespace KompetansetorgetXamarin.Droid
@@ -15,12 +16,21 @@ namespace KompetansetorgetXamarin.Droid
         /// Receives a Message from GCM. The method exctracts a message from the Bundle data,
         /// and calls SendNotification
         /// </summary>
-        public override void OnMessageReceived(string from, Bundle data)
-        {    
+        public override async void OnMessageReceived(string from, Bundle data)
+        {
             var message = data.GetString("message");
             Log.Debug("MyGcmListenerService", "From:    " + from);
             Log.Debug("MyGcmListenerService", "Message: " + message);
             SendNotification(message);
+
+            var type = data.GetString("type");
+            var uuid = data.GetString("uuid");
+            Log.Debug("MyGcmListenerService", "type: " + type);
+            Log.Debug("MyGcmListenerService", "uuid: " + uuid);
+            // type = job or project          
+            NotificationsController nc = new NotificationsController();
+            Log.Debug("MyGcmListenerService", "After New NotificationController, but before use of method.");
+            nc.InsertNotification(type, uuid);
         }
 
         /// <summary>

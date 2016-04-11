@@ -11,9 +11,6 @@ using Android.Gms.Common;
 using Android.Util;
 //using KompetansetorgetXamarin.Views;
 using Xamarin.Forms;
-using PCLStorage;
-using SQLite.Net.Interop;
-using SQLite.Net.Platform.XamarinAndroid;
 
 namespace KompetansetorgetXamarin.Droid
 {                                                                           //MainLauncher = true
@@ -37,7 +34,6 @@ namespace KompetansetorgetXamarin.Droid
             }
 
             SetActionBar();
-            ISQLitePlatform platform = new SQLitePlatformAndroid();
 
         }
 

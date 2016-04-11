@@ -1,13 +1,19 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
+using KompetansetorgetXamarin.Controllers;
 using KompetansetorgetXamarin.CRUD;
 using KompetansetorgetXamarin.DAL;
 using Xamarin.Forms;
 using KompetansetorgetXamarin.Models;
 using KompetansetorgetXamarin.Renderers;
+using Newtonsoft.Json;
 using PCLStorage;
+using SQLiteNetExtensions.Extensions;
+
 
 namespace KompetansetorgetXamarin.Views
 {
@@ -21,8 +27,9 @@ namespace KompetansetorgetXamarin.Views
         private async void StudentButton_OnClicked(object sender, EventArgs e)
         {
             var client = new HttpClient();
-            var response = await client.GetAsync("http://kompetansetorgetserverapp.azurewebsites.net/api/students");
+            var response = await client.GetAsync("http://kompetansetorgetserver1.azurewebsites.net/api/v1/students");
             var results = await response.Content.ReadAsAsync<IEnumerable<Student>>();
+
             /*
             var sb = new StringBuilder();
             foreach (var student in results)
@@ -58,6 +65,7 @@ namespace KompetansetorgetXamarin.Views
             string token = await th.GetToken();
             TextBox.Text = token;
         }
+
         private async void DeviceIdButton_OnClicked(object sender, EventArgs e)
         {
             TokenHandler th = new TokenHandler();
@@ -65,7 +73,118 @@ namespace KompetansetorgetXamarin.Views
             TextBox.Text = deviceId;
         }
 
+        private async void GetJobsFromServer_OnClicked(object sender, EventArgs e)
+        {
+            //JobsController jc = new JobsController();
+            // jc.GetJobsFromServer();
 
+            var client = new HttpClient();
+            var response = await client.GetAsync("http://kompetansetorgetserver1.azurewebsites.net/api/v1/jobs");
+            var results = await response.Content.ReadAsAsync<IEnumerable<Job>>();
+
+            var sb = new StringBuilder();
+            foreach (var job in results)
+            {
+                var id = new StringBuilder();
+                foreach (var c in job.companies)
+                {
+                    id.AppendLine(c.id);
+                }
+             
+                string[] s = new string[2];
+                s[0] = "a";
+                s[1] = "b";
+
+                var text = string.Format("title: {0}, published: {1}, id: {2}", job.title, job.published,
+                id.ToString());
+                //job.companies.Select(c => new { c.id }));
+                sb.AppendLine(text);
+
+            }
+            TextBox.Text = sb.ToString();
+
+        }
+
+        private async void NotificationsFromDb_OnClicked(object sender, EventArgs e)
+        {
+            NotificationsController nc = new NotificationsController();
+            ProjectsController pc = new ProjectsController();
+            JobsController jc = new JobsController();
+
+            IEnumerable<Notification> notifications = nc.GetNotifications();
+
+            var sb = new StringBuilder();
+            foreach (var n in notifications)
+            {
+                System.Diagnostics.Debug.WriteLine("ViktorTestView - NotificationsFromDb_OnClicked: var n.id = " + n.id);
+                System.Diagnostics.Debug.WriteLine("ViktorTestView - NotificationsFromDb_OnClicked: var n.jobUuid = " + n.jobUuid);
+                System.Diagnostics.Debug.WriteLine("ViktorTestView - NotificationsFromDb_OnClicked: var n.projectUuid = " + n.projectUuid);
+
+                if (!string.IsNullOrWhiteSpace(n.jobUuid))
+                {
+                    Job j = jc.GetJobByUuid(n.jobUuid);
+                    try
+                    {
+                        var text = string.Format("title: {0}, company: {1}, published: {2}, webpage: {3}, logo: {4}",
+                            j.title, j.companies[0].name, j.published,
+                            j.webpage, j.companies[0].logo);
+
+
+                        //job.companies.Select(c => new { c.id }));
+                        sb.AppendLine(text);
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine("ViktorTestView - NotificationsFromDb_OnClicked: Exception msg: " + ex.Message);
+                        System.Diagnostics.Debug.WriteLine("ViktorTestView - NotificationsFromDb_OnClicked: Stack Trace: \n" + ex.StackTrace);
+                        System.Diagnostics.Debug.WriteLine("ViktorTestView - NotificationsFromDb_OnClicked: End Of Stack Trace");
+                    }
+
+                }
+                else
+                {
+                    Project p = pc.GetProjectByUuid(n.projectUuid);
+                    List<Company> companies = pc.GetAllCompaniesRelatedToProject(p);
+                    System.Diagnostics.Debug.WriteLine(
+                        "ViktorTestView - NotificationsFromDb_OnClicked: companies.Count = " + companies.Count());
+                    p.companies = companies;
+                    System.Diagnostics.Debug.WriteLine("ViktorTestView - NotificationsFromDb_OnClicked: var n.projectUuid = " + n.projectUuid);
+                    System.Diagnostics.Debug.WriteLine("ViktorTestView - NotificationsFromDb_OnClicked: var p.uuid = " + p.uuid);
+                    System.Diagnostics.Debug.WriteLine("ViktorTestView - NotificationsFromDb_OnClicked: var p.title = " + p.title);
+                    System.Diagnostics.Debug.WriteLine("ViktorTestView - NotificationsFromDb_OnClicked: var p.webpage = " + p.webpage);
+                    System.Diagnostics.Debug.WriteLine("ViktorTestView - NotificationsFromDb_OnClicked: p.companies.Count = " + p.companies.Count);
         
+                    try
+                    {
+                        System.Diagnostics.Debug.WriteLine("ViktorTestView - NotificationsFromDb_OnClicked: var p.companies[0].name = " + p.companies[0].name);
+                        System.Diagnostics.Debug.WriteLine("ViktorTestView - NotificationsFromDb_OnClicked: var p.companies[0].logo " + p.companies[0].logo);
+
+                        //var text = string.Format("title: {0}, published: {1}, webpage: {2}", p.title,  p.published, p.webpage);
+                        
+                        var text = string.Format("title: {0}, company: {1}, published: {2}, webpage: {3}, logo: {4}",
+                            p.title, p.companies[0].name, p.published,
+                            p.webpage, p.companies[0].logo);
+                        //job.companies.Select(c => new { c.id }));
+                        
+                        sb.AppendLine(text);
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine("ViktorTestView - NotificationsFromDb_OnClicked: Exception msg: " + ex.Message);
+                        System.Diagnostics.Debug.WriteLine("ViktorTestView - NotificationsFromDb_OnClicked: Stack Trace: \n" + ex.StackTrace);
+                        System.Diagnostics.Debug.WriteLine("ViktorTestView - NotificationsFromDb_OnClicked: End Of Stack Trace");
+                    }
+                } 
+
+
+
+
+            }
+            TextBox.Text = sb.ToString();
+
+        }
+
+
+
     }
 }

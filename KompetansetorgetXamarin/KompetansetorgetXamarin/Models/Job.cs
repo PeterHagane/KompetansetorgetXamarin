@@ -40,21 +40,24 @@ namespace KompetansetorgetXamarin.Models
         public string modified { get; set; }
 
         // When the object got Cached, to prevent storing old data
-        public DateTime Cached { get; set; }
+        public DateTime cached { get; set; }
 
         [ManyToMany(typeof(CompanyJob))]
-        public List<Company> Companies { get; set; }
+        public List<Company> companies { get; set; }
 
         [ManyToMany(typeof(ContactJob))]
-        public List<Contact> Contacts { get; set; }
+        public List<Contact> contacts { get; set; }
 
         [ManyToMany(typeof(LocationJob))]
-        public List<Location> Locations { get; set; }
+        public List<Location> locations { get; set; }
 
         [ManyToMany(typeof(JobTypeJob))]
-        public List<JobType> JobTypes { get; set; }
+        public List<JobType> jobTypes { get; set; }
 
         [ManyToMany(typeof(StudyGroupJob))]
-        public List<StudyGroup> StudyGroups { get; set; }
+        public List<StudyGroup> studyGroups { get; set; }
+
+        [OneToMany]
+        public List<Notification> notifications { get; set; }
     }
 }

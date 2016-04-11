@@ -27,10 +27,10 @@ namespace KompetansetorgetXamarin.Models
         public string email { get; set; }
 
         [ManyToMany(typeof(StudyGroupStudent))]
-        public List<StudyGroup> StudyGroup { get; set; }
+        public List<StudyGroup> studyGroup { get; set; }
 
         [OneToMany]
-        public List<Device> Devices { get; set; }
+        public List<Device> devices { get; set; }
 
     }
 

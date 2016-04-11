@@ -26,7 +26,7 @@ namespace KompetansetorgetXamarin.Models
         public DateTime Cached { get; set; }
 
 
-        [ManyToMany(typeof(CompanyProject))]
+        [ManyToMany(typeof(CompanyProject), CascadeOperations = CascadeOperation.All, ReadOnly = true)]
         public List<Project> Projects { get; set; }
 
         [ManyToMany(typeof(CompanyJob))]

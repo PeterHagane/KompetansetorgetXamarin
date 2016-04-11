@@ -10,6 +10,10 @@
       <Button Clicked="PathButton_OnClicked" x:Name= "PathButton" Text="Get Path" Style="{DynamicResource baseButtonStyle}"  />
       <Button Clicked="TokenButton_OnClicked"  x:Name="TokenButton" Text="Hent token fra fil" Style="{DynamicResource baseButtonStyle}" />
       <Button Clicked="DeviceIdButton_OnClicked"  x:Name="DeviceIdButton" Text="Hent device id fra fil" Style="{DynamicResource baseButtonStyle}" />
+      <Button Clicked="GetJobsFromServer_OnClicked"  x:Name="ServerJobsButton" Text="Hent jobbstillinger fra server" Style="{DynamicResource baseButtonStyle}" />
+      <Button Clicked="NotificationsFromDb_OnClicked"  x:Name="NotificationsFromDbButton" Text="Hent varsler fra database" Style="{DynamicResource baseButtonStyle}" />
+
+      
       <Label x:Name="TextBox" Text="Information"/>
     </StackLayout>
   </ContentPage.Content>
