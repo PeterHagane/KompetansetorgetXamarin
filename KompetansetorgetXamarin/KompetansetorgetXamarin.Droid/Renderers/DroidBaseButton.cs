@@ -18,6 +18,8 @@ namespace KompetansetorgetXamarin.Droid
     public class DroidBaseButton : ButtonRenderer
     {
         private GradientDrawable _normal, _pressed;
+        string buttonGrey = "#FFA6BCC6"; //NOTE: THE TWO FIRST ARE ALPHA
+        string buttonWhite = "#FFFFFFFF";
 
         protected override void OnElementChanged(ElementChangedEventArgs<Xamarin.Forms.Button> e)
         {
@@ -28,8 +30,7 @@ namespace KompetansetorgetXamarin.Droid
             if (Control != null)
             {
                 var button = e.NewElement;
-                var buttonGrey = "#FFA6BCC6"; //NOTE: THE TWO FIRST ARE ALPHA
-                var buttonWhite = "#FFFFFFFF";
+
 
                 // Create a drawable for the button's normal state
                 _normal = new Android.Graphics.Drawables.GradientDrawable();
@@ -45,7 +46,8 @@ namespace KompetansetorgetXamarin.Droid
 
                 // Create a drawable for the button's pressed state
                 _pressed = new Android.Graphics.Drawables.GradientDrawable();
-                var highlight = Context.ObtainStyledAttributes(new int[] { Android.Resource.Attribute.ColorActivatedHighlight }).GetColor(0, Android.Graphics.Color.ParseColor(buttonGrey));
+                var highlight = Android.Graphics.Color.ParseColor(buttonGrey);
+                //var highlight = Context.ObtainStyledAttributes(new int[] { Android.Resource.Attribute.ColorActivatedHighlight }).GetColor(0, Android.Graphics.Color.ParseColor(buttonWhite));
                 _pressed.SetColor(highlight);
                 _pressed.SetStroke((int)button.BorderWidth, button.BorderColor.ToAndroid());
                 _pressed.SetCornerRadius(button.BorderRadius);
