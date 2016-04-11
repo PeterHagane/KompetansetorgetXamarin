@@ -19,37 +19,25 @@ namespace KompetansetorgetXamarin.Controllers
         private DbContext dbContext = DbContext.GetDbContext;
         private SQLiteConnection Db;
 
+
         public ProjectsController()
         {
             Db = dbContext.Db;
         }
 
-        public async void GetProjectsFromServer()
-        {
-            var client = new HttpClient();
-            var response = await client.GetAsync("http://kompetansetorgetserver1.azurewebsites.net/api/v1/projects");
-            var results = await response.Content.ReadAsAsync<IEnumerable<Project>>();
-        }
-
-
         /// <summary>
-        /// Gets the projects from the server including their respective company name and logo
+        /// Gets the project with the spesific uuid. 
+        /// If no matching Project is found it returns null.
         /// </summary>
-        public async void GetProjectsWithExtraFromServer()
-        {
-            var client = new HttpClient();
-            var response = await client.GetAsync("http://kompetansetorgetserver1.azurewebsites.net/api/v1/projects?fields=cname&fields=clogo");
-            var results = await response.Content.ReadAsAsync<IEnumerable<Project>>();
-
-        }
-
+        /// <param name="uuid"></param>
+        /// <returns></returns>
         public Project GetProjectByUuid(string uuid)
         {
             try
             {
                 lock (DbContext.locker)
                 {
-                     return Db.GetWithChildren<Project>(uuid);
+                    return Db.GetWithChildren<Project>(uuid);
                     //return Db.Get<Project>(uuid);
                 }
             }
@@ -62,93 +50,89 @@ namespace KompetansetorgetXamarin.Controllers
             }
         }
 
-        // MÅ SES OVER ER NOE SOM SKURRRER
         /// <summary>
-        /// Gets the minimum information about a spesific project to build a proper notification in the notification list
+        /// Inserts the project and its respective children (only Company and CompanyProject) 
+        /// into the database.
         /// </summary>
-        public async void GetProjectNotificationInfoServer(string uuid)
-        {
-            //http://kompetansetorgetserver1.azurewebsites.net/api/v1/projects/113bff7f-7df5-47cf-ab94-b0a198f24ee1?minnot=true
-            string url = "http://kompetansetorgetserver1.azurewebsites.net/api/v1/projects/" + uuid + "?minnot=true";
-            var client = new HttpClient();
-            var response = await client.GetAsync("url");
-            //if (!response.IsSuccessStatusCode) {}
-            var results = await response.Content.ReadAsAsync<IEnumerable<Project>>();
-
-            CompaniesController cc = new CompaniesController();
-            foreach (var project in results)
-            {
-                foreach (Company c in project.companies)
-                {
-                    cc.InsertCompany(c);
-                }
-                InsertProject(project);
-            }
-        }
-
-        public void InsertProject(Project project)
+        /// <param name="project"></param>
+        /// <returns>Returns true if the project was inserted, returns false if a project with the same 
+        ///  uuid (primary key) already exists in the table.</returns>
+        public bool InsertProject(Project project)
         {
             System.Diagnostics.Debug.WriteLine("ProjectController InsertProject(Project project): initiated");
-            try
+            if (CheckIfProjectExist(project.uuid))
             {
-                var checkIfExist = Db.Get<Project>(project.uuid);
-                System.Diagnostics.Debug.WriteLine("ProjectController InsertProject(string uuid): Already exists");
-                return;
+                return false;
             }
-            catch (Exception e)
+
+            //Project did not exist, safe to insert.
+            CompaniesController cc = new CompaniesController();
+
+            foreach (Company c in project.companies)
             {
-                //Project did not exist, safe to insert.
-                CompaniesController cc = new CompaniesController();
-                foreach (Company c in project.companies)
-                {
-                    cc.InsertCompany(c);
-                }
+                cc.InsertCompany(c);
+            }
+
+            lock (DbContext.locker)
+            {
+                Db.Insert(project);
+                // Db.InsertOrReplaceWithChildren(project, recursive: true);
+            }
+
+            // This could perhaps be done in the above foreach loop, 
+            // but because of lack of concurrency control in SQLite its done in its own loop.
+            foreach (Company c in project.companies)
+            {
+                CompanyProject cp = new CompanyProject();
+                cp.ProjectUuid = project.uuid;
+                cp.CompanyId = c.id;
                 lock (DbContext.locker)
                 {
-                    Db.Insert(project);
-                   // Db.InsertOrReplaceWithChildren(project, recursive: true);
-                }
-
-                // This should perhaps be done above in the other loop, but because of concurrency its in its own loop.
-                foreach (Company c in project.companies)
-                {
-                    CompanyProject cp = new CompanyProject();
-                    cp.ProjectUuid = project.uuid;
-                    cp.CompanyId = c.id;
-                    lock (DbContext.locker)
-                    {
-                        Db.Insert(cp);
-                        // Db.InsertOrReplaceWithChildren(project, recursive: true);
-                    }
+                    Db.Insert(cp);
+                    // Db.InsertOrReplaceWithChildren(project, recursive: true);
                 }
             }
+            // Project was successfully inserted
+            return true;
+            
         }
 
 
-        public void InsertProject(string uuid)
+        /// <summary>
+        /// Inserts a new Project with the param as primary key 
+        /// </summary>
+        /// <param name="uuid">The new Projects primary key</param>
+        /// <returns>Returns true if the project was inserted, returns false if a project with the same 
+        ///  uuid (primary key) already exists in the table.</returns>
+        public bool InsertProject(string uuid)
         {
             System.Diagnostics.Debug.WriteLine("ProjectController InsertProject(string uuid): initiated");
-            try { 
-                // If Project already exists it will not be inserted again
-                var checkIfExist = Db.Get<Project>(uuid);
-                System.Diagnostics.Debug.WriteLine("ProjectController InsertProject(string uuid): Already exists");
-                return;
-            }
-            catch (Exception e)
+            if (CheckIfProjectExist(uuid))
             {
-                //Project did not exist so it will be inserted
-                Project p = new Project();
-                p.uuid = uuid;
-                lock (DbContext.locker)
-                {
-                    System.Diagnostics.Debug.WriteLine("ProjectController - InsertProject(string uuid): Under LOCK");
-                    Db.Insert(p);
-                    //Db.InsertOrReplaceWithChildren(p, recursive: true);
-                    System.Diagnostics.Debug.WriteLine("ProjectController - InsertProject(string uuid): After Insert");
-                }
-            } 
+                System.Diagnostics.Debug.WriteLine("ProjectController InsertProject(string uuid): Project already exists");
+                return false;
+            }
+
+            //Project did not exist so it will be inserted
+            Project p = new Project();
+            p.uuid = uuid;
+            lock (DbContext.locker)
+            {
+                Db.Insert(p);
+                //Db.InsertOrReplaceWithChildren(p, recursive: true);
+                System.Diagnostics.Debug.WriteLine("ProjectController - InsertProject(string uuid): Project Inserted");
+                return true;
+            }
+            
         }
 
+        /// <summary>
+        /// Updates the Project from the servers REST Api.
+        /// 
+        /// This implementation also get the minimum data from the related
+        /// Companies to build a proper notification list.
+        /// </summary>
+        /// <param name="uuid"></param>
         public async void UpdateProjectFromServer(string uuid)
         {
             System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProjectFromServer(string uuid): initiated");
@@ -160,7 +144,8 @@ namespace KompetansetorgetXamarin.Controllers
             System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProjectFromServer: HttpClient created");
 
             string jsonString = null;
-            try { 
+            try
+            {
                 var response = await client.GetAsync(url);
                 System.Diagnostics.Debug.WriteLine("UpdateProjectFromServer response " + response.StatusCode.ToString());
                 //results = await response.Content.ReadAsAsync<IEnumerable<Project>>();
@@ -175,60 +160,41 @@ namespace KompetansetorgetXamarin.Controllers
                 System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProjectFromServer: End Of Stack Trace");
                 return;
             }
-                
+
             Project project = DeserializeOneProject(jsonString);
             UpdateProject(project);
 
-
-
-                //var project = JsonConvert.DeserializeObject<List<Project>>(jsonString);
-
-                /*
-                Cannot deserialize the current JSON object (e.g. { "name":"value"}) 
-                into type 'System.Collections.Generic.IEnumerable`1[KompetansetorgetXamarin.Models.Project]'
-                because the type requires a JSON array(e.g. [1, 2, 3]) to deserialize correctly.
-                To fix this error either change the JSON to a JSON array(e.g. [1, 2, 3]) 
-                or change the deserialized type so that it is a normal.NET type 
-                (e.g.not a primitive type like integer, not a collection type like an array or List<T>)
-                that can be deserialized from a JSON object.JsonObjectAttribute can also be added to the
-                type to force it to deserialize from a JSON object. Path 'uuid', line 1, position 8.
-                    */
-
-            /*
-            CompaniesController cc = new CompaniesController();
-            foreach (var project in results)
-            {
-                foreach (Company c in project.companies)
-                {
-                    cc.UpdateCompany(c);
-                }
-                UpdateProject(project);
-            } */
         }
-        
 
+
+        /// <summary>
+        /// Updates an entry in the Project table. 
+        /// If it doesnt already exist InsertProject will be called.
+        /// </summary>
+        /// <param name="project"></param>
         public void UpdateProject(Project project)
         {
+            if (!CheckIfProjectExist(project.uuid))
+            {
+                System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProject: There was no stored record of Project.");
+                InsertProject(project);
+            }
+     
+            System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProject: There was a record of project in the database.");
+
+            //Project do exist.
+            CompaniesController cc = new CompaniesController();
+            foreach (Company c in project.companies)
+            {
+                if (!cc.InsertCompany(c))
+                {
+                    System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProject: company already exists: Calling UpdateCompany.");
+
+                    cc.UpdateCompany(c);
+                }
+            }
             try
             {
-                System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProject: Checks if project already is stored in database");
-
-                // if exist project will be updated.
-                var checkIfExists = Db.Get<Project>(project.uuid);
-
-                System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProject: There was a record of project in the database.");
-
-                //Project do exist.
-                CompaniesController cc = new CompaniesController();
-                foreach (Company c in project.companies)
-                {
-                    if (!cc.InsertCompany(c))
-                    {
-                        System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProject: company already exists: Calling UpdateCompany.");
-
-                        cc.UpdateCompany(c);
-                    }
-                }
                 lock (DbContext.locker)
                 {
                     System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProject: Before Updating project.");
@@ -239,136 +205,89 @@ namespace KompetansetorgetXamarin.Controllers
                     // Db.InsertOrReplaceWithChildren(project, recursive: true);
                     //Db.UpdateWithChildren(project);
                 }
-
-                // This should perhaps be done above in the other loop, but because of concurrency its in its own loop.
-                foreach (Company c in project.companies)
-                {
-                    CompanyProject cp = new CompanyProject();
-                    cp.ProjectUuid = project.uuid;
-                    cp.CompanyId = c.id;
-                    try
-                    {
-                        lock (DbContext.locker)
-                        {
-                            System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProject: Inserting CompanyProject.");
-                            Db.Insert(cp);
-                            // Db.InsertOrReplaceWithChildren(project, recursive: true);
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProject: CompanyProject Already exists");
-
-                    }
-                }
             }
-
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProject: There was no stored record of Project.");
-                // project did not exist so it will be inserted.
-                InsertProject(project);
+                System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProject: Project update failed");
+                System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProject: Exception msg: " + e.Message);
+                System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProject: Stack Trace: \n" + e.StackTrace);
+                System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProject: End Of Stack Trace");
+            }
 
 
+            // This should perhaps be done above in the other loop, but because of lack of concurrency its in its own loop.
+            foreach (Company c in project.companies)
+            {
+                CompanyProject cp = new CompanyProject();
+                cp.ProjectUuid = project.uuid;
+                cp.CompanyId = c.id;
+                try
+                {
+                    lock (DbContext.locker)
+                    {
+                        System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProject: Inserting CompanyProject.");
+                        Db.Insert(cp);
+                        // Db.InsertOrReplaceWithChildren(project, recursive: true);
+                    }
+                }
+                catch (Exception e)
+                {
+                    System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProject: CompanyProject Insertion failed");
+                    System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProject: Exception msg: " + e.Message);
+                    System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProject: Stack Trace: \n" + e.StackTrace);
+                    System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProject: End Of Stack Trace");
+                }
+            }
+            
+
+        }
+
+        /// <summary>
+        /// Gets a list of all companies that are related to the spesific Project
+        /// </summary>
+        /// <param name="project"></param>
+        /// <returns></returns>
+        public List<Company> GetAllCompaniesRelatedToProject(Project project)
+        {
+            lock (DbContext.locker)
+            {
+                return Db.Query<Company>("Select * from Company"
+                                          + " inner join CompanyProject on Company.id = CompanyProject.CompanyId"
+                                          + " inner join Project on CompanyProject.ProjectUuid = Project.uuid"
+                                          + " where Project.uuid = ?", project.uuid);
             }
         }
 
-        public List<Company> GetAllCompaniesRelatedToProject(Project project)
+        /// <summary>
+        /// Checks if there already is an entry of that Projects primary key
+        /// In the database.
+        /// </summary>
+        /// <param name="uuid"></param>
+        /// <returns>Returns true if exist, false if it doesnt exist.</returns>
+        public bool CheckIfProjectExist(string uuid)
         {
-            /*
-            System.Diagnostics.Debug.WriteLine("ProjectController - GetAllCompaniesRelatedToProject: project.uuid = " +
-                                               project.uuid);
-            lock (DbContext.locker)
+            try
             {
-                List<CompanyProject> cps = Db.GetAllWithChildren<CompanyProject>();
-                System.Diagnostics.Debug.WriteLine("ProjectController - GetAllCompaniesRelatedToProject: cps.Count = " +
-                                                   cps.Count);
-                System.Diagnostics.Debug.WriteLine(
-                    "ProjectController - GetAllCompaniesRelatedToProject: cps[0].CompanyId = " + cps[0].CompanyId);
-                System.Diagnostics.Debug.WriteLine(
-                    "ProjectController - GetAllCompaniesRelatedToProject: cps[0].ProjectUuid = " + cps[0].ProjectUuid);
+                var checkIfExist = Db.Get<Project>(uuid);
+                System.Diagnostics.Debug.WriteLine("ProjectController - CheckIfProjectExist(string uuid): Project Already exists");
+                return true;
             }
-            */
-            /*
-            lock (DbContext.locker)
+            catch (Exception e)
             {
-                List<Company> companies = Db.GetAllWithChildren<Company>();
-                System.Diagnostics.Debug.WriteLine("ProjectController - GetAllCompaniesRelatedToProject: companies[0].id = " + companies[0].id);
+                System.Diagnostics.Debug.WriteLine("ProjectController - CheckIfProjectExist(string uuid): Project Already exists");
+                System.Diagnostics.Debug.WriteLine("ProjectController - GetProjectByUuid(string uuid): Exception msg: " + e.Message);
+                // System.Diagnostics.Debug.WriteLine("ProjectController - GetProjectByUuid(string uuid): Stack Trace: \n" + e.StackTrace);
+                // System.Diagnostics.Debug.WriteLine("ProjectController - GetProjectByUuid(string uuid): End Of Stack Trace");
+                return false;
             }
-            */
-            /*
-            List<Project> projects;
-            lock (DbContext.locker)
-            {
-                projects = Db.GetAllWithChildren<Project>();
-                System.Diagnostics.Debug.WriteLine(
-                    "ProjectController - GetAllCompaniesRelatedToProject: projects[0].uuid = " + projects[0].uuid);
-                System.Diagnostics.Debug.WriteLine(
-                    "ProjectController - GetAllCompaniesRelatedToProject: projects[0].companies.Count = " +
-                    projects[0].companies.Count);
+        }
 
-            }
-
-            List<Company> companies = new List<Company>();
-            foreach (var p in projects)
-            {
-                if (p.uuid.Equals(project.uuid))
-                {
-                    System.Diagnostics.Debug.WriteLine(
-                        "ProjectController - GetAllCompaniesRelatedToProject: p.companies.Count = " + p.companies.Count);
-                    companies = p.companies;
-                    if (companies.Count != 0)
-                    {
-                        System.Diagnostics.Debug.WriteLine("WTFFF");
-
-                       // return companies;
-                    }
-                }
-            }
-           // return companies;
-           */
-        
-        
-            lock (DbContext.locker)
-            {
-               return Db.Query<Company>("Select * from Company"
-                                         + " inner join CompanyProject on Company.id = CompanyProject.CompanyId"
-                                         + " inner join Project on CompanyProject.ProjectUuid = Project.uuid"
-                                         + " where Project.uuid = ?", project.uuid);
-                /*
-                return Db.Query<Company>("Select * from Company"
-                                         + " inner join CompanyProject on 'Company.id' == 'CompanyProject.CompanyId'"
-                    // + " inner join Project on 'CompanyProject.ProjectUuid' = 'Project.uuid'"
-                    //+ " where 'Project.uuid' = " + "'" + project.uuid + "';");
-                                         + " WHERE 'CompanyProject.ProjectUuid' == ?", project.uuid);
-                                         */
-            }
-        } 
-
-/*
-            var result = conn.Query<MeasurementInstanceModel>(
-    "SELECT * " +
-    "FROM MeasurementInstanceModel AS it " +
-    "JOIN MeasurementSubjectModel AS sb " +
-    "ON it.MeasurementSubjectId == sb.Id " +
-    "WHERE sb.Name == ?", avariable);
-            */
-
-
-            /*
-
-            select column1 from table1 
-   inner join table2 on table1.column = table2.column
-   where table2.columne=0
-
-            select * from Company
-             inner join CompanyProject on Company.id = CompanyProject.CompanyId
-             inner join Project on CompanyProject.ProjectUuid = Project.uuid
-             where Project.uuid = project.uuid
-
-             */
-        
-
+        /// <summary>
+        /// Deseriliazes a singular Project with childrem. 
+        /// This method is not fully completed and should be used with caution.
+        /// </summary>
+        /// <param name="jsonString">Serialized data contain information about project and its children</param>
+        /// <returns>A deserialized Project object</returns>
         private Project DeserializeOneProject(string jsonString)
         {
             Dictionary<string, object> dict = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonString);
@@ -390,7 +309,7 @@ namespace KompetansetorgetXamarin.Controllers
                     || !key.Equals("jobTypes") || !key.Equals("studyGroup")) {} */
                 if (key.Equals("uuid"))
                 {
-                    p.uuid = dict[key].ToString();           
+                    p.uuid = dict[key].ToString();
                 }
                 if (key.Equals("title"))
                 {
@@ -443,38 +362,59 @@ namespace KompetansetorgetXamarin.Controllers
                 }
             }
             return p;
-            /*
-            foreach (var item in dict)
-            {
-                System.Diagnostics.Debug.WriteLine("key: " + item.Key);
-                System.Diagnostics.Debug.WriteLine("value: " + item.Value);
-            }
-            */
         }
 
-        // return 
 
-        //serialized.Select(u => new Project(u.Uuid));
-        /*serialized.Select(p => new Project
+
+        /*
+        public async void GetProjectsFromServer()
         {
-            serialized.,
-            p.title,
-            p.description,
-            p.webpage,
-            p.linkedInProfile,
-            p.expiryDate,
-            p.stepsToApply,
-            p.created,
-            p.published,
-            p.modified,
-            p.status,
-            companies = p.companies.Select(c => new { c.id }),
-            courses = p.courses.Select(l => new { l.id }),
-            degrees = p.degrees.Select(d => new { d.id }),
-            jobTypes = p.jobTypes.Select(jt => new { jt.id }),
-            studyGroups = p.studyGroups.Select(st => new { st.id })
-        }); */
-   
+            var client = new HttpClient();
+            var response = await client.GetAsync("http://kompetansetorgetserver1.azurewebsites.net/api/v1/projects");
+            var results = await response.Content.ReadAsAsync<IEnumerable<Project>>();
+        }
+        */
+
+
+        /*
+    /// <summary>
+    /// Gets the projects from the server including their respective company name and logo
+    /// </summary>
+    public async void GetProjectsWithExtraFromServer()
+    {
+        var client = new HttpClient();
+        var response = await client.GetAsync("http://kompetansetorgetserver1.azurewebsites.net/api/v1/projects?fields=cname&fields=clogo");
+        var results = await response.Content.ReadAsAsync<IEnumerable<Project>>();
+
+    }
+    */
+
+
+        /*
+                // MÅ SES OVER ER NOE SOM SKURRRER
+                /// <summary>
+                /// Gets the minimum information about a spesific project to build a proper notification in the notification list
+                /// </summary>
+                public async void GetProjectNotificationInfoServer(string uuid)
+                {
+                    //http://kompetansetorgetserver1.azurewebsites.net/api/v1/projects/113bff7f-7df5-47cf-ab94-b0a198f24ee1?minnot=true
+                    string url = "http://kompetansetorgetserver1.azurewebsites.net/api/v1/projects/" + uuid + "?minnot=true";
+                    var client = new HttpClient();
+                    var response = await client.GetAsync("url");
+                    //if (!response.IsSuccessStatusCode) {}
+                    var results = await response.Content.ReadAsAsync<IEnumerable<Project>>();
+
+                    CompaniesController cc = new CompaniesController();
+                    foreach (var project in results)
+                    {
+                        foreach (Company c in project.companies)
+                        {
+                            cc.InsertCompany(c);
+                        }
+                        InsertProject(project);
+                    }
+                }
+                */
 
     }
 }
