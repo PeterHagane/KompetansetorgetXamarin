@@ -17,8 +17,8 @@ namespace KompetansetorgetXamarin.Views
 
         private async void VarselButton_OnClicked(object sender, EventArgs e)
         {
-            var VarselListPage = new VarselListPage();
-            await Navigation.PushAsync(VarselListPage);
+            var CarouselVarsler = new CarouselVarsler();
+            await Navigation.PushAsync(CarouselVarsler);
         }
 
         private async void ViktorButton_OnClicked(object sender, EventArgs e)

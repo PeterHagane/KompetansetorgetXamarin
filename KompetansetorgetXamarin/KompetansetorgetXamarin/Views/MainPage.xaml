@@ -4,15 +4,28 @@
              xmlns:local="clr-namespace:KompetansetorgetXamarin.Controls;assembly=KompetansetorgetXamarin"
              x:Class="KompetansetorgetXamarin.Views.MainPage">
   <ContentPage.Content>
+    <!--<StackLayout>
+      <Image Source="{local:ImageResource KTbanner.jpg}"/>
+    </StackLayout>-->
+    
     <StackLayout VerticalOptions="FillAndExpand"
                  Orientation="Vertical"
-                 Spacing="20">
+                 Spacing="15">
 
-      <Label x:Name="KTLabel" Text="Kompetansetorget" TextColor="#ffa31a" FontSize="30"/>
-      <local:BaseButton Clicked="VarselButton_OnClicked" x:Name="VarselButton" Text="Vis varsler" Style="{DynamicResource baseButtonStyle}" />
+      
+
+      <local:ButtonShadow BorderRadius="13" Padding ="2,2,2,7" Style="{DynamicResource buttonShadowStyle}">
+        <local:BaseButton Clicked="VarselButton_OnClicked" x:Name="VarselButton" Text="Vis varsler" Style="{DynamicResource baseButtonStyle}" />
+      </local:ButtonShadow>
+
+      <local:ButtonShadow BorderRadius="13" Padding ="2,2,2,7" Style="{DynamicResource buttonShadowStyle}">
       <local:BaseButton Clicked="ViktorButton_OnClicked" x:Name="ViktorButton" Text="Goto ViktorTestPage" Style="{DynamicResource baseButtonStyle}"  />
+      </local:ButtonShadow>
+        
+      <local:ButtonShadow BorderRadius="13" Padding ="2,2,2,7" Style="{DynamicResource buttonShadowStyle}">  
       <local:BaseButton Clicked="CarouselButton_OnClicked" x:Name="CaourselButton" Text="Goto ListsCarouselPage" Style="{DynamicResource baseButtonStyle}" />
-
+      </local:ButtonShadow>
+        
     </StackLayout>
   </ContentPage.Content>
 </local:BaseContentPage>

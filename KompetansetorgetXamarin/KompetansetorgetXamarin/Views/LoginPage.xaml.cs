@@ -12,32 +12,39 @@ namespace KompetansetorgetXamarin.Views
     {
         public LoginPage()
         {
+            
             InitializeComponent();
+
+            Hei();
+        }
+
+        public void Hei() {
+            Resultat.Text = "MOSHI MOSHI";
         }
 
 
-        public void LoginClicked(object sender, EventArgs e)
-        {
-            string username = "nadia";
-            string password = "1234";
+        //public void LoginClicked(object sender, EventArgs e)
+        //{
+        //   string username = "nadia";
+        //    string password = "1234";
 
 
-            if (username.Equals(usernameEntry.Text) && password.Equals(passwordEntry.Text))
-            {
-                Resultat.Text = "Velkommen";
+        //if (username.Equals(usernameEntry.Text) && password.Equals(passwordEntry.Text))
+        //{
+        //   Resultat.Text = "Velkommen";
 
 
-            }
-            else {
-                Resultat.Text = "Feil, prøv igjen";
-            }
-        }
+        //}
+        //else {
+        //   Resultat.Text = "Feil, prøv igjen";
+        //}
+        //}
 
 
-        private void GlemtPassord(object sender, EventArgs e)
-        {
+        //private void GlemtPassord(object sender, EventArgs e)
+        //{
 
-        }
+        //}
 
         private void OnBypassLogin(object sender, EventArgs e)
         {

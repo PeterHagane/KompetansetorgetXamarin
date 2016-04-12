@@ -143,6 +143,10 @@
     <AndroidResource Include="Resources\drawable-hdpi\kompetansetorget_logo_dark.9.png" />
     <AndroidResource Include="Resources\drawable-xhdpi\kompetansetorget_logo_dark.9.png" />
     <AndroidResource Include="Resources\drawable-xxhdpi\kompetansetorget_logo_dark.9.png" />
+    <Content Include="Resources\drawable-hdpi\KTbanner.jpg" />
+    <Content Include="Resources\drawable-xhdpi\KTbanner.jpg" />
+    <Content Include="Resources\drawable-xxhdpi\KTbanner.jpg" />
+    <Content Include="Resources\drawable\KTbanner.jpg" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\KompetansetorgetXamarin\KompetansetorgetXamarin.csproj">

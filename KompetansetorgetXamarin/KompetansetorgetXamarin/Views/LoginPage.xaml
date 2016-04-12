@@ -3,19 +3,33 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:KompetansetorgetXamarin.Controls;assembly=KompetansetorgetXamarin"
              x:Class="KompetansetorgetXamarin.Views.LoginPage">
-  <StackLayout VerticalOptions="StartAndExpand" Spacing="20">
-    <Label Text="Brukernavn" />
+  <StackLayout VerticalOptions="StartAndExpand" Spacing="15">
+    <!--<Label Text="Brukernavn" />
     <Entry x:Name="usernameEntry" Text="" />
 
     <Label Text="Passord" />
-    <Entry x:Name="passwordEntry" Text="" />
+    <Entry x:Name="passwordEntry" Text="" />-->
 
-    
-    <local:ButtonShadow BorderRadius="10" Padding ="3,3,3,7" Style="{DynamicResource buttonShadowStyle}">
-    <local:BaseButton x:Name="LoginButton" Text="Login" Clicked="LoginClicked" Padding="0,0,0,0" Style="{DynamicResource baseButtonStyle}"/>
+    <StackLayout>
+      <Image Source="KTbanner.jpg"/>
+    </StackLayout>
+
+    <local:ButtonShadow BorderRadius="13" Padding ="2,2,2,7" Style="{DynamicResource buttonShadowStyle}">
+      <local:BaseButton x:Name="LoginButton" Text="Logg inn" Clicked="OnLoginClicked" Padding="0,0,0,0" Style="{DynamicResource baseButtonStyle}"/>
     </local:ButtonShadow>
-      
-    <local:BaseButton x:Name="ForgotButton" Text="Glemt Passord?" Clicked="GlemtPassord" Style="{DynamicResource baseButtonStyle}"/>
+
+    <local:ButtonShadow BorderRadius="13" Padding ="2,2,2,7" Style="{DynamicResource buttonShadowStyle}">
+      <local:BaseButton x:Name="Bypass" Text="Hopp over" Clicked="OnBypassLogin" Style="{DynamicResource baseButtonStyle}" />
+    </local:ButtonShadow>
+
+    <!--<local:ButtonShadow BorderRadius="13" Padding ="2,2,2,7" Style="{DynamicResource buttonShadowStyle}">
+      <local:BaseButton x:Name="ForgotButton" Text="Glemt Passord?" Clicked="GlemtPassord" Style="{DynamicResource baseButtonStyle}"/>
+    </local:ButtonShadow>-->
+
+    <!--<local:ButtonShadow BorderRadius="13" Padding ="2,2,2,7" Style="{DynamicResource buttonShadowStyle}">
+    <local:BaseButton x:Name="Login" Text="Login gjennom Google" Clicked="OnLoginClicked" Style="{DynamicResource baseButtonStyle}" />
+    </local:ButtonShadow>-->
+
     <Label x:Name="Resultat" Text="" />
     <!--
   <TextBlock>
@@ -23,10 +37,6 @@
                NavigateUri="http://kompetansetorget.uia.no/user/forgotpassword"></Hyperlink>
   </TextBlock> 
   -->
-    <local:BaseButton x:Name="Login" Text="Login gjennom Google" Clicked="OnLoginClicked" Style="{DynamicResource baseButtonStyle}" />
-
-    <local:BaseButton x:Name="Bypass" Text="Hopp over" Clicked="OnBypassLogin" Style="{DynamicResource baseButtonStyle}" />
-
 
 
   </StackLayout>
