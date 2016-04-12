@@ -3,7 +3,9 @@ using Android.Content;
 using Android.OS;
 using Android.Gms.Gcm;
 using Android.Util;
-using XamarinTest.Droid;
+using KompetansetorgetXamarin.Droid;
+
+//using XamarinTest.Droid;
 
 namespace KompetansetorgetXamarin.Droid
 {

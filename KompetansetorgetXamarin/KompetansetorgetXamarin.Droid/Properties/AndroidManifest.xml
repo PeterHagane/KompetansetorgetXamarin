@@ -15,9 +15,6 @@
 				<category android:name="com.kompetansetorget.xamarin" />
 			</intent-filter>
 		</receiver>
-
-    <activity android:name=".SplashScreen" android:theme="@style/Theme.Splash" />
-  
-
-  </application>
+		<activity android:name=".SplashScreen" android:theme="@style/Theme.Splash" />
+	</application>
 </manifest>
