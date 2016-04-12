@@ -46,8 +46,16 @@
     <Compile Include="Controls\BaseButton.cs" />
     <Compile Include="Controls\BaseContentPage.cs" />
     <Compile Include="DataPassed.cs" />
+    <Compile Include="Models\Stilling.cs" />
+    <Compile Include="Models\Oppgave.cs" />
     <Compile Include="Models\Student.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Views\CarouselOppgaver.xaml.cs">
+      <DependentUpon>CarouselOppgaver.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CarouselStillinger.xaml.cs">
+      <DependentUpon>CarouselStillinger.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ListsCarouselPage.xaml.cs">
       <DependentUpon>ListsCarouselPage.xaml</DependentUpon>
     </Compile>
@@ -155,6 +163,18 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\KTbanner.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Views\CarouselStillinger.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Views\CarouselOppgaver.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\..\packages\Xamarin.Forms.2.0.0.6490\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets" Condition="Exists('..\..\packages\Xamarin.Forms.2.0.0.6490\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets')" />

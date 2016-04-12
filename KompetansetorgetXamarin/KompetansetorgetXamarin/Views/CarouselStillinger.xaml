@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<CarouselPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="KompetansetorgetXamarin.Views.CarouselStillinger"
+             xmlns:local="clr-namespace:KompetansetorgetXamarin.Controls;assembly=KompetansetorgetXamarin">
+
+  <local:BaseContentPage >
+    <ContentPage.Padding>
+      <OnPlatform x:TypeArguments="Thickness" iOS="0,0,0,0" Android="0,0,0,0" />
+    </ContentPage.Padding>
+
+
+
+    <StackLayout VerticalOptions="FillAndExpand">
+
+      <Entry x:Name="søk" Placeholder="Søk 🔍" Style="{DynamicResource entryStyle}"/>
+
+      <ListView x:Name="StillingList" RowHeight="75">
+        <!--ItemTapped="OnOppgaveSelected"-->
+        <ListView.ItemTemplate>
+          <DataTemplate>
+            <ImageCell
+                ImageSource="{Binding Image}"
+                Text="{Binding Text}"
+                Detail="{Binding Detail}">
+            </ImageCell>
+          </DataTemplate>
+        </ListView.ItemTemplate>
+      </ListView>
+
+    </StackLayout>
+
+  </local:BaseContentPage>
+
+
+
+  <local:BaseContentPage Padding="0,0,0,0">
+    <ContentPage.Padding>
+      <OnPlatform x:TypeArguments="Thickness" iOS="0,30,0,0" Android="0,30,0,0" />
+    </ContentPage.Padding>
+    <StackLayout>
+
+
+    </StackLayout>
+  </local:BaseContentPage>
+
+</CarouselPage>

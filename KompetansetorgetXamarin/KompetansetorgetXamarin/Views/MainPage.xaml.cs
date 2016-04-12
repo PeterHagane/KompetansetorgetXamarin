@@ -21,16 +21,16 @@ namespace KompetansetorgetXamarin.Views
             await Navigation.PushAsync(CarouselVarsler);
         }
 
-        private async void ViktorButton_OnClicked(object sender, EventArgs e)
+        private async void StillingButton_OnClicked(object sender, EventArgs e)
         {
-            var ViktorTestView = new ViktorTestView();
-            await Navigation.PushAsync(ViktorTestView);
+            var CarouselStillinger = new CarouselStillinger();
+            await Navigation.PushAsync(CarouselStillinger);
         }
 
-        private async void CarouselButton_OnClicked(object sender, EventArgs e)
+        private async void OppgaveButton_OnClicked(object sender, EventArgs e)
         {
-            var ListsCarouselPage = new ListsCarouselPage();
-            await Navigation.PushAsync(ListsCarouselPage);
+            var CarouselOppgaver = new CarouselOppgaver();
+            await Navigation.PushAsync(CarouselOppgaver);
         }
     }
 }

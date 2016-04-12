@@ -19,11 +19,11 @@
       </local:ButtonShadow>
 
       <local:ButtonShadow BorderRadius="13" Padding ="2,2,2,7" Style="{DynamicResource buttonShadowStyle}">
-      <local:BaseButton Clicked="ViktorButton_OnClicked" x:Name="ViktorButton" Text="Goto ViktorTestPage" Style="{DynamicResource baseButtonStyle}"  />
+      <local:BaseButton Clicked="StillingButton_OnClicked" x:Name="StillingButton" Text="Finn stillinger" Style="{DynamicResource baseButtonStyle}"  />
       </local:ButtonShadow>
         
       <local:ButtonShadow BorderRadius="13" Padding ="2,2,2,7" Style="{DynamicResource buttonShadowStyle}">  
-      <local:BaseButton Clicked="CarouselButton_OnClicked" x:Name="CaourselButton" Text="Goto ListsCarouselPage" Style="{DynamicResource baseButtonStyle}" />
+      <local:BaseButton Clicked="OppgaveButton_OnClicked" x:Name="CarouselButton" Text="Finn oppgaveforslag" Style="{DynamicResource baseButtonStyle}" />
       </local:ButtonShadow>
         
     </StackLayout>
