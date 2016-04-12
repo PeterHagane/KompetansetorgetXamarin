@@ -14,12 +14,6 @@ namespace KompetansetorgetXamarin.Views
         {
             
             InitializeComponent();
-
-            Hei();
-        }
-
-        public void Hei() {
-            Resultat.Text = "MOSHI MOSHI";
         }
 
 

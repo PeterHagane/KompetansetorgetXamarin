@@ -13,7 +13,7 @@
 
     <StackLayout VerticalOptions="FillAndExpand">
 
-      <Entry x:Name="søk" Placeholder="Søk 🔍" Style="{DynamicResource entryStyle}"/>
+      <Entry x:Name="søk" Placeholder="Søk" Style="{DynamicResource entryStyle}"/>
 
       <ListView x:Name="StillingList" RowHeight="75">
         <!--ItemTapped="OnOppgaveSelected"-->

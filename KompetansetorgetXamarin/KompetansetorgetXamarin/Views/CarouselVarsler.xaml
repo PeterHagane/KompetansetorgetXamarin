@@ -4,19 +4,43 @@
              x:Class="KompetansetorgetXamarin.Views.CarouselVarsler"
              xmlns:local="clr-namespace:KompetansetorgetXamarin.Controls;assembly=KompetansetorgetXamarin">
 
-  <local:BaseContentPage >
+  <local:BaseContentPage Padding="0,0,0,0">
+    <ContentPage.Padding>
+      <OnPlatform x:TypeArguments="Thickness" iOS="0,0,0,0" Android="0,0,0,0" />
+    </ContentPage.Padding>
+
+    <StackLayout VerticalOptions="FillAndExpand">
+
+      <Entry x:Name="søk" Placeholder="Søk" Style="{DynamicResource entryStyle}"/>
+
+      <ListView x:Name="VarselList" RowHeight="75">
+        <!--ItemTapped="OnOppgaveSelected"-->
+        <ListView.ItemTemplate>
+          <DataTemplate>
+            <ImageCell
+                ImageSource="{Binding Image}"
+                Text="{Binding Text}"
+                Detail="{Binding Detail}">
+            </ImageCell>
+          </DataTemplate>
+        </ListView.ItemTemplate>
+      </ListView>
+
+    </StackLayout>
+
+  </local:BaseContentPage>
+
+
+
+  <local:BaseContentPage Padding="0,0,0,0">
     <ContentPage.Padding>
       <OnPlatform x:TypeArguments="Thickness" iOS="0,30,0,0" Android="0,30,0,0" />
     </ContentPage.Padding>
     <StackLayout>
-      
-      
-      <Label Text="Red" FontSize="Medium" HorizontalOptions="Center" />
-      <BoxView Color="Red" WidthRequest="200" HeightRequest="200" HorizontalOptions="Center" VerticalOptions="CenterAndExpand" />
+
+
     </StackLayout>
   </local:BaseContentPage>
-  
-  
   
   
 </CarouselPage>

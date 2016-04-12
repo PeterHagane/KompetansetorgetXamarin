@@ -49,6 +49,7 @@
     <Compile Include="Models\Stilling.cs" />
     <Compile Include="Models\Oppgave.cs" />
     <Compile Include="Models\Student.cs" />
+    <Compile Include="Models\Varsel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Views\CarouselOppgaver.xaml.cs">
       <DependentUpon>CarouselOppgaver.xaml</DependentUpon>

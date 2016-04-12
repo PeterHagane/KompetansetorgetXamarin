@@ -1,10 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<local:BaseContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+<local:BaseContentPage Padding="0,0,0,10"
+             xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:KompetansetorgetXamarin.Controls;assembly=KompetansetorgetXamarin"
              x:Class="KompetansetorgetXamarin.Views.LoginPage">
   
-  <StackLayout VerticalOptions="StartAndExpand" Spacing="15">
+  <StackLayout>
+    <Image Source="http://i.imgur.com/DtzFNl1.jpg"/>
+    
+  <StackLayout VerticalOptions="StartAndExpand" Spacing="15" Style="{DynamicResource stackLayoutStyle}">
     <!--<Label Text="Brukernavn" />
     <Entry x:Name="usernameEntry" Text="" />
 
@@ -13,7 +17,7 @@
 
     
     
-    <Image Source="http://i.imgur.com/DtzFNl1.jpg"/>
+    
 
     <local:ButtonShadow BorderRadius="13" Padding ="2,2,2,7" Style="{DynamicResource buttonShadowStyle}">
       <local:BaseButton x:Name="LoginButton" Text="Logg inn" Clicked="OnLoginClicked" Padding="0,0,0,0" Style="{DynamicResource baseButtonStyle}"/>
@@ -41,7 +45,7 @@
 
 
   </StackLayout>
-
+</StackLayout>
 </local:BaseContentPage>
 
 
