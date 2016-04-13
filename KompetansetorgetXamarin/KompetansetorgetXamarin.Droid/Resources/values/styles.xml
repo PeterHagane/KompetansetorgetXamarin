@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <resources>
+
   <style name="Theme.Splash" parent="android:Theme.Light">
     <item name="android:windowBackground">@drawable/layersplash</item>
     <item name="android:windowNoTitle">true</item>
@@ -8,7 +9,16 @@
     <!--<item name="android:background">#FF0000</item>-->
     <!--<item name="android:colorBackground">#0000FF</item>-->
   </style>
-
+  <!-- the theme applied to the application or activity -->
+  <style name="CustomActionBarTheme"
+         parent="@android:style/Theme.Holo.Light">
+    <item name="android:actionBarStyle">@style/MyActionBar</item>
+  </style>
+  <!-- ActionBar styles -->
+  <style name="MyActionBar"
+         parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
+    <item name="android:background">#EC7A08</item>
+  </style>
   <style name="Theme.Toolbar" parent="android:Theme.Light">
   </style>
 </resources>
