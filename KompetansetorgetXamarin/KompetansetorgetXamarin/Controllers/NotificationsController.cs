@@ -62,18 +62,26 @@ namespace KompetansetorgetXamarin.Controllers
             {
                 return;
             }
-            // type is "" so both is false, but the method crashes before end of line.
+            
             if (type.Equals("job"))
             {
-                // FIRST insert a new job object matching the uuid as long as it doesn't exist
-                // SECOND: insert the notification.
-                notification.jobUuid = typeUuid;
+                // FIRST !!
+                // insert a new job object matching the uuid as long as it doesn't exist
+                System.Diagnostics.Debug.WriteLine("NotificationsController - InsertNotification: new JobsController();");
+                JobsController jc = new JobsController();
+                System.Diagnostics.Debug.WriteLine("NotificationsController - InsertNotification: JobsController Created");
 
+                jc.InsertJob(typeUuid);
+
+                // SECOND insert the notification.
+                notification.jobUuid = typeUuid;
                 lock (DbContext.locker)
                 {
                     Db.Insert(notification);
                 }
                 //THIRD: async get extra minimum info for the notification list.
+                jc.UpdateJobFromServer(typeUuid);
+
             }
 
             else if (type.Equals("project"))
@@ -94,7 +102,6 @@ namespace KompetansetorgetXamarin.Controllers
                 }
                 //THIRD: async get extra minimum info for the notification list.
                 pc.UpdateProjectFromServer(typeUuid);
-
             }
             System.Diagnostics.Debug.WriteLine("NotificationsController - InsertNotification: Test: End of method");
         }

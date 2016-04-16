@@ -107,6 +107,8 @@ namespace KompetansetorgetXamarin.Views
 
         private async void NotificationsFromDb_OnClicked(object sender, EventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine("ViktorTestView - NotificationsFromDb_OnClicked: Initiated");
+
             NotificationsController nc = new NotificationsController();
             ProjectsController pc = new ProjectsController();
             JobsController jc = new JobsController();
@@ -114,6 +116,10 @@ namespace KompetansetorgetXamarin.Views
             IEnumerable<Notification> notifications = nc.GetNotifications();
 
             var sb = new StringBuilder();
+
+            // IF JOBS THEN NOTIFICATION IS EMPTY
+            // IF PROJECT THERE ARE NO COMPANIES RELATED TO THE PROJECT!
+
             foreach (var n in notifications)
             {
                 System.Diagnostics.Debug.WriteLine("ViktorTestView - NotificationsFromDb_OnClicked: var n.id = " + n.id);
@@ -122,9 +128,24 @@ namespace KompetansetorgetXamarin.Views
 
                 if (!string.IsNullOrWhiteSpace(n.jobUuid))
                 {
+
                     Job j = jc.GetJobByUuid(n.jobUuid);
+                    List<Company> jCompanies = jc.GetAllCompaniesRelatedToJob(j);
+
+                    System.Diagnostics.Debug.WriteLine(
+                    "ViktorTestView - NotificationsFromDb_OnClicked: companies.Count = " + jCompanies.Count());
+                    j.companies = jCompanies;
+                    System.Diagnostics.Debug.WriteLine("ViktorTestView - NotificationsFromDb_OnClicked: var n.projectUuid = " + n.projectUuid);
+                    System.Diagnostics.Debug.WriteLine("ViktorTestView - NotificationsFromDb_OnClicked: var p.uuid = " + j.uuid);
+                    System.Diagnostics.Debug.WriteLine("ViktorTestView - NotificationsFromDb_OnClicked: var p.title = " + j.title);
+                    System.Diagnostics.Debug.WriteLine("ViktorTestView - NotificationsFromDb_OnClicked: var p.webpage = " + j.webpage);
+                    System.Diagnostics.Debug.WriteLine("ViktorTestView - NotificationsFromDb_OnClicked: p.companies.Count = " + j.companies.Count);
+
                     try
                     {
+                        System.Diagnostics.Debug.WriteLine("ViktorTestView - NotificationsFromDb_OnClicked: var p.companies[0].name = " + j.companies[0].name);
+                        System.Diagnostics.Debug.WriteLine("ViktorTestView - NotificationsFromDb_OnClicked: var p.companies[0].logo " + j.companies[0].logo);
+
                         var text = string.Format("title: {0}, company: {1}, published: {2}, webpage: {3}, logo: {4}",
                             j.title, j.companies[0].name, j.published,
                             j.webpage, j.companies[0].logo);
@@ -141,13 +162,14 @@ namespace KompetansetorgetXamarin.Views
                     }
 
                 }
+
                 else
                 {
                     Project p = pc.GetProjectByUuid(n.projectUuid);
-                    List<Company> companies = pc.GetAllCompaniesRelatedToProject(p);
+                    List<Company> pCompanies = pc.GetAllCompaniesRelatedToProject(p);
                     System.Diagnostics.Debug.WriteLine(
-                        "ViktorTestView - NotificationsFromDb_OnClicked: companies.Count = " + companies.Count());
-                    p.companies = companies;
+                        "ViktorTestView - NotificationsFromDb_OnClicked: companies.Count = " + pCompanies.Count());
+                    p.companies = pCompanies;
                     System.Diagnostics.Debug.WriteLine("ViktorTestView - NotificationsFromDb_OnClicked: var n.projectUuid = " + n.projectUuid);
                     System.Diagnostics.Debug.WriteLine("ViktorTestView - NotificationsFromDb_OnClicked: var p.uuid = " + p.uuid);
                     System.Diagnostics.Debug.WriteLine("ViktorTestView - NotificationsFromDb_OnClicked: var p.title = " + p.title);

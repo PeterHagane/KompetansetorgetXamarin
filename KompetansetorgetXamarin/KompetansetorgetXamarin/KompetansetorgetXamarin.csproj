@@ -40,7 +40,7 @@
     </Compile>
     <Compile Include="Authenticater.cs" />
     <Compile Include="AuthProvider.cs" />
-    <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\BaseAssignmentController.cs" />
     <Compile Include="Controllers\CompaniesController.cs" />
     <Compile Include="Controllers\JobsController.cs" />
     <Compile Include="Controllers\NotificationsController.cs" />

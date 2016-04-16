@@ -19,11 +19,11 @@ namespace KompetansetorgetXamarin.Controllers
         private DbContext dbContext = DbContext.GetDbContext;
         private SQLiteConnection Db;
 
-
         public ProjectsController()
         {
             Db = dbContext.Db;
         }
+            
 
         /// <summary>
         /// Gets the project with the spesific uuid. 
@@ -93,10 +93,8 @@ namespace KompetansetorgetXamarin.Controllers
                 }
             }
             // Project was successfully inserted
-            return true;
-            
+            return true;            
         }
-
 
         /// <summary>
         /// Inserts a new Project with the param as primary key 
@@ -122,8 +120,7 @@ namespace KompetansetorgetXamarin.Controllers
                 //Db.InsertOrReplaceWithChildren(p, recursive: true);
                 System.Diagnostics.Debug.WriteLine("ProjectController - InsertProject(string uuid): Project Inserted");
                 return true;
-            }
-            
+            }            
         }
 
         /// <summary>
@@ -161,11 +158,10 @@ namespace KompetansetorgetXamarin.Controllers
                 return;
             }
 
-            Project project = DeserializeOneProject(jsonString);
+            Project project = Deserialize(jsonString);
             UpdateProject(project);
 
         }
-
 
         /// <summary>
         /// Updates an entry in the Project table. 
@@ -288,7 +284,7 @@ namespace KompetansetorgetXamarin.Controllers
         /// </summary>
         /// <param name="jsonString">Serialized data contain information about project and its children</param>
         /// <returns>A deserialized Project object</returns>
-        private Project DeserializeOneProject(string jsonString)
+        private Project Deserialize(string jsonString)
         {
             Dictionary<string, object> dict = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonString);
             System.Diagnostics.Debug.WriteLine("DeserializeApiData. Printing Key Value:");
@@ -324,47 +320,70 @@ namespace KompetansetorgetXamarin.Controllers
                     p.published = dict[key].ToString();
                 }
 
+                if (key.Equals("modified"))
+                {
+                    p.modified = dict[key].ToString();
+                }
+
                 if (key.Equals("companies"))
                 {
                     // if not true then company already exist and needs to be updated.
-                    Company company = new Company();
+                    CompaniesController cc = new CompaniesController();
                     IEnumerable companies = (IEnumerable)dict[key];
                     //`Newtonsoft.Json.Linq.JArray'
                     System.Diagnostics.Debug.WriteLine("companies created");
                     foreach (var comp in companies)
                     {
                         System.Diagnostics.Debug.WriteLine("foreach initiated");
-
                         Dictionary<string, object> companyDict = JsonConvert.DeserializeObject<Dictionary<string, object>>(comp.ToString());
-                        System.Diagnostics.Debug.WriteLine("companyDict created");
-
-                        company.id = companyDict["id"].ToString();
-
-                        if (companyDict.ContainsKey("name"))
-                        {
-                            company.name = companyDict["name"].ToString();
-                        }
-
-                        if (companyDict.ContainsKey("logo"))
-                        {
-                            company.logo = companyDict["logo"].ToString();
-                        }
-                        /*
-                        if (!cp.InsertCompany(company))
-                        {
-                            cp.UpdateCompany(company);
-                        }*/
-                        System.Diagnostics.Debug.WriteLine("DeserializeOneProject: Before p.companies.Add(company)");
+                        Company company = cc.DeserializeCompany(companyDict);
                         p.companies.Add(company);
                         System.Diagnostics.Debug.WriteLine("DeserializeOneProject: After p.companies.Add(company)");
 
                     }
                 }
+
+                /*
+                if (key.Equals("courses"))
+                {
+                    
+                    Same as companies implementation
+                    
+                }
+
+                if (key.Equals("studyGroups"))
+                {
+                    
+                    Same as companies implementation
+                    
+                }
+
+                if (key.Equals("approvedCourses"))
+                {
+                    
+                    Same as companies implementation
+                    
+                }
+
+                if (key.Equals("degrees"))
+                {
+                    
+                    Same as companies implementation
+                    
+                }
+
+                if (key.Equals("jobTypes"))
+                {
+                    
+                    Same as companies implementation
+                    
+                }
+
+                */
+
             }
             return p;
         }
-
-
 
         /*
         public async void GetProjectsFromServer()
@@ -374,47 +393,6 @@ namespace KompetansetorgetXamarin.Controllers
             var results = await response.Content.ReadAsAsync<IEnumerable<Project>>();
         }
         */
-
-
-        /*
-    /// <summary>
-    /// Gets the projects from the server including their respective company name and logo
-    /// </summary>
-    public async void GetProjectsWithExtraFromServer()
-    {
-        var client = new HttpClient();
-        var response = await client.GetAsync("http://kompetansetorgetserver1.azurewebsites.net/api/v1/projects?fields=cname&fields=clogo");
-        var results = await response.Content.ReadAsAsync<IEnumerable<Project>>();
-
-    }
-    */
-
-
-        /*
-                // MÅ SES OVER ER NOE SOM SKURRRER
-                /// <summary>
-                /// Gets the minimum information about a spesific project to build a proper notification in the notification list
-                /// </summary>
-                public async void GetProjectNotificationInfoServer(string uuid)
-                {
-                    //http://kompetansetorgetserver1.azurewebsites.net/api/v1/projects/113bff7f-7df5-47cf-ab94-b0a198f24ee1?minnot=true
-                    string url = "http://kompetansetorgetserver1.azurewebsites.net/api/v1/projects/" + uuid + "?minnot=true";
-                    var client = new HttpClient();
-                    var response = await client.GetAsync("url");
-                    //if (!response.IsSuccessStatusCode) {}
-                    var results = await response.Content.ReadAsAsync<IEnumerable<Project>>();
-
-                    CompaniesController cc = new CompaniesController();
-                    foreach (var project in results)
-                    {
-                        foreach (Company c in project.companies)
-                        {
-                            cc.InsertCompany(c);
-                        }
-                        InsertProject(project);
-                    }
-                }
-                */
 
     }
 }

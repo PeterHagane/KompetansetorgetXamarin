@@ -9,17 +9,20 @@ using SQLiteNetExtensions.Extensions;
 
 namespace KompetansetorgetXamarin.Controllers
 {
-    public abstract class BasePositionController<T>
+    public abstract class BaseAssignmentController<T>
     {
         protected DbContext dbContext = DbContext.GetDbContext;
         protected SQLiteConnection Db;
 
         protected string ModelName;
 
-        public BasePositionController()
+        public BaseAssignmentController()
         {
             Db = dbContext.Db;
         }
+
+
+
 
         /*
         public T GetProjectByUuid(string uuid)
