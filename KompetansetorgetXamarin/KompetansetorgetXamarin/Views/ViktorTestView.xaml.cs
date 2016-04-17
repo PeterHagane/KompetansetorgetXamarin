@@ -108,7 +108,11 @@ namespace KompetansetorgetXamarin.Views
         private async void NotificationsFromDb_OnClicked(object sender, EventArgs e)
         {
             System.Diagnostics.Debug.WriteLine("ViktorTestView - NotificationsFromDb_OnClicked: Initiated");
+            NotificationsController nc = new NotificationsController();
+            nc.GetNotificationList();
+        
 
+        /*
             NotificationsController nc = new NotificationsController();
             ProjectsController pc = new ProjectsController();
             JobsController jc = new JobsController();
@@ -116,9 +120,6 @@ namespace KompetansetorgetXamarin.Views
             IEnumerable<Notification> notifications = nc.GetNotifications();
 
             var sb = new StringBuilder();
-
-            // IF JOBS THEN NOTIFICATION IS EMPTY
-            // IF PROJECT THERE ARE NO COMPANIES RELATED TO THE PROJECT!
 
             foreach (var n in notifications)
             {
@@ -146,9 +147,9 @@ namespace KompetansetorgetXamarin.Views
                         System.Diagnostics.Debug.WriteLine("ViktorTestView - NotificationsFromDb_OnClicked: var p.companies[0].name = " + j.companies[0].name);
                         System.Diagnostics.Debug.WriteLine("ViktorTestView - NotificationsFromDb_OnClicked: var p.companies[0].logo " + j.companies[0].logo);
 
-                        var text = string.Format("title: {0}, company: {1}, published: {2}, webpage: {3}, logo: {4}",
+                        var text = string.Format("title: {0}, company: {1}, published: {2}, webpage: {3}, logo: {4}, expiryDate: {5}",
                             j.title, j.companies[0].name, j.published,
-                            j.webpage, j.companies[0].logo);
+                            j.webpage, j.companies[0].logo, j.expiryDate);
 
 
                         //job.companies.Select(c => new { c.id }));
@@ -203,9 +204,9 @@ namespace KompetansetorgetXamarin.Views
 
             }
             TextBox.Text = sb.ToString();
-
+            */
         }
-
+        
 
 
     }

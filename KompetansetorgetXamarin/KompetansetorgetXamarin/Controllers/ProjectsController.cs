@@ -24,7 +24,6 @@ namespace KompetansetorgetXamarin.Controllers
             Db = dbContext.Db;
         }
             
-
         /// <summary>
         /// Gets the project with the spesific uuid. 
         /// If no matching Project is found it returns null.

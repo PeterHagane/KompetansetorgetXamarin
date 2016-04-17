@@ -23,6 +23,7 @@ namespace KompetansetorgetXamarin.Models
         public string logo { get; set; }
 
         // When the object got Cached, to prevent old data
+        public DateTime modified { get; set; }
         public DateTime Cached { get; set; }
 
 

@@ -97,6 +97,11 @@ namespace KompetansetorgetXamarin.Controllers
                 company.name = companyDict["name"].ToString();
             }
 
+            if (companyDict.ContainsKey("modified"))
+            {
+                company.name = companyDict["modified"].ToString();
+            }
+
             if (companyDict.ContainsKey("logo"))
             {
                 company.logo = companyDict["logo"].ToString();
