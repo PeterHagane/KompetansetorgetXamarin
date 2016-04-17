@@ -45,7 +45,7 @@ namespace KompetansetorgetXamarin.Droid
 
             var notificationBuilder = new Notification.Builder(this)
                 .SetSmallIcon(Resource.Drawable.icon)
-                .SetContentTitle("GCM Message") // can probably be extracted from the Bundle the same way as message.
+                .SetContentTitle("Kompetansetorget") // can probably be extracted from the Bundle the same way as message.
                 .SetContentText(message)
                 .SetAutoCancel(true)
                 .SetDefaults(NotificationDefaults.Sound | NotificationDefaults.Vibrate | NotificationDefaults.Lights)
