@@ -263,7 +263,10 @@ namespace KompetansetorgetXamarin.Controllers
         {
             try
             {
-                var checkIfExist = Db.Get<Job>(uuid);
+                lock (DbContext.locker)
+                {
+                    var checkIfExist = Db.Get<Job>(uuid);
+                }
                 System.Diagnostics.Debug.WriteLine("JobController - CheckIfJobExist(string uuid): Job Already exists");
                 return true;
             }

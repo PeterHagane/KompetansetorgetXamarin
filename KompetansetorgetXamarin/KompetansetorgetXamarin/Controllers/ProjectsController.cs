@@ -263,7 +263,10 @@ namespace KompetansetorgetXamarin.Controllers
         {
             try
             {
-                var checkIfExist = Db.Get<Project>(uuid);
+                lock (DbContext.locker)
+                {
+                    var checkIfExist = Db.Get<Project>(uuid);
+                }
                 System.Diagnostics.Debug.WriteLine("ProjectController - CheckIfProjectExist(string uuid): Project Already exists");
                 return true;
             }

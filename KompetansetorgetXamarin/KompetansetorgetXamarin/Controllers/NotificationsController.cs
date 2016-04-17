@@ -48,9 +48,10 @@ namespace KompetansetorgetXamarin.Controllers
 
 
         /// <summary>
-        /// Get all stored notifications
+        /// Inserts a notification into the database.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="type">This param can either be job or project, and will determine what kind of notification it is.</param>
+        /// <param name="typeUuid">the foreign key of type</param>
         public void InsertNotification(string type, string typeUuid)
         {
             System.Diagnostics.Debug.WriteLine("NotificationsController - InsertNotification: initiated");
@@ -192,7 +193,7 @@ namespace KompetansetorgetXamarin.Controllers
 
         /*
             // 
-            // TESTING AT INSTANCEOF PÅ EN KLASSE AV OBJECT funker til notification list 
+            // TESTING AT 'is' (instanceof) PÅ EN KLASSE AV OBJECT funker til notification list 
 
             int j = 0;
             int p = 0;
