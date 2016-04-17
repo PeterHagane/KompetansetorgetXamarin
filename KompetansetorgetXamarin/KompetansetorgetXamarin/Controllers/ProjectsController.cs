@@ -123,6 +123,95 @@ namespace KompetansetorgetXamarin.Controllers
         }
 
         /// <summary>
+        /// Gets a project based on optional filters.
+        /// Current implementation supports only 1 key on the filter param!
+        /// </summary>
+        /// <param name="studyGroups">studyGroups can be a list of numerous studygroups ex: helse, idrettsfag, datateknologi </param>
+        /// <param name="sortBy">published - oldest to newest
+        ///                      -published - newest to oldest</param>
+        /// <param name="filter">A dictionary where key can be: titles (values:title of the project), types (values: virksomhet, faglærer). 
+        ///                      Supports only 1 key at this current implementation!</param>
+        /// <returns></returns>
+        public async Task<IEnumerable<Project>> GetProjectsBasedOnFilter(List<string> studyGroups = null, 
+            string sortBy = "", Dictionary<string, string> filter = null)
+        {
+            // Projects: types, title, sortby=published (oldest to newest), sortby=-published (newest to oldest)
+            // Extra for jobs: 
+            // jobs: types, Location, og sorterting sortby=expirydate (descending order), sortby=-expirydate (ascending order)
+            // api/v1/jobs?locations=vestagder&sortby=published  elste til nyeste
+            // api/v1/jobs?locations=vestagder&sortby=-published nyeste til eldste
+
+            //api/v1/projects?studygroups=datateknologi&sortby=published
+            string adress = "http://kompetansetorgetserver1.azurewebsites.net/api/v1/projects";
+            string queryParams = "";
+            if (studyGroups != null) {
+                System.Diagnostics.Debug.WriteLine("GetProjectsBasedOnStudyGroup - studyGroups.Count(): " + studyGroups.Count());
+                for (int i = 0; i < studyGroups.Count(); i++)
+                {
+                    if (i == 0)
+                    {
+                        queryParams = "?studygroups=" + studyGroups[i];
+                    }
+
+                    else
+                    {
+                        queryParams += "&studygroups=" + studyGroups[i];
+                    }
+                }
+            }
+
+            if (filter != null && filter.Count == 1)
+            {
+                if (string.IsNullOrWhiteSpace(queryParams))
+                {
+                    queryParams = "?";
+                }
+                else queryParams += "&";
+                string category = filter.Keys.ToArray()[0];
+                // removes whitespaces from a potential user typed parameters like title search.
+                // And replaces them with +
+                string value = filter[category].Replace(" ", "+");
+                queryParams += category + "=" + value;
+            }
+
+            if (string.IsNullOrWhiteSpace(sortBy))
+            {
+                if (string.IsNullOrWhiteSpace(queryParams))
+                {
+                    queryParams = "?";
+                }
+                else queryParams += "&";
+                queryParams += "sortby=" + sortBy;
+            }
+
+
+            adress += queryParams;
+            Uri url = new Uri(adress);
+            System.Diagnostics.Debug.WriteLine("GetProjectsBasedOnStudyGroup - adress: " + adress);
+            var client = new HttpClient();
+            string jsonString = null;
+            try
+            {
+                var response = await client.GetAsync(url).ConfigureAwait(false);
+                System.Diagnostics.Debug.WriteLine("GetProjectsBasedOnStudyGroup response " + response.StatusCode.ToString());
+                jsonString = await response.Content.ReadAsStringAsync();
+
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine("ProjectController - GetProjectsBasedOnStudyGroup: await client.GetAsync(\"url\") Failed");
+                System.Diagnostics.Debug.WriteLine("ProjectController - GetProjectsBasedOnStudyGroup: Exception msg: " + e.Message);
+                System.Diagnostics.Debug.WriteLine("ProjectController - GetProjectsBasedOnStudyGroup: Stack Trace: \n" + e.StackTrace);
+                System.Diagnostics.Debug.WriteLine("ProjectController - GetProjectsBasedOnStudyGroup: End Of Stack Trace");
+                return null;
+                // TODO Implement local db query for cached data.
+            }
+
+            IEnumerable<Project> projects = DeserializeMany(jsonString);
+            return projects;
+        }
+
+        /// <summary>
         /// Updates the Project from the servers REST Api.
         /// 
         /// This implementation also get the minimum data from the related
@@ -280,8 +369,29 @@ namespace KompetansetorgetXamarin.Controllers
             }
         }
 
+        private IEnumerable<Project> DeserializeMany(string jsonString)
+        {
+            System.Diagnostics.Debug.WriteLine("ProjectController - DeserializeMany Initialized");
+
+            List<object> serializedProjects =
+                JsonConvert.DeserializeObject<List<object>>(jsonString);
+            //System.Diagnostics.Debug.WriteLine("ProjectController - jsonString: " + jsonString);
+             
+            //List<string> serializedProjects =
+            //    JsonConvert.DeserializeObject<List<string>>(jsonString);
+
+            System.Diagnostics.Debug.WriteLine("ProjectController - serializedProjects.Count(): " + serializedProjects.Count());
+
+            List<Project> projects = new List<Project>();
+            foreach (var serializedProject in serializedProjects)
+            {
+                projects.Add(Deserialize(serializedProject.ToString()));
+            }
+            return projects;
+        }
+
         /// <summary>
-        /// Deseriliazes a singular Project with childrem. 
+        /// Deserializes a singular Project with childrem. 
         /// This method is not fully completed and should be used with caution.
         /// </summary>
         /// <param name="jsonString">Serialized data contain information about project and its children</param>

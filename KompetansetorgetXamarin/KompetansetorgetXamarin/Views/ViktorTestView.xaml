@@ -12,7 +12,9 @@
       <Button Clicked="DeviceIdButton_OnClicked"  x:Name="DeviceIdButton" Text="Hent device id fra fil" Style="{DynamicResource baseButtonStyle}" />
       <Button Clicked="GetJobsFromServer_OnClicked"  x:Name="ServerJobsButton" Text="Hent jobbstillinger fra server" Style="{DynamicResource baseButtonStyle}" />
       <Button Clicked="NotificationsFromDb_OnClicked"  x:Name="NotificationsFromDbButton" Text="Hent varsler fra database" Style="{DynamicResource baseButtonStyle}" />
+      <Button Clicked="TestProjectsStudyGroup_OnClicked"  x:Name="TestProjectsStudyGroupButton" Text="Henter prosjekt basert på studygroups" Style="{DynamicResource baseButtonStyle}" />
 
+      
       
       <Label x:Name="TextBox" Text="Information"/>
     </StackLayout>

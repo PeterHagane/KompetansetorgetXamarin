@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 using KompetansetorgetXamarin.Controllers;
 using KompetansetorgetXamarin.CRUD;
 using KompetansetorgetXamarin.DAL;
@@ -206,8 +207,22 @@ namespace KompetansetorgetXamarin.Views
             TextBox.Text = sb.ToString();
             */
         }
-        
 
+        private async void TestProjectsStudyGroup_OnClicked(object sender, EventArgs e)
+        {
+            List<string> studyGroups = new List<string>();
+            studyGroups.Add("helse");
+            studyGroups.Add("datateknologi");
+            Dictionary<string, string> filter = new Dictionary<string, string>();
+            filter.Add("types", "virksomhet");
+
+            ProjectsController pc = new ProjectsController();
+            Task<IEnumerable<Project>> projects = pc.GetProjectsBasedOnFilter(studyGroups, "-published", filter);
+            IEnumerable<Project> pro = projects.Result;
+            System.Diagnostics.Debug.WriteLine("ProjectController - GetProjectsBasedOnStudyGroup: projects.Count(): " +
+                                   pro.Count());
+        }
+        
 
     }
 }
