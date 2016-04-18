@@ -145,7 +145,7 @@ namespace KompetansetorgetXamarin.Controllers
             string adress = "http://kompetansetorgetserver1.azurewebsites.net/api/v1/projects";
             string queryParams = "";
             if (studyGroups != null) {
-                System.Diagnostics.Debug.WriteLine("GetProjectsBasedOnStudyGroup - studyGroups.Count(): " + studyGroups.Count());
+                System.Diagnostics.Debug.WriteLine("GetProjectsBasedOnFilter - studyGroups.Count(): " + studyGroups.Count());
                 for (int i = 0; i < studyGroups.Count(); i++)
                 {
                     if (i == 0)
@@ -187,22 +187,22 @@ namespace KompetansetorgetXamarin.Controllers
 
             adress += queryParams;
             Uri url = new Uri(adress);
-            System.Diagnostics.Debug.WriteLine("GetProjectsBasedOnStudyGroup - adress: " + adress);
+            System.Diagnostics.Debug.WriteLine("GetProjectsBasedOnFilter - adress: " + adress);
             var client = new HttpClient();
             string jsonString = null;
             try
             {
                 var response = await client.GetAsync(url).ConfigureAwait(false);
-                System.Diagnostics.Debug.WriteLine("GetProjectsBasedOnStudyGroup response " + response.StatusCode.ToString());
+                System.Diagnostics.Debug.WriteLine("GetProjectsBasedOnFilter response " + response.StatusCode.ToString());
                 jsonString = await response.Content.ReadAsStringAsync();
 
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine("ProjectController - GetProjectsBasedOnStudyGroup: await client.GetAsync(\"url\") Failed");
-                System.Diagnostics.Debug.WriteLine("ProjectController - GetProjectsBasedOnStudyGroup: Exception msg: " + e.Message);
-                System.Diagnostics.Debug.WriteLine("ProjectController - GetProjectsBasedOnStudyGroup: Stack Trace: \n" + e.StackTrace);
-                System.Diagnostics.Debug.WriteLine("ProjectController - GetProjectsBasedOnStudyGroup: End Of Stack Trace");
+                System.Diagnostics.Debug.WriteLine("ProjectController - GetProjectsBasedOnFilter: await client.GetAsync(\"url\") Failed");
+                System.Diagnostics.Debug.WriteLine("ProjectController - GetProjectsBasedOnFilter: Exception msg: " + e.Message);
+                System.Diagnostics.Debug.WriteLine("ProjectController - GetProjectsBasedOnFilter: Stack Trace: \n" + e.StackTrace);
+                System.Diagnostics.Debug.WriteLine("ProjectController - GetProjectsBasedOnFilter: End Of Stack Trace");
                 return null;
                 // TODO Implement local db query for cached data.
             }
@@ -369,6 +369,11 @@ namespace KompetansetorgetXamarin.Controllers
             }
         }
 
+        /// <summary>
+        /// Deserializes a json formated string containing multiple Project objects
+        /// </summary>
+        /// <param name="jsonString"></param>
+        /// <returns></returns>
         private IEnumerable<Project> DeserializeMany(string jsonString)
         {
             System.Diagnostics.Debug.WriteLine("ProjectController - DeserializeMany Initialized");

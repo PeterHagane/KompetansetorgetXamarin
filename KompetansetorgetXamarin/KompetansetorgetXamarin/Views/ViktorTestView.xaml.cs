@@ -25,6 +25,7 @@ namespace KompetansetorgetXamarin.Views
             InitializeComponent();            
         }
 
+        /*
         private async void StudentButton_OnClicked(object sender, EventArgs e)
         {
             var client = new HttpClient();
@@ -41,9 +42,9 @@ namespace KompetansetorgetXamarin.Views
 
             }
             TextBox.Text = sb.ToString();
-            */
+            
         }
-
+    */
 
        
        private void PathButton_OnClicked(object sender, EventArgs e)
@@ -111,7 +112,7 @@ namespace KompetansetorgetXamarin.Views
             System.Diagnostics.Debug.WriteLine("ViktorTestView - NotificationsFromDb_OnClicked: Initiated");
             NotificationsController nc = new NotificationsController();
             nc.GetNotificationList();
-        
+        }
 
         /*
             NotificationsController nc = new NotificationsController();
@@ -206,20 +207,20 @@ namespace KompetansetorgetXamarin.Views
             }
             TextBox.Text = sb.ToString();
             */
-        }
 
-        private async void TestProjectsStudyGroup_OnClicked(object sender, EventArgs e)
+
+        private async void TestJobsStudyGroup_OnClicked(object sender, EventArgs e)
         {
             List<string> studyGroups = new List<string>();
             studyGroups.Add("helse");
             studyGroups.Add("datateknologi");
             Dictionary<string, string> filter = new Dictionary<string, string>();
-            filter.Add("types", "virksomhet");
+            filter.Add("locations", "vestagder");
 
-            ProjectsController pc = new ProjectsController();
-            Task<IEnumerable<Project>> projects = pc.GetProjectsBasedOnFilter(studyGroups, "-published", filter);
-            IEnumerable<Project> pro = projects.Result;
-            System.Diagnostics.Debug.WriteLine("ProjectController - GetProjectsBasedOnStudyGroup: projects.Count(): " +
+            JobsController jc = new JobsController();
+            Task<IEnumerable<Job>> jobs = jc.GetJobsBasedOnFilter(studyGroups, "-published", filter);
+            IEnumerable<Job> pro = jobs.Result;
+            System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter: projects.Count(): " +
                                    pro.Count());
         }
         

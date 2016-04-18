@@ -25,7 +25,11 @@
       <local:ButtonShadow BorderRadius="13" Padding ="2,2,2,7" Style="{DynamicResource buttonShadowStyle}">  
       <local:BaseButton Clicked="OppgaveButton_OnClicked" x:Name="CarouselButton" Text="Finn oppgaveforslag" Style="{DynamicResource baseButtonStyle}" />
       </local:ButtonShadow>
-        
+
+      <local:ButtonShadow BorderRadius="13" Padding ="2,2,2,7" Style="{DynamicResource buttonShadowStyle}">
+        <local:BaseButton Clicked="ViktorButton_OnClicked" x:Name="ViktorButton" Text="Viktors test vindu" Style="{DynamicResource baseButtonStyle}" />
+      </local:ButtonShadow>
+      
     </StackLayout>
   </ContentPage.Content>
 </local:BaseContentPage>

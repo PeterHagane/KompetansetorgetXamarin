@@ -162,6 +162,8 @@ namespace KompetansetorgetXamarin.Controllers
 
         }
 
+
+
         /// <summary>
         /// Updates an entry in the Job table. 
         /// If it doesnt already exist InsertJob will be called.
@@ -278,6 +280,119 @@ namespace KompetansetorgetXamarin.Controllers
                 // System.Diagnostics.Debug.WriteLine("JobController - GetJobByUuid(string uuid): End Of Stack Trace");
                 return false;
             }
+        }
+
+        /// <summary>
+        /// Gets a job based on optional filters.
+        /// Current implementation supports only 1 key on the filter param!
+        /// </summary>
+        /// <param name="studyGroups">studyGroups can be a list of numerous studygroups ex: helse, idrettsfag, datateknologi </param>
+        /// <param name="sortBy">published - oldest to newest
+        ///                      -published - newest to oldest
+        ///                      expirydate - descending order
+        ///                      -expirydate - ascending order
+        /// </param>
+        /// <param name="filter">A dictionary where key can be: titles (values:title of the job), types (values: deltid, heltid, etc...),
+        ///                      locations (values: vestagder, austagder), . 
+        ///                      Supports only 1 key at this current implementation!</param>
+        /// <returns></returns>
+        public async Task<IEnumerable<Job>> GetJobsBasedOnFilter(List<string> studyGroups = null,
+            string sortBy = "", Dictionary<string, string> filter = null)
+        {
+            string adress = "http://kompetansetorgetserver1.azurewebsites.net/api/v1/jobs";
+            string queryParams = "";
+            if (studyGroups != null)
+            {
+                System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter - studyGroups.Count(): " + studyGroups.Count());
+                for (int i = 0; i < studyGroups.Count(); i++)
+                {
+                    if (i == 0)
+                    {
+                        queryParams = "?studygroups=" + studyGroups[i];
+                    }
+
+                    else
+                    {
+                        queryParams += "&studygroups=" + studyGroups[i];
+                    }
+                }
+            }
+
+            if (filter != null && filter.Count == 1)
+            {
+                if (string.IsNullOrWhiteSpace(queryParams))
+                {
+                    queryParams = "?";
+                }
+                else queryParams += "&";
+                string category = filter.Keys.ToArray()[0];
+                // removes whitespaces from a potential user typed parameters like title search.
+                // And replaces them with +
+                string value = filter[category].Replace(" ", "+");
+                queryParams += category + "=" + value;
+            }
+
+            if (string.IsNullOrWhiteSpace(sortBy))
+            {
+                if (string.IsNullOrWhiteSpace(queryParams))
+                {
+                    queryParams = "?";
+                }
+                else queryParams += "&";
+                queryParams += "sortby=" + sortBy;
+            }
+
+
+            adress += queryParams;
+            Uri url = new Uri(adress);
+            System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter - adress: " + adress);
+            var client = new HttpClient();
+            string jsonString = null;
+            try
+            {
+                var response = await client.GetAsync(url).ConfigureAwait(false);
+                System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter response " + response.StatusCode.ToString());
+                jsonString = await response.Content.ReadAsStringAsync();
+
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine("JobsController - GetJobsBasedOnFilter: await client.GetAsync(\"url\") Failed");
+                System.Diagnostics.Debug.WriteLine("JobsController - GetJobsBasedOnFilter: Exception msg: " + e.Message);
+                System.Diagnostics.Debug.WriteLine("JobsController - GetJobsBasedOnFilter: Stack Trace: \n" + e.StackTrace);
+                System.Diagnostics.Debug.WriteLine("JobsController - GetJobsBasedOnFilter: End Of Stack Trace");
+                return null;
+                // TODO Implement local db query for cached data.
+            }
+
+            IEnumerable<Job> jobs = DeserializeMany(jsonString);
+            return jobs;
+        }
+
+        /// <summary>
+        /// Deserializes a json formated string containing multiple Project objects
+        /// </summary>
+        /// <param name="jsonString"></param>
+        /// <returns></returns>
+        private IEnumerable<Job> DeserializeMany(string jsonString)
+        {
+            System.Diagnostics.Debug.WriteLine("JobsController - DeserializeMany Initialized");
+
+            List<object> serializedJobs =
+                JsonConvert.DeserializeObject<List<object>>(jsonString);
+            //System.Diagnostics.Debug.WriteLine("ProjectController - jsonString: " + jsonString);
+
+            //List<string> serializedProjects =
+            //    JsonConvert.DeserializeObject<List<string>>(jsonString);
+
+            System.Diagnostics.Debug.WriteLine("JobsController - serializedProjects.Count(): " + serializedJobs.Count());
+
+            List<Job> jobs = new List<Job>();
+            foreach (var serializedJob in serializedJobs)
+            {
+                jobs.Add(Deserialize(serializedJob.ToString()));
+            }
+            return jobs;
         }
 
         /// <summary>
