@@ -6,6 +6,7 @@ using Android.Util;
 using KompetansetorgetXamarin.Droid;
 
 //using XamarinTest.Droid;
+using KompetansetorgetXamarin.Controllers;
 
 namespace KompetansetorgetXamarin.Droid
 {
@@ -17,12 +18,21 @@ namespace KompetansetorgetXamarin.Droid
         /// Receives a Message from GCM. The method exctracts a message from the Bundle data,
         /// and calls SendNotification
         /// </summary>
-        public override void OnMessageReceived(string from, Bundle data)
-        {    
+        public override async void OnMessageReceived(string from, Bundle data)
+        {
             var message = data.GetString("message");
             Log.Debug("MyGcmListenerService", "From:    " + from);
             Log.Debug("MyGcmListenerService", "Message: " + message);
             SendNotification(message);
+
+            var type = data.GetString("type");
+            var uuid = data.GetString("uuid");
+            Log.Debug("MyGcmListenerService", "type: " + type);
+            Log.Debug("MyGcmListenerService", "uuid: " + uuid);
+            // type = job or project          
+            NotificationsController nc = new NotificationsController();
+            Log.Debug("MyGcmListenerService", "After New NotificationController, but before use of method.");
+            nc.InsertNotification(type, uuid);
         }
 
         /// <summary>
@@ -37,7 +47,7 @@ namespace KompetansetorgetXamarin.Droid
 
             var notificationBuilder = new Notification.Builder(this)
                 .SetSmallIcon(Resource.Drawable.icon)
-                .SetContentTitle("GCM Message") // can probably be extracted from the Bundle the same way as message.
+                .SetContentTitle("Kompetansetorget") // can probably be extracted from the Bundle the same way as message.
                 .SetContentText(message)
                 .SetAutoCancel(true)
                 .SetDefaults(NotificationDefaults.Sound | NotificationDefaults.Vibrate | NotificationDefaults.Lights)

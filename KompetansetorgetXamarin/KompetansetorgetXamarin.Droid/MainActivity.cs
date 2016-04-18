@@ -11,7 +11,6 @@ using Android.Gms.Common;
 using Android.Util;
 //using KompetansetorgetXamarin.Views;
 using Xamarin.Forms;
-using PCLStorage;
 
 namespace KompetansetorgetXamarin.Droid
 {                                                                           //MainLauncher = true
@@ -27,7 +26,6 @@ namespace KompetansetorgetXamarin.Droid
             global::Xamarin.Forms.Forms.Init(this, bundle);
             UAuth.Auth.auth = new UAuthImpl.Auth(this);
             LoadApplication(new App());
-
             // This check get run once every startup
             if (IsPlayServicesAvailable())
             {
