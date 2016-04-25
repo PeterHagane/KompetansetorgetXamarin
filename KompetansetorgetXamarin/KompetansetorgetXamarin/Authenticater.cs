@@ -1,6 +1,10 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using UAuth;
 //using Xamarin.Forms;
 
@@ -23,8 +27,8 @@ namespace KompetansetorgetXamarin
         void Authenticate(IOAuth2Authenticator auth, List<Account> accounts)
         {
             // Checks if there any accounts stored.
-            if (accounts.Count == 0)
-            {
+           // if (accounts.Count == 0)
+           // {
                 // EventHandler: When an auth is completed this will be executed.
                 auth.Completed += (sender, eventArgs) =>
                 {
@@ -76,12 +80,12 @@ namespace KompetansetorgetXamarin
                     foreach (KeyValuePair<string, string> p in accounts[0].Properties)
                             System.Diagnostics.Debug.WriteLine("Key:" + p.Key + " Value:" + p.Value);
                 }
-            }
+            
 
             // If there is a registered account the manual login will not be needed and this 
             // and this else statement will be executed instead.
-            else
-                PerformAuth2TestRequests(accounts[0]);
+            //else
+            //    PerformAuth2TestRequests(accounts[0]);
             // TODO: implement error handling. If error is caused by expired token, renew token.
         }
 
@@ -95,31 +99,79 @@ namespace KompetansetorgetXamarin
         {
             try
             {
-                //await Navigation.PushModalAsync(new ViktorTestView());
-
                 /*
+                System.Diagnostics.Debug.WriteLine("PerformAuth2TestRequests before looop");
+
+
                 foreach (KeyValuePair<string, string> p in account.Properties)
                 {
                     System.Diagnostics.Debug.WriteLine("Property: Key:" + p.Key + " Value:" + p.Value);
                 }
+                System.Diagnostics.Debug.WriteLine("PerformAuth2TestRequests before looop");
+
                 System.Diagnostics.Debug.WriteLine("PerformAuth2TestRequests: Url:" + AuthProvider.ApiRequests);
                 System.Diagnostics.Debug.WriteLine("Request Url:" + AuthProvider.ApiRequests);
-                OAuth2Request request = new OAuth2Request("GET", new Uri(AuthProvider.ApiRequests), null, account);
-                IResponse response = await request.GetResponseAsync();
-                System.Diagnostics.Debug.WriteLine("PerformAuth2TestRequests: StatusCode:" + response.StatusCode +
-                                                   " ResponseUri:" + response.ResponseUri);
-                System.Diagnostics.Debug.WriteLine("PerformAuth2TestRequests: Headers:");
+                */
+                Uri requestLocalToken = new Uri(AuthProvider.ApiRequests + account.Properties["access_token"]);
+                System.Diagnostics.Debug.WriteLine("Requesting local token");
+                OAuth2Request request1 = new OAuth2Request("GET", requestLocalToken, null, account);
+                //OAuth2Request request1 = new OAuth2Request("GET", requestLocalToken, null, null);
+                 
+                IResponse response1 = await request1.GetResponseAsync();
+                System.Diagnostics.Debug.WriteLine("After Response");
+
+                
+                Dictionary<string, string> responseDict = JsonConvert.DeserializeObject<Dictionary<string, string>>(response1.GetResponseText());
+
+
+                string localToken = "";
+                string username = "";
+
+                if (response1.StatusCode == 200)
+                {
+                    localToken = responseDict["access_token"];
+                    username = responseDict["userName"];
+                }
+               
+
+                string student = "http://kompetansetorgetserver1.azurewebsites.net/api/v1/students";
+                Uri testAuthorize = new Uri(student);
+               /* Dictionary<string, string> test = new Dictionary<string, string>();
+                test.Add("authorization", "bearer " + localToken);
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(testAuthorize);
+                request.Method = "GET";
+                request.Accept = "application/json";
+                request.ContentType = "application/json";
+                request.Headers["Authorization"] = bearerLocalToken;
+                //Add("Authorization", bearerLocalToken);
+
+
+                IResponse response = await request.BeginGetResponse();*/
+                //authorization: bearer b2Dvqzi9Ux_FAjbBYat6PE-LgNGKL_HDBWbnJ3Fb9cwfjaE8NQdqcvC8jwSB5QJUIVRog_gQQPjaRI0DT7ahu7TEpqP28URtPr1LjgaV - liCqgIuTdSHW_NqD3qh - 5shVh - h7TCin7XNHq8GSkGg5qtOlcHeFPSZ4xMwMbw5_1rBfKYJr3w0_D5R9jk0hJPEfJldCTYcawatz7wVfbmz0qKHAkrKxZyaqum6IHJWdczWz5K26RCfZWMwEmK1uLN5
+
+                var client = new HttpClient();
+                System.Diagnostics.Debug.WriteLine("PerformAuth2TestRequests before Setting AuthenticationHeaderValue");
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", localToken);
+                System.Diagnostics.Debug.WriteLine("PerformAuth2TestRequests after Setting AuthenticationHeaderValue");
+                System.Diagnostics.Debug.WriteLine(client.DefaultRequestHeaders.Authorization.Parameter);
+                
+
+                var response = await client.GetAsync(testAuthorize);
+
+
+                System.Diagnostics.Debug.WriteLine("PerformAuth2TestRequests: StatusCode:" + response.StatusCode);
+                                                 // + " ResponseUri:" + response.ResponseUri);
+                //System.Diagnostics.Debug.WriteLine("PerformAuth2TestRequests: Headers:");
+
+                /*
                 foreach (KeyValuePair<string, string> h in response.Headers)
                 {
                     System.Diagnostics.Debug.WriteLine("Header: Key:" + h.Key + " Value:" + h.Value);
-                }
+                } */
                 System.Diagnostics.Debug.WriteLine("Response(" + response.StatusCode);
-                string r = response.GetResponseText();
-                System.Diagnostics.Debug.WriteLine(r);
-                */
-                //await Navigation.PushModalAsync(new ViktorTestView());
-
-
+                string jsonString = await response.Content.ReadAsStringAsync();
+                System.Diagnostics.Debug.WriteLine(jsonString);
+                
                 // TODO Implement relevant GET, PUT or POST Requests
                 // Notifies the app that the login was successful and that its safe to shift page.
                 App.SuccessfulLoginAction();

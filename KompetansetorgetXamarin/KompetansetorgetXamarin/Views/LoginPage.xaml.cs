@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using KompetansetorgetXamarin.Controls;
 using Xamarin.Forms;
+using System.Net.Http;
 
 namespace KompetansetorgetXamarin.Views
 {
@@ -12,7 +13,7 @@ namespace KompetansetorgetXamarin.Views
     {
         public LoginPage()
         {
-            
+
             InitializeComponent();
         }
 
@@ -46,10 +47,21 @@ namespace KompetansetorgetXamarin.Views
             Navigation.PopToRootAsync();
         }
 
-        private void OnLoginClicked(object sender, EventArgs e)
+        private async void OnLoginClicked(object sender, EventArgs e)
         {
             new Authenticater();
+            /*
+            Uri uri =
+                new Uri(
+                    "http://oauthtest101.azurewebsites.net/api/Account/ExternalLogin?provider=Google&response_type=token&client_id=ngAuthApp&redirect_uri=http://oauthtest101.azurewebsites.net");
+            var client = new HttpClient();
+            var response = await client.GetAsync(uri);
+            var results = await response.Content.ReadAsStringAsync();
+            System.Diagnostics.Debug.WriteLine("results: " + results);
+            */
         }
 
     }
+   // http://oauthtest101.azurewebsites.net/api/account/externallogin?provider=Google&response_type=token&client_id=ngAuthApp&redirect_uri=http://oauthtest101.azurewebsites.net/api/Account/ExternalLogin
+    //http://oauthtest101.azurewebsites.net/api/Account/ExternalLogin?provider=Google&response_type=token&client_id=Kompetansetorget&redirect_uri=http://oauthtest101.azurewebsites.net
 }

@@ -25,56 +25,57 @@ namespace KompetansetorgetXamarin.Views
             InitializeComponent();            
         }
 
-        /*
+        
         private async void StudentButton_OnClicked(object sender, EventArgs e)
         {
             var client = new HttpClient();
             var response = await client.GetAsync("http://kompetansetorgetserver1.azurewebsites.net/api/v1/students");
-            var results = await response.Content.ReadAsAsync<IEnumerable<Student>>();
+            if (response.IsSuccessStatusCode) { 
+                var results = await response.Content.ReadAsAsync<IEnumerable<Student>>();
 
-            /*
-            var sb = new StringBuilder();
-            foreach (var student in results)
-            {
-                var text = string.Format("FName: {0}, Mail: {1}, UserName {2}", student.FName, student.Mail,
-                    student.UserName);
-                sb.AppendLine(text);
-
-            }
-            TextBox.Text = sb.ToString();
             
-        }
-    */
+                var sb = new StringBuilder();
+                foreach (var student in results)
+                {
+                    var text = string.Format("Mail: {0}, Username: {1}", student.email, student.username);
+                    sb.AppendLine(text);
 
-       
-       private void PathButton_OnClicked(object sender, EventArgs e)
-       {
-           try
-           {
-               IFolder rootFolder = FileSystem.Current.LocalStorage;
-               TextBox.Text = rootFolder.Path;
-                
+                }
+                TextBox.Text = sb.ToString();
             }
-            catch (Exception ex)
-           {
-               TextBox.Text = ex.Message;
-           }
-       }
+        }
+        
 
-        private async void TokenButton_OnClicked(object sender, EventArgs e)
+
+        /*
+        private void PathButton_OnClicked(object sender, EventArgs e)
         {
-            TokenHandler th = new TokenHandler();
-            string token = await th.GetToken();
-            TextBox.Text = token;
+            try
+            {
+                IFolder rootFolder = FileSystem.Current.LocalStorage;
+                TextBox.Text = rootFolder.Path;
+
+             }
+             catch (Exception ex)
+            {
+                TextBox.Text = ex.Message;
+            }
         }
 
-        private async void DeviceIdButton_OnClicked(object sender, EventArgs e)
-        {
-            TokenHandler th = new TokenHandler();
-            string deviceId = await th.GetDeviceId();
-            TextBox.Text = deviceId;
-        }
+         private async void TokenButton_OnClicked(object sender, EventArgs e)
+         {
+             TokenHandler th = new TokenHandler();
+             string token = await th.GetToken();
+             TextBox.Text = token;
+         }
 
+         private async void DeviceIdButton_OnClicked(object sender, EventArgs e)
+         {
+             TokenHandler th = new TokenHandler();
+             string deviceId = await th.GetDeviceId();
+             TextBox.Text = deviceId;
+         }
+         */
         private async void GetJobsFromServer_OnClicked(object sender, EventArgs e)
         {
             //JobsController jc = new JobsController();
