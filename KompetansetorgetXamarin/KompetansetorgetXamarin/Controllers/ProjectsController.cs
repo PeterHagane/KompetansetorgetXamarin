@@ -321,8 +321,7 @@ namespace KompetansetorgetXamarin.Controllers
                     System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProject: Stack Trace: \n" + e.StackTrace);
                     System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProject: End Of Stack Trace");
                 }
-            }
-            
+            }  
 
         }
 

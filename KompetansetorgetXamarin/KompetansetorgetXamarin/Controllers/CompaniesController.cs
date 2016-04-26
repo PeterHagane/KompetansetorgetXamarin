@@ -61,7 +61,7 @@ namespace KompetansetorgetXamarin.Controllers
             try
             {
                 // if exist company will be updated.
-                var checkIfExists = Db.Get<Project>(company.id);
+                var checkIfExists = Db.Get<Company>(company.id);
                 lock (DbContext.locker)
                 {
                     Db.Update(company);

@@ -5,6 +5,8 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using KompetansetorgetXamarin.Controllers;
+using KompetansetorgetXamarin.Models;
 using UAuth;
 //using Xamarin.Forms;
 
@@ -131,11 +133,24 @@ namespace KompetansetorgetXamarin
                 {
                     localToken = responseDict["access_token"];
                     username = responseDict["userName"];
+                    StudentsController sc = new StudentsController();
+                    if (sc.CheckIfStudentExist(username))
+                    {
+                        Student student = sc.GetStudent(username);
+                        student.accessToken = localToken;
+                        sc.UpdateStudent(student);
+                    }
+                    else
+                    {
+                        Student student = new Student();
+                        student.username = username;
+                        student.accessToken = localToken;
+                        sc.InsertStudent(student);
+                    }
                 }
-               
 
-                string student = "http://kompetansetorgetserver1.azurewebsites.net/api/v1/students";
-                Uri testAuthorize = new Uri(student);
+                string studentEndpoint = "http://kompetansetorgetserver1.azurewebsites.net/api/v1/students";
+                Uri testAuthorize = new Uri(studentEndpoint);
                /* Dictionary<string, string> test = new Dictionary<string, string>();
                 test.Add("authorization", "bearer " + localToken);
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(testAuthorize);
