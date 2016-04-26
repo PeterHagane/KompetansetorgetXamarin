@@ -146,11 +146,13 @@ namespace KompetansetorgetXamarin.Controllers
             }
         }
 
+        /*
         public bool UpdateOAuthToken(string accessToken)
         {
             // IMPLEMENT
             return false;
         }
+        */
 
         /// <summary>
         /// Gets the student with the specified username
@@ -201,17 +203,48 @@ namespace KompetansetorgetXamarin.Controllers
 
             System.Diagnostics.Debug.WriteLine("StudentsController - UpdateStudentWithChilds: There was a record of project in the database.");
 
-            //Project do exist.
-            DevicesController dc = new DevicesController();
-            foreach (Device d in student.devices)
-            {
-                if (!dc.InsertDevice(d))
+            
+            
+            if (student.devices != null) {
+                DevicesController dc = new DevicesController();
+                foreach (Device d in student.devices)
                 {
-                    System.Diagnostics.Debug.WriteLine("StudentsController - UpdateStudentWithChilds: company already exists: Calling UpdateCompany.");
+                    if (!dc.InsertDevice(d))
+                    {
+                        System.Diagnostics.Debug.WriteLine("StudentsController - UpdateStudentWithChilds: Device already exists: Calling UpdateDevice.");
 
-                    dc.UpdateDevice(d);
+                        dc.UpdateDevice(d);
+                    }
                 }
             }
+
+            if (student.studyGroup != null)
+            {
+                
+                foreach (StudyGroup sg in student.studyGroup)
+                {
+                    StudyGroupStudent sgs = new StudyGroupStudent();
+                    sgs.StudentUsername = student.username;
+                    sgs.StudyGroupId = sg.id;
+                    try
+                    {
+                        lock (DbContext.locker)
+                        {
+                            System.Diagnostics.Debug.WriteLine("StudentsController - UpdateStudentWithChilds: Inserting StudyGroupStudent.");
+                            Db.Insert(sgs);
+                            // Db.InsertOrReplaceWithChildren(project, recursive: true);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        System.Diagnostics.Debug.WriteLine("StudentsController - UpdateStudentWithChilds: StudyGroupStudent Insertion failed");
+                        System.Diagnostics.Debug.WriteLine("StudentsController - UpdateStudentWithChilds: Exception msg: " + e.Message);
+                        System.Diagnostics.Debug.WriteLine("StudentsController - UpdateStudentWithChilds: Stack Trace: \n" + e.StackTrace);
+                        System.Diagnostics.Debug.WriteLine("StudentsController - UpdateStudentWithChilds: End Of Stack Trace");
+                    }
+                }
+            }
+
             try
             {
                 lock (DbContext.locker)

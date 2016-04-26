@@ -47,7 +47,7 @@ namespace KompetansetorgetXamarin.Models
     public class StudyGroupStudent
     {
         [ForeignKey(typeof(Student))]
-        public string StudentId { get; set; }
+        public string StudentUsername { get; set; }
 
         [ForeignKey(typeof(StudyGroup))]
         public string StudyGroupId { get; set; }

@@ -43,6 +43,7 @@ namespace KompetansetorgetXamarin.Controllers
         /// <summary>
         /// Checks if there already is an entry of that Device primary key
         /// In the database.
+        /// Returns true if exist, false if it doesnt exist
         /// </summary>
         /// <param name="id"></param>
         /// <returns>Returns true if exist, false if it doesnt exist.</returns>
@@ -71,19 +72,16 @@ namespace KompetansetorgetXamarin.Controllers
         /// <param name="device"></param>
         public void UpdateDevice(Device device)
         {
-            try
-            {
-                // if exist device will be updated.
-                var checkIfExists = Db.Get<Device>(device.id);
+            if(CheckIfDeviceExist(device.id))
+            { 
                 lock (DbContext.locker)
                 {
                     Db.Update(device);
                 }
             }
 
-            catch (Exception e)
+            else
             {
-                // if it doesnt exist device will be inserted.
                 lock (DbContext.locker)
                 {
                     Db.Insert(device);
