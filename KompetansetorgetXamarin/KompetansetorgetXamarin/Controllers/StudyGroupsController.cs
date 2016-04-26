@@ -56,13 +56,13 @@ namespace KompetansetorgetXamarin.Controllers
                 {
                     var checkIfExist = Db.Get<Device>(id);
                 }
-                System.Diagnostics.Debug.WriteLine("StudyGroupsController - CheckIfStudyGroupExist: StudyGroups Already exists");
+                System.Diagnostics.Debug.WriteLine("StudyGroupsController - CheckIfStudyGroupExist: StudyGroup Already exists");
                 return true;
             }
 
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine("StudyGroupsController - CheckIfStudyGroupExist: StudyGroups Already exists");
+                System.Diagnostics.Debug.WriteLine("StudyGroupsController - CheckIfStudyGroupExist: entry of StudyGroup doesnt exists");
                 System.Diagnostics.Debug.WriteLine("StudyGroupsController - CheckIfStudyGroupExist: Exception msg: " + e.Message);
                 return false;
             }

@@ -47,6 +47,7 @@
     <Compile Include="Controllers\NotificationsController.cs" />
     <Compile Include="Controllers\ProjectsController.cs" />
     <Compile Include="Controllers\StudentsController.cs" />
+    <Compile Include="Controllers\StudyGroupsController.cs" />
     <Compile Include="Controls\ButtonShadow.cs" />
     <Compile Include="Controls\RoundBox.cs" />
     <Compile Include="Controls\BaseButton.cs" />
