@@ -7,6 +7,7 @@ using KompetansetorgetXamarin.Models;
 
 using Xamarin.Forms;
 using System.Collections.ObjectModel;
+using KompetansetorgetXamarin.Controls;
 
 namespace KompetansetorgetXamarin.Views
 {
@@ -14,17 +15,23 @@ namespace KompetansetorgetXamarin.Views
     {
         string defaultLogo = "http://kompetansetorget.uia.no/extension/kompetansetorget/design/kompetansetorget/images/logo-virksomhet.jpg";
         string uiaLogo = "http://kompetansetorget.uia.no/var/kompetansetorget/storage/images/virksomheter-internt/universitetet-i-agder/18076-2-nor-NO/universitetet-i-agder_width-4.jpg";
+        VMOppgaverSettings listInit = new VMOppgaverSettings();
         ObservableCollection<Oppgave> oppgaver = new ObservableCollection<Oppgave>();
+        ObservableCollection<fagområdeSetting> fagområder; 
+
 
         public CarouselOppgaver()
         {
             InitializeComponent();
             addData();
             OppgaveList.ItemsSource = oppgaver;
+            oppgaverSettings.ItemsSource = listInit.oppgaveSettings;
+            //oppgaverSettings.ItemsSource = fagområder;
         }
 
-        public void addData(){
-            oppgaver.Add(new Oppgave("UiA","Lag en app for kompetansetorget!", uiaLogo));
+        public void addData()
+        {
+            oppgaver.Add(new Oppgave("UiA", "Lag en app for kompetansetorget!", uiaLogo));
             oppgaver.Add(new Oppgave("UiA", "Lag en kalenderfunksjon til UiAs studenter", uiaLogo));
             oppgaver.Add(new Oppgave("UiA", "Morseffekter på eggstørrelse hos hummer", uiaLogo));
             oppgaver.Add(new Oppgave("Agder Energi", "Fullstendig interaktiv 3D visualisering av Kraftstasjon (Tungefoss) med innlagte e-læringsressurser og dokumentasjon", "http://kompetansetorget.uia.no/var/kompetansetorget/storage/images/virksomheter/agder-energi/10593-1-nor-NO/agder-energi_width-12.jpg"));
@@ -39,10 +46,19 @@ namespace KompetansetorgetXamarin.Views
         }
 
 
+        public void getList()
+        {
+            ObservableCollection<fagområdeSetting> fagområder = listInit.oppgaveSettings;
+        }
+
+
+
+
+
     }
-
-
 }
+
+
 
 
 

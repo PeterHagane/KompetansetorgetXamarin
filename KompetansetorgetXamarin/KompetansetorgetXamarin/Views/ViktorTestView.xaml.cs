@@ -202,7 +202,7 @@ namespace KompetansetorgetXamarin.Views
                     }
                 } 
 
-
+             
 
 
             }
@@ -215,6 +215,9 @@ namespace KompetansetorgetXamarin.Views
             List<string> studyGroups = new List<string>();
             studyGroups.Add("helse");
             studyGroups.Add("datateknologi");
+            //LEGG FAGOMRÅDER TIL AKTIVT FILTER HER MED EN SWITCH ELLER LIGNENDE
+
+
             Dictionary<string, string> filter = new Dictionary<string, string>();
             filter.Add("locations", "vestagder");
 

@@ -36,7 +36,19 @@
     <ContentPage.Padding>
       <OnPlatform x:TypeArguments="Thickness" iOS="0,30,0,0" Android="0,30,0,0" />
     </ContentPage.Padding>
+
+
     <StackLayout>
+      <!--SeparatorVisibility="None"--> 
+      <ListView x:Name="oppgaverSettings">
+        <ListView.ItemTemplate>
+          <DataTemplate>
+            <local:CustomSwitchCell>
+               
+            </local:CustomSwitchCell> 
+          </DataTemplate>
+        </ListView.ItemTemplate>
+      </ListView>
 
 
     </StackLayout>
