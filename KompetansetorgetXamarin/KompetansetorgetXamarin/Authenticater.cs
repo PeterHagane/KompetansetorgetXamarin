@@ -5,6 +5,8 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using KompetansetorgetXamarin.Controllers;
+using KompetansetorgetXamarin.Models;
 using UAuth;
 //using Xamarin.Forms;
 
@@ -131,22 +133,26 @@ namespace KompetansetorgetXamarin
                 {
                     localToken = responseDict["access_token"];
                     username = responseDict["userName"];
+                    StudentsController sc = new StudentsController();
+                    if (sc.CheckIfStudentExist(username))
+                    {
+                        Student student = sc.GetStudent(username);
+                        student.accessToken = localToken;
+                        sc.UpdateStudent(student);
+                    }
+                    else
+                    {
+                        Student student = new Student();
+                        student.username = username;
+                        student.accessToken = localToken;
+                        sc.InsertStudent(student);
+                    }
                 }
-               
-
-                string student = "http://kompetansetorgetserver1.azurewebsites.net/api/v1/students";
-                Uri testAuthorize = new Uri(student);
-               /* Dictionary<string, string> test = new Dictionary<string, string>();
-                test.Add("authorization", "bearer " + localToken);
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(testAuthorize);
-                request.Method = "GET";
-                request.Accept = "application/json";
-                request.ContentType = "application/json";
-                request.Headers["Authorization"] = bearerLocalToken;
-                //Add("Authorization", bearerLocalToken);
+                /*
+                string studentEndpoint = "http://kompetansetorgetserver1.azurewebsites.net/api/v1/students";
+                Uri testAuthorize = new Uri(studentEndpoint);
 
 
-                IResponse response = await request.BeginGetResponse();*/
                 //authorization: bearer b2Dvqzi9Ux_FAjbBYat6PE-LgNGKL_HDBWbnJ3Fb9cwfjaE8NQdqcvC8jwSB5QJUIVRog_gQQPjaRI0DT7ahu7TEpqP28URtPr1LjgaV - liCqgIuTdSHW_NqD3qh - 5shVh - h7TCin7XNHq8GSkGg5qtOlcHeFPSZ4xMwMbw5_1rBfKYJr3w0_D5R9jk0hJPEfJldCTYcawatz7wVfbmz0qKHAkrKxZyaqum6IHJWdczWz5K26RCfZWMwEmK1uLN5
 
                 var client = new HttpClient();
@@ -163,15 +169,15 @@ namespace KompetansetorgetXamarin
                                                  // + " ResponseUri:" + response.ResponseUri);
                 //System.Diagnostics.Debug.WriteLine("PerformAuth2TestRequests: Headers:");
 
-                /*
+                
                 foreach (KeyValuePair<string, string> h in response.Headers)
                 {
                     System.Diagnostics.Debug.WriteLine("Header: Key:" + h.Key + " Value:" + h.Value);
-                } */
+                } 
                 System.Diagnostics.Debug.WriteLine("Response(" + response.StatusCode);
                 string jsonString = await response.Content.ReadAsStringAsync();
                 System.Diagnostics.Debug.WriteLine(jsonString);
-                
+                */
                 // TODO Implement relevant GET, PUT or POST Requests
                 // Notifies the app that the login was successful and that its safe to shift page.
                 App.SuccessfulLoginAction();

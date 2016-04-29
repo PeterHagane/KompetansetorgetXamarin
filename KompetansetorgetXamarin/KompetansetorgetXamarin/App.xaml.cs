@@ -3,6 +3,7 @@ using Xamarin.Forms;
 using KompetansetorgetXamarin.Views;
 using System.IO;
 using System.Linq;
+using KompetansetorgetXamarin.Controllers;
 using PCLStorage;
 using KompetansetorgetXamarin.CRUD;
 using KompetansetorgetXamarin.Models;
@@ -13,8 +14,6 @@ namespace KompetansetorgetXamarin
     public partial class App : Application
     {
         private static NavigationPage NavPage;
-
-
 
         public App()
         {
@@ -43,6 +42,10 @@ namespace KompetansetorgetXamarin
                 Crud crudster = new Crud();
                 crudster.CreateNewFile(filename);
             }
+
+            // This is to make sure that the app got the study groups that is used as search filters. 
+            StudyGroupsController sgc = new StudyGroupsController();
+            sgc.GetStudyGroupsFromServer();
         }
 
         protected override void OnSleep()

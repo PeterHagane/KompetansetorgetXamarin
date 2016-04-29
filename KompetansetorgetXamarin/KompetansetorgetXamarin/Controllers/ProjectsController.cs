@@ -321,8 +321,7 @@ namespace KompetansetorgetXamarin.Controllers
                     System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProject: Stack Trace: \n" + e.StackTrace);
                     System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProject: End Of Stack Trace");
                 }
-            }
-            
+            }  
 
         }
 
@@ -361,7 +360,7 @@ namespace KompetansetorgetXamarin.Controllers
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine("ProjectController - CheckIfProjectExist(string uuid): Project Already exists");
+                System.Diagnostics.Debug.WriteLine("ProjectController - CheckIfProjectExist(string uuid): entry of Project doesnt exists");
                 System.Diagnostics.Debug.WriteLine("ProjectController - GetProjectByUuid(string uuid): Exception msg: " + e.Message);
                 // System.Diagnostics.Debug.WriteLine("ProjectController - GetProjectByUuid(string uuid): Stack Trace: \n" + e.StackTrace);
                 // System.Diagnostics.Debug.WriteLine("ProjectController - GetProjectByUuid(string uuid): End Of Stack Trace");

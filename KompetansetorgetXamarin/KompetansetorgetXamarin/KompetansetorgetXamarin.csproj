@@ -42,9 +42,12 @@
     <Compile Include="AuthProvider.cs" />
     <Compile Include="Controllers\BaseAssignmentController.cs" />
     <Compile Include="Controllers\CompaniesController.cs" />
+    <Compile Include="Controllers\DevicesController.cs" />
     <Compile Include="Controllers\JobsController.cs" />
     <Compile Include="Controllers\NotificationsController.cs" />
     <Compile Include="Controllers\ProjectsController.cs" />
+    <Compile Include="Controllers\StudentsController.cs" />
+    <Compile Include="Controllers\StudyGroupsController.cs" />
     <Compile Include="Controls\ButtonShadow.cs" />
     <Compile Include="Controls\CustomSwitchCell.cs" />
     <Compile Include="Controls\OppgaverSettingsViewModel.cs" />

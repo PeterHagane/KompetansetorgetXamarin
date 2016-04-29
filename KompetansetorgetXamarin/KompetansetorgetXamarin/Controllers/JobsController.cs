@@ -274,7 +274,7 @@ namespace KompetansetorgetXamarin.Controllers
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine("JobController - CheckIfJobExist(string uuid): Job Already exists");
+                System.Diagnostics.Debug.WriteLine("JobController - CheckIfJobExist(string uuid): DB entry of job doesnt exists");
                 System.Diagnostics.Debug.WriteLine("JobController - GetJobByUuid(string uuid): Exception msg: " + e.Message);
                 // System.Diagnostics.Debug.WriteLine("JobController - GetJobByUuid(string uuid): Stack Trace: \n" + e.StackTrace);
                 // System.Diagnostics.Debug.WriteLine("JobController - GetJobByUuid(string uuid): End Of Stack Trace");
