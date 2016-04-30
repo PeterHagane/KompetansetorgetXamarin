@@ -10,14 +10,11 @@ using SQLite.Net;
 
 namespace KompetansetorgetXamarin.Controllers
 {
-    class StudyGroupsController
+    class StudyGroupsController : BaseController
     {
-        private DbContext dbContext = DbContext.GetDbContext;
-        private SQLiteConnection Db;
-
         public StudyGroupsController()
         {
-            Db = dbContext.Db;
+            Adress += "v1/studygroups";
         }
 
         /// <summary>
@@ -74,9 +71,7 @@ namespace KompetansetorgetXamarin.Controllers
         public async void GetStudyGroupsFromServer()
         {
             System.Diagnostics.Debug.WriteLine("StudyGroupsController - GetStudyGroupsFromServer: initiated");
-            string adress = "http://kompetansetorgetserver1.azurewebsites.net/api/v1/studygroups/";
-
-            Uri url = new Uri(adress);
+            Uri url = new Uri(Adress);
             var client = new HttpClient();
             try
             {

@@ -14,14 +14,11 @@ using SQLiteNetExtensions.Extensions;
 
 namespace KompetansetorgetXamarin.Controllers
 {
-    public class JobsController
+    public class JobsController : BaseController
     {
-        private DbContext dbContext = DbContext.GetDbContext;
-        private SQLiteConnection Db;
-
         public JobsController()
         {
-            Db = dbContext.Db;
+            Adress += "v1/jobs";
         }
 
         /// <summary>
@@ -132,7 +129,7 @@ namespace KompetansetorgetXamarin.Controllers
         public async void UpdateJobFromServer(string uuid)
         {
             System.Diagnostics.Debug.WriteLine("JobController - UpdateJobFromServer(string uuid): initiated");
-            string adress = "http://kompetansetorgetserver1.azurewebsites.net/api/v1/jobs/" + uuid + "?minnot=true";
+            string adress = Adress + "/" + uuid + "?minnot=true";
             System.Diagnostics.Debug.WriteLine("UpdateJobFromServer: var url = " + adress);
 
             Uri url = new Uri(adress);
@@ -299,7 +296,7 @@ namespace KompetansetorgetXamarin.Controllers
         public async Task<IEnumerable<Job>> GetJobsBasedOnFilter(List<string> studyGroups = null,
             string sortBy = "", Dictionary<string, string> filter = null)
         {
-            string adress = "http://kompetansetorgetserver1.azurewebsites.net/api/v1/jobs";
+            //string adress = "http://kompetansetorgetserver1.azurewebsites.net/api/v1/jobs";
             string queryParams = "";
             if (studyGroups != null)
             {
@@ -342,10 +339,8 @@ namespace KompetansetorgetXamarin.Controllers
                 queryParams += "sortby=" + sortBy;
             }
 
-
-            adress += queryParams;
-            Uri url = new Uri(adress);
-            System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter - adress: " + adress);
+            Uri url = new Uri(Adress + queryParams);
+            System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter - url: " + url.ToString());
             var client = new HttpClient();
             string jsonString = null;
             try

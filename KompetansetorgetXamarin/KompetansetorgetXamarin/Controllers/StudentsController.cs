@@ -19,14 +19,12 @@ using Device = KompetansetorgetXamarin.Models.Device;
 
 namespace KompetansetorgetXamarin.Controllers
 {
-    class StudentsController
+    class StudentsController : BaseController
     {
-        private DbContext dbContext = DbContext.GetDbContext;
-        private SQLiteConnection Db;
 
         public StudentsController()
         {
-            Db = dbContext.Db;
+            Adress += "v1/students";
         }
 
         /// <summary>
@@ -354,9 +352,9 @@ namespace KompetansetorgetXamarin.Controllers
                 return;
             }
 
-            string adress = "http://kompetansetorgetserver1.azurewebsites.net/api/v1/students/";
+           
             string encodedUsername = Base64Encode(student.username);
-            Uri url = new Uri(adress + encodedUsername);
+            Uri url = new Uri(Adress + "/" + encodedUsername);
             
             System.Diagnostics.Debug.WriteLine("StudentsController - UpdateStudyGroupStudent uri: " + url.ToString());
             string accessToken = GetStudentAccessToken();

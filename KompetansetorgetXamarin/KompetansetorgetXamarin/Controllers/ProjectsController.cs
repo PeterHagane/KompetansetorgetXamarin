@@ -14,14 +14,12 @@ using SQLiteNetExtensions.Extensions;
 
 namespace KompetansetorgetXamarin.Controllers
 {
-    public class ProjectsController
+    public class ProjectsController : BaseController
     {
-        private DbContext dbContext = DbContext.GetDbContext;
-        private SQLiteConnection Db;
 
         public ProjectsController()
         {
-            Db = dbContext.Db;
+            Adress += "v1/projects";
         }
             
         /// <summary>
@@ -142,7 +140,7 @@ namespace KompetansetorgetXamarin.Controllers
             // api/v1/jobs?locations=vestagder&sortby=-published nyeste til eldste
 
             //api/v1/projects?studygroups=datateknologi&sortby=published
-            string adress = "http://kompetansetorgetserver1.azurewebsites.net/api/v1/projects";
+
             string queryParams = "";
             if (studyGroups != null) {
                 System.Diagnostics.Debug.WriteLine("GetProjectsBasedOnFilter - studyGroups.Count(): " + studyGroups.Count());
@@ -184,10 +182,8 @@ namespace KompetansetorgetXamarin.Controllers
                 queryParams += "sortby=" + sortBy;
             }
 
-
-            adress += queryParams;
-            Uri url = new Uri(adress);
-            System.Diagnostics.Debug.WriteLine("GetProjectsBasedOnFilter - adress: " + adress);
+            Uri url = new Uri(Adress + queryParams);
+            System.Diagnostics.Debug.WriteLine("GetProjectsBasedOnFilter - adress: " + Adress);
             var client = new HttpClient();
             string jsonString = null;
             try
@@ -221,7 +217,7 @@ namespace KompetansetorgetXamarin.Controllers
         public async void UpdateProjectFromServer(string uuid)
         {
             System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProjectFromServer(string uuid): initiated");
-            string adress = "http://kompetansetorgetserver1.azurewebsites.net/api/v1/projects/" + uuid + "?minnot=true";
+            string adress = Adress + "/" + uuid + "?minnot=true";
             System.Diagnostics.Debug.WriteLine("UpdateProjectFromServer: var url = " + adress);
 
             Uri url = new Uri(adress);
