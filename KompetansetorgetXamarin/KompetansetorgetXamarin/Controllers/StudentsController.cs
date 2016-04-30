@@ -500,6 +500,16 @@ namespace KompetansetorgetXamarin.Controllers
             }
         }
 
+        public void DeleteAllStudents()
+        {
+            lock (DbContext.locker)
+            {
+                System.Diagnostics.Debug.WriteLine("StudentsController - DeleteAllStudents: Before delete.");
+                Db.Execute("delete from " + "Student");
+                System.Diagnostics.Debug.WriteLine("StudentsController - DeleteAllStudents: After delete.");
+            }
+        }
+
         public void DeleteAllStudyGroupStudent()
         {
             lock (DbContext.locker)

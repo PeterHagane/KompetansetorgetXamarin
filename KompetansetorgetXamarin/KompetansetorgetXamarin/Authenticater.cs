@@ -146,10 +146,13 @@ namespace KompetansetorgetXamarin
                     }
                     else
                     {
+                        sc.DeleteAllStudents();
                         Student student = new Student();
                         student.username = username;
                         student.accessToken = localToken;
                         sc.InsertStudent(student);
+                        DevicesController dc = new DevicesController();
+                        dc.FixStudentForeignKey(username);
                     }
                 }
                 /*
