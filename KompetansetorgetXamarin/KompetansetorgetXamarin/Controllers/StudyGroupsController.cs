@@ -122,12 +122,27 @@ namespace KompetansetorgetXamarin.Controllers
         }
 
         /// <summary>
+        /// Gets a studygroup based in its id
+        /// </summary>
+        /// <returns></returns>
+        public StudyGroup GetStudygroup(string id)
+        {
+            lock (DbContext.locker)
+            {
+                return Db.Get<StudyGroup>(id);
+            }
+        }
+
+        /// <summary>
         /// Returns a List containing all stored StudyGroups
         /// </summary>
         /// <returns></returns>
         public List<StudyGroup> GetAllStudyGroups()
         {
-            return Db.Query<StudyGroup>("Select * from StudyGroup");
+            lock (DbContext.locker)
+            {
+                return Db.Query<StudyGroup>("Select * from StudyGroup");
+            }
         }
     }
 }

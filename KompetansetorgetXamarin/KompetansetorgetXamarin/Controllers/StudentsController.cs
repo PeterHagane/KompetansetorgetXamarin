@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.ServiceModel.Description;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,7 +28,17 @@ namespace KompetansetorgetXamarin.Controllers
         {
             Db = dbContext.Db;
         }
-    
+
+        /// <summary>
+        /// WARNING, this is a hack workaround.
+        /// How to use:
+        /// 1: Call UpdateStudyGroupStudent before calling this method
+        /// 2: Check BaseContentPage.Authorized before 
+        /// 3. Call this method, but check for null. 
+        /// If this list is null and Authorized is true then communication with server has failed.
+        /// </summary>
+        public List<StudyGroup> StudyGroupStudentId { get; set; }
+
         /// <summary>
         /// Inserts the project and its respective children (only Company and CompanyProject) 
         /// into the database.
@@ -112,9 +123,9 @@ namespace KompetansetorgetXamarin.Controllers
                     }
                     Student student = students[0];
                     List<Device> devices = GetAllDevicesRelatedToStudent(student);
-                    List<StudyGroup> studyGroups = GetAllStudyGroupsRelatedToStudent(student);
+                    //List<StudyGroup> studyGroups = GetAllStudyGroupsRelatedToStudent(student);
                     student.devices = devices;
-                    student.studyGroup = studyGroups;
+                    //student.studyGroup = studyGroups;
                     return student;
                 }
             }
@@ -168,20 +179,7 @@ namespace KompetansetorgetXamarin.Controllers
             }
         }
 
-        /// <summary>
-        /// Gets a list of all studyGroups that are related to the student
-        /// </summary>
-        /// <param name="student"></param>
-        /// <returns></returns>
-        public List<StudyGroup> GetAllStudyGroupsRelatedToStudent(Student student)
-        {
-            lock (DbContext.locker)
-            {
-                return Db.Query<StudyGroup>("SELECT * FROM StudyGroup" +
-                                        " INNER JOIN StudyGroupStudent ON StudyGroup.id = StudyGroupStudent.StudyGroupId" +
-                                        " WHERE StudyGroupStudent.StudentUsername = ?", student.username);
-            }
-        }
+
 
 
         /*
@@ -191,6 +189,11 @@ namespace KompetansetorgetXamarin.Controllers
             return false;
         }
         */
+
+        public string GetStudentAccessToken()
+        {
+            return GetStudent().accessToken;
+        }
 
         /// <summary>
         /// Gets the student with the specified username
@@ -327,8 +330,6 @@ namespace KompetansetorgetXamarin.Controllers
                 {
                     dc.DeleteDevice(d);
                 }
-
-
                 
                 lock (DbContext.locker)
                 {
@@ -339,14 +340,14 @@ namespace KompetansetorgetXamarin.Controllers
             }
         }
 
+        /// <summary>
+        /// Creates a list of the Ids of the studygroups used for push notifications
+        /// </summary>
+        /// <param name="page"></param>
+        /// <returns></returns>
         public async Task UpdateStudyGroupStudent(BaseContentPage page)
         {
-            Student student;
-            lock (DbContext.locker)
-            {
-                var result = Db.Query<Student>("SELECT * FROM Student");
-                student = result[0];
-            }
+            Student student = GetStudent();
 
             if (student == null)
             {
@@ -358,7 +359,16 @@ namespace KompetansetorgetXamarin.Controllers
             Uri url = new Uri(adress + encodedUsername);
             
             System.Diagnostics.Debug.WriteLine("StudentsController - UpdateStudyGroupStudent uri: " + url.ToString());
+            string accessToken = GetStudentAccessToken();
+
+            if (accessToken == null)
+            {
+                page.Authorized = false;
+                return;
+            }
+
             var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", accessToken);
             string jsonString = null;
 
             try
@@ -386,9 +396,9 @@ namespace KompetansetorgetXamarin.Controllers
 
             if (jsonString != null)
             {
-                List<string> studyGroupIds = ExtractStudyGroupId(jsonString);
-                DeleteAllStudyGroupStudent();
-                CreateStudyGroupStudents(student.username, studyGroupIds);
+                StudyGroupStudentId = ExtractStudyGroupId(jsonString);
+                //DeleteAllStudyGroupStudent();
+                //CreateStudyGroupStudents(student.username, studyGroupIds);
             }
         }
 
@@ -407,6 +417,39 @@ namespace KompetansetorgetXamarin.Controllers
             }
         }
 
+        private List<StudyGroup> ExtractStudyGroupId(string jsonString)
+        {
+            Dictionary<string, object> dict = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonString);
+            System.Diagnostics.Debug.WriteLine("DeserializeApiData. Printing Key Value:");
+
+            string[] keys = dict.Keys.ToArray();
+            List<StudyGroup> studyGroupList = new List<StudyGroup>();
+
+            StudyGroupsController sgc = new StudyGroupsController();
+             
+            foreach (var key in keys)
+            {
+                System.Diagnostics.Debug.WriteLine("key: " + key);
+                System.Diagnostics.Debug.WriteLine("value: " + dict[key].ToString());
+
+                if (key.Equals("studyGroups"))
+                {
+                    IEnumerable studyGroups = (IEnumerable)dict[key];
+                    foreach (var studyGroup in studyGroups)
+                    {
+                        Dictionary<string, object> studyGroupDict =
+                            JsonConvert.DeserializeObject<Dictionary<string, object>>(studyGroup.ToString());
+
+                        studyGroupList.Add(sgc.GetStudygroup(studyGroupDict["id"].ToString()));
+                    }
+                    return studyGroupList;
+                }
+                
+            }
+            return null;
+        }
+
+        /*
         private List<string> ExtractStudyGroupId(string jsonString)
         {
             Dictionary<string, object> dict = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonString);
@@ -429,11 +472,34 @@ namespace KompetansetorgetXamarin.Controllers
                             JsonConvert.DeserializeObject<Dictionary<string, object>>(studyGroup.ToString());
                         idList.Add(studyGroupDict["id"].ToString());
                     }
-
+                    return idList;
                 }
-                return idList;
+                
             }
             return null;
+        }
+
+        */
+
+        public static string Base64Encode(string plainText)
+        {
+            var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
+            return System.Convert.ToBase64String(plainTextBytes);
+        }
+
+        /// <summary>
+        /// Gets a list of all studyGroups that are related to the student
+        /// </summary>
+        /// <param name="student"></param>
+        /// <returns></returns>
+        public List<StudyGroup> GetAllStudyGroupsRelatedToStudent(Student student)
+        {
+            lock (DbContext.locker)
+            {
+                return Db.Query<StudyGroup>("SELECT * FROM StudyGroup" +
+                                        " INNER JOIN StudyGroupStudent ON StudyGroup.id = StudyGroupStudent.StudyGroupId" +
+                                        " WHERE StudyGroupStudent.StudentUsername = ?", student.username);
+            }
         }
 
         public void DeleteAllStudyGroupStudent()
@@ -444,12 +510,6 @@ namespace KompetansetorgetXamarin.Controllers
                 Db.Execute("delete from " + "StudyGroupStudent");
                 System.Diagnostics.Debug.WriteLine("StudentsController - DeleteAllStudyGroupStudent: After delete.");
             }
-        }
-
-        public static string Base64Encode(string plainText)
-        {
-            var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
-            return System.Convert.ToBase64String(plainTextBytes);
         }
     }
 }

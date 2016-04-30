@@ -233,6 +233,7 @@ namespace KompetansetorgetXamarin.Views
         {
             StudentsController sc = new StudentsController();
             await sc.UpdateStudyGroupStudent(this);
+            // checks if still Authorized 
             if (!Authorized)
             {
                 System.Diagnostics.Debug.WriteLine("TestGetStudyGroupStudent inside If: Authorized:  " + Authorized);
@@ -241,7 +242,12 @@ namespace KompetansetorgetXamarin.Views
             else
             {
                 System.Diagnostics.Debug.WriteLine("TestGetStudyGroupStudent inside Else: Authorized:  " + Authorized);
-                var list = sc.GetAllStudyGroupsRelatedToStudent(sc.GetStudent());
+                var list = sc.StudyGroupStudentId;
+                if (list == null)
+                {
+                    System.Diagnostics.Debug.WriteLine("Server communication failed");
+                } 
+
                 System.Diagnostics.Debug.WriteLine("Studygroups.Count: " + list.Count);
 
                 foreach (var sg in list)
