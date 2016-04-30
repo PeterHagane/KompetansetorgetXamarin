@@ -114,6 +114,32 @@ namespace KompetansetorgetXamarin.Controllers
         }
 
         /// <summary>
+        /// Returns all devices stored in the database. 
+        /// If no Devices is found it returns null.
+        /// </summary>
+        /// <returns></returns>
+        public List<Device> GetDevices()
+        {
+            try
+            {
+                List<Device> results;
+                lock (DbContext.locker)
+                {
+                    results = Db.Query<Device>("Select * from Device");
+                }
+                return results;
+            }
+
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine("DevicesController - GetDevice(): Exception msg: " + e.Message);
+                System.Diagnostics.Debug.WriteLine("DevicesController - GetDevice(): Stack Trace: \n" + e.StackTrace);
+                System.Diagnostics.Debug.WriteLine("DevicesController - GetDevice(): End Of Stack Trace");
+                return null;
+            }
+        }
+
+        /// <summary>
         /// Deletes the Device with the spesific id. 
         /// </summary>
         /// <param name="id"></param>
@@ -155,6 +181,24 @@ namespace KompetansetorgetXamarin.Controllers
                 System.Diagnostics.Debug.WriteLine("DevicesController - DeleteDevice(Device device): Stack Trace: \n" + e.StackTrace);
                 System.Diagnostics.Debug.WriteLine("DevicesController - DeleteDevice(Device device): End Of Stack Trace");
             }
+        }
+
+        /// <summary>
+        /// Sets the foreign key in Device: device.username
+        /// </summary>
+        /// <returns></returns>
+        public List<Device> FixStudentForeignKey(string username)
+        {
+            List<Device> list = GetDevices();
+            foreach (var device in list)
+            {
+                device.username = username;
+                lock (DbContext.locker)
+                {
+                    Db.Update(device);
+                }
+            }
+            return list;
         }
     }
 }

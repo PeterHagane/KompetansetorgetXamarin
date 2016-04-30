@@ -59,8 +59,7 @@ namespace KompetansetorgetXamarin.DAL
                 System.Diagnostics.Debug.WriteLine("DbContext instance reused ");
                 return dbContext;
             }
-            
-            
+
         }
 
         private void InitDb()
