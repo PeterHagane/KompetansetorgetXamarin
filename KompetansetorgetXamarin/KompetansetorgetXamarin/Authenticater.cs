@@ -131,8 +131,12 @@ namespace KompetansetorgetXamarin
 
                 if (response1.StatusCode == 200)
                 {
+                    System.Diagnostics.Debug.WriteLine("Response code from backend: 200");
                     localToken = responseDict["access_token"];
                     username = responseDict["userName"];
+                    System.Diagnostics.Debug.WriteLine("username: " + username);
+                    System.Diagnostics.Debug.WriteLine("access_token: " + localToken);
+
                     StudentsController sc = new StudentsController();
                     if (sc.CheckIfStudentExist(username))
                     {

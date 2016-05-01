@@ -25,7 +25,7 @@ namespace KompetansetorgetXamarin
             //NavPage.BarTextColor = Color.White;
             MainPage = NavPage;
         }
-
+        
         protected override void OnStart()
         {
             IFolder path = FileSystem.Current.LocalStorage;
@@ -43,9 +43,7 @@ namespace KompetansetorgetXamarin
                 crudster.CreateNewFile(filename);
             }
 
-            // This is to make sure that the app got the study groups that is used as search filters. 
-            StudyGroupsController sgc = new StudyGroupsController();
-            sgc.GetStudyGroupsFromServer();
+            
         }
 
         protected override void OnSleep()
@@ -58,6 +56,17 @@ namespace KompetansetorgetXamarin
             // Handle when your app resumes
         }
 
+        /// <summary>
+        /// Activate this method if Authorization fails and a new login is required.
+        /// </summary>
+        public static void GoToLogin()
+        {
+            // THIS Method do not work
+            System.Diagnostics.Debug.WriteLine("App - GoToLogin");
+            NavPage = new NavigationPage(new LoginPage());
+            NavPage.Navigation.InsertPageBefore(new LoginPage(), NavPage.Navigation.NavigationStack.First());
+            NavPage.Navigation.PopToRootAsync();
+        }
 
         /// <summary>
         /// Activate this method when a login is successful to navigate to a MainPage and remove the 
@@ -68,6 +77,10 @@ namespace KompetansetorgetXamarin
             // NavPage.Navigation.PopModalAsync();
             NavPage.Navigation.InsertPageBefore(new MainPage(), NavPage.Navigation.NavigationStack.First());
             NavPage.Navigation.PopToRootAsync();
+            // This is to make sure that the app got the study groups that is used as search filters. 
+            StudyGroupsController sgc = new StudyGroupsController();
+            sgc.GetStudyGroupsFromServer();
+
         }
     }
 }

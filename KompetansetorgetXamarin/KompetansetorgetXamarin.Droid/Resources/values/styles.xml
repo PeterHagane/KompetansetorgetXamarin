@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+﻿﻿<?xml version="1.0" encoding="utf-8" ?>
 <resources>
 
   <style name="Theme.Splash" parent="android:Theme.Light">
@@ -30,4 +30,5 @@
   
   <style name="Theme.Toolbar" parent="android:Theme.Light">
   </style>
+
 </resources>

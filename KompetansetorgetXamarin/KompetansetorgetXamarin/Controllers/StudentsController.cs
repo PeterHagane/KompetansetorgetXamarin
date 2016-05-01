@@ -1,11 +1,20 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.ServiceModel.Description;
 using System.Text;
 using System.Threading.Tasks;
 using KompetansetorgetXamarin.DAL;
 using KompetansetorgetXamarin.Models;
 using SQLite.Net;
+using Newtonsoft.Json;
+using System.Web;
+using KompetansetorgetXamarin.Controls;
+using Xamarin.Forms;
+using Device = KompetansetorgetXamarin.Models.Device;
 
 namespace KompetansetorgetXamarin.Controllers
 {
@@ -18,8 +27,7 @@ namespace KompetansetorgetXamarin.Controllers
         {
             Db = dbContext.Db;
         }
-
-        
+    
         /// <summary>
         /// Inserts the project and its respective children (only Company and CompanyProject) 
         /// into the database.
@@ -31,20 +39,30 @@ namespace KompetansetorgetXamarin.Controllers
         {
             if (CheckIfStudentExist(student.username))
             {
+                System.Diagnostics.Debug.WriteLine("StudentsController - InsertStudent: Student not inserted, already exist");
                 return false;
             }
 
-            //Project did not exist, safe to insert.
+            System.Diagnostics.Debug.WriteLine("StudentsController - InsertStudent: Student not inserted");
+            //Student did not exist, safe to insert.
             DevicesController dc = new DevicesController();
-
-            foreach (Device d in student.devices)
-            {
-                dc.InsertDevice(d);
-            }
 
             lock (DbContext.locker)
             {
                 Db.Insert(student);
+            }
+
+            if (student.devices != null)
+            {
+                foreach (Device d in student.devices)
+                {
+                    dc.InsertDevice(d);
+                }
+            }
+
+            else
+            {
+                dc.FixStudentForeignKey(student.username);
             }
 
             return true;
@@ -70,7 +88,7 @@ namespace KompetansetorgetXamarin.Controllers
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine("StudentsController - CheckIfStudentExist: Student Already exists");
+                System.Diagnostics.Debug.WriteLine("StudentsController - CheckIfStudentExist: Student doesnt exists");
                 System.Diagnostics.Debug.WriteLine("StudentsController - CheckIfStudentExist: Exception msg: " + e.Message);
                 return false;
             }
@@ -90,11 +108,13 @@ namespace KompetansetorgetXamarin.Controllers
                     if (students.Count > 1)
                     {
                         // SHOULD NOT BE ALLOWED, IMPLEMENT SOMETHING AGAINST THIS
-                        return null;
+                        //return null;
                     }
                     Student student = students[0];
                     List<Device> devices = GetAllDevicesRelatedToStudent(student);
+                    List<StudyGroup> studyGroups = GetAllStudyGroupsRelatedToStudent(student);
                     student.devices = devices;
+                    student.studyGroup = studyGroups;
                     return student;
                 }
             }
@@ -119,7 +139,9 @@ namespace KompetansetorgetXamarin.Controllers
                 {
                     Student student = Db.Get<Student>(username);
                     List<Device> devices = GetAllDevicesRelatedToStudent(student);
+                    List<StudyGroup> studyGroups = GetAllStudyGroupsRelatedToStudent(student);
                     student.devices = devices;
+                    student.studyGroup = studyGroups;
                     return student;
                 }
             }
@@ -142,9 +164,25 @@ namespace KompetansetorgetXamarin.Controllers
             lock (DbContext.locker)
             {
                 return Db.Query<Device>("Select * from Device " +
-                                        "Where device.username = ?", student.username);
+                                        "Where Device.username = ?", student.username);
             }
         }
+
+        /// <summary>
+        /// Gets a list of all studyGroups that are related to the student
+        /// </summary>
+        /// <param name="student"></param>
+        /// <returns></returns>
+        public List<StudyGroup> GetAllStudyGroupsRelatedToStudent(Student student)
+        {
+            lock (DbContext.locker)
+            {
+                return Db.Query<StudyGroup>("SELECT * FROM StudyGroup" +
+                                        " INNER JOIN StudyGroupStudent ON StudyGroup.id = StudyGroupStudent.StudyGroupId" +
+                                        " WHERE StudyGroupStudent.StudentUsername = ?", student.username);
+            }
+        }
+
 
         /*
         public bool UpdateOAuthToken(string accessToken)
@@ -177,7 +215,7 @@ namespace KompetansetorgetXamarin.Controllers
                     System.Diagnostics.Debug.WriteLine("StudentsController - UpdateStudent: After Updating student.");
 
                     // Db.InsertOrReplaceWithChildren(project, recursive: true);
-                    //Db.UpdateWithChildren(project);
+                    // Db.UpdateWithChildren(project);
                 }
             }
             catch (Exception e)
@@ -290,6 +328,8 @@ namespace KompetansetorgetXamarin.Controllers
                     dc.DeleteDevice(d);
                 }
 
+
+                
                 lock (DbContext.locker)
                 {
                     System.Diagnostics.Debug.WriteLine("StudentsController - DeleteStudentWithChilds: Before delete.");
@@ -299,7 +339,117 @@ namespace KompetansetorgetXamarin.Controllers
             }
         }
 
+        public async Task UpdateStudyGroupStudent(BaseContentPage page)
+        {
+            Student student;
+            lock (DbContext.locker)
+            {
+                var result = Db.Query<Student>("SELECT * FROM Student");
+                student = result[0];
+            }
 
+            if (student == null)
+            {
+                return;
+            }
 
+            string adress = "http://kompetansetorgetserver1.azurewebsites.net/api/v1/students/";
+            string encodedUsername = Base64Encode(student.username);
+            Uri url = new Uri(adress + encodedUsername);
+            
+            System.Diagnostics.Debug.WriteLine("StudentsController - UpdateStudyGroupStudent uri: " + url.ToString());
+            var client = new HttpClient();
+            string jsonString = null;
+
+            try
+            {
+                var response = await client.GetAsync(url).ConfigureAwait(false);
+                // doesnt activate even if unauthorized, so fix this if. 21:35
+                if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    System.Diagnostics.Debug.WriteLine("StudentsController - UpdateStudyGroupStudent failed due to lack of Authorization");
+                    // THIS DOES NOT WORK!!
+                    page.Authorized = false;
+                    return;
+                }
+                System.Diagnostics.Debug.WriteLine("UpdateStudyGroupStudent response " + response.StatusCode.ToString());
+                jsonString = await response.Content.ReadAsStringAsync();
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine("StudentsController - UpdateStudyGroupStudent: await client.GetAsync(\"url\") Failed");
+                System.Diagnostics.Debug.WriteLine("StudentsController - UpdateStudyGroupStudent: Exception msg: " + e.Message);
+                System.Diagnostics.Debug.WriteLine("StudentsController - UpdateStudyGroupStudent: Stack Trace: \n" + e.StackTrace);
+                System.Diagnostics.Debug.WriteLine("StudentsController - UpdateStudyGroupStudent: End Of Stack Trace");
+                return;
+            }
+
+            if (jsonString != null)
+            {
+                List<string> studyGroupIds = ExtractStudyGroupId(jsonString);
+                DeleteAllStudyGroupStudent();
+                CreateStudyGroupStudents(student.username, studyGroupIds);
+            }
+        }
+
+        private void CreateStudyGroupStudents(string username, List<string> studyGroupIds)
+        {
+            foreach (var id in studyGroupIds)
+            {
+                StudyGroupStudent sgs = new StudyGroupStudent();
+                sgs.StudentUsername = username;
+                sgs.StudyGroupId = id;
+
+                lock (DbContext.locker)
+                {
+                    Db.Insert(sgs);
+                }
+            }
+        }
+
+        private List<string> ExtractStudyGroupId(string jsonString)
+        {
+            Dictionary<string, object> dict = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonString);
+            System.Diagnostics.Debug.WriteLine("DeserializeApiData. Printing Key Value:");
+
+            string[] keys = dict.Keys.ToArray();
+            List<string> idList = new List<string>();
+
+            foreach (var key in keys)
+            {
+                System.Diagnostics.Debug.WriteLine("key: " + key);
+                System.Diagnostics.Debug.WriteLine("value: " + dict[key].ToString());
+
+                if (key.Equals("studyGroups"))
+                {
+                    IEnumerable studyGroups = (IEnumerable) dict[key];
+                    foreach (var studyGroup in studyGroups)
+                    {                        
+                        Dictionary<string, object> studyGroupDict =
+                            JsonConvert.DeserializeObject<Dictionary<string, object>>(studyGroup.ToString());
+                        idList.Add(studyGroupDict["id"].ToString());
+                    }
+
+                }
+                return idList;
+            }
+            return null;
+        }
+
+        public void DeleteAllStudyGroupStudent()
+        {
+            lock (DbContext.locker)
+            {
+                System.Diagnostics.Debug.WriteLine("StudentsController - DeleteAllStudyGroupStudent: Before delete.");
+                Db.Execute("delete from " + "StudyGroupStudent");
+                System.Diagnostics.Debug.WriteLine("StudentsController - DeleteAllStudyGroupStudent: After delete.");
+            }
+        }
+
+        public static string Base64Encode(string plainText)
+        {
+            var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
+            return System.Convert.ToBase64String(plainTextBytes);
+        }
     }
 }

@@ -76,6 +76,7 @@ namespace KompetansetorgetXamarin.Views
              TextBox.Text = deviceId;
          }
          */
+         /*
         private async void GetJobsFromServer_OnClicked(object sender, EventArgs e)
         {
             //JobsController jc = new JobsController();
@@ -107,7 +108,7 @@ namespace KompetansetorgetXamarin.Views
             TextBox.Text = sb.ToString();
 
         }
-
+        */
         private async void NotificationsFromDb_OnClicked(object sender, EventArgs e)
         {
             System.Diagnostics.Debug.WriteLine("ViktorTestView - NotificationsFromDb_OnClicked: Initiated");
@@ -227,7 +228,30 @@ namespace KompetansetorgetXamarin.Views
             System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter: projects.Count(): " +
                                    pro.Count());
         }
-        
 
+        private async void TestGetStudyGroupStudent_OnClicked(object sender, EventArgs e)
+        {
+            StudentsController sc = new StudentsController();
+            await sc.UpdateStudyGroupStudent(this);
+            if (!Authorized)
+            {
+                System.Diagnostics.Debug.WriteLine("TestGetStudyGroupStudent inside If: Authorized:  " + Authorized);
+                GoToLogin();
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("TestGetStudyGroupStudent inside Else: Authorized:  " + Authorized);
+                var list = sc.GetAllStudyGroupsRelatedToStudent(sc.GetStudent());
+                System.Diagnostics.Debug.WriteLine("Studygroups.Count: " + list.Count);
+
+                foreach (var sg in list)
+                {
+                    System.Diagnostics.Debug.WriteLine("id: " + sg.id);
+                    System.Diagnostics.Debug.WriteLine("name: " + sg.name);
+                }
+            }
+
+        }
+        
     }
 }

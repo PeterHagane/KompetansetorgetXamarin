@@ -16,6 +16,8 @@ namespace KompetansetorgetXamarin.Models
         public string token { get; set; } // size: (4096)
         public string deviceType { get; set; }
         public DateTime Modified { get; set; }
+        public bool tokenSent { get; set; } // represent if it has been successfully sent to the server application.
+
 
 
         [ForeignKey(typeof(Student))]
