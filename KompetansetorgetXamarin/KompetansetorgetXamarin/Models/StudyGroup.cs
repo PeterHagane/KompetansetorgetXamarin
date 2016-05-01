@@ -28,7 +28,7 @@ namespace KompetansetorgetXamarin.Models
     public class StudyGroupProject
     {
         [ForeignKey(typeof(Project))]
-        public string ProjectUiid { get; set; }
+        public string ProjectUuid { get; set; }
 
         [ForeignKey(typeof(StudyGroup))]
         public string StudyGroupId { get; set; }
@@ -37,7 +37,7 @@ namespace KompetansetorgetXamarin.Models
     public class StudyGroupJob
     {
         [ForeignKey(typeof(Job))]
-        public string JobUiid { get; set; }
+        public string JobUuid { get; set; }
 
         [ForeignKey(typeof(StudyGroup))]
         public string StudyGroupId { get; set; }

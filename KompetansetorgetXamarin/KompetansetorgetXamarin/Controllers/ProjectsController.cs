@@ -273,6 +273,7 @@ namespace KompetansetorgetXamarin.Controllers
                     cc.UpdateCompany(c);
                 }
             }
+
             try
             {
                 lock (DbContext.locker)

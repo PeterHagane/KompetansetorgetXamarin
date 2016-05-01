@@ -43,7 +43,9 @@ namespace KompetansetorgetXamarin
                 crudster.CreateNewFile(filename);
             }
 
-            
+            // This is to make sure that the app got the study groups that is used as search filters. 
+            StudyGroupsController sgc = new StudyGroupsController();
+            sgc.GetStudyGroupsFromServer();
         }
 
         protected override void OnSleep()
@@ -77,9 +79,7 @@ namespace KompetansetorgetXamarin
             // NavPage.Navigation.PopModalAsync();
             NavPage.Navigation.InsertPageBefore(new MainPage(), NavPage.Navigation.NavigationStack.First());
             NavPage.Navigation.PopToRootAsync();
-            // This is to make sure that the app got the study groups that is used as search filters. 
-            StudyGroupsController sgc = new StudyGroupsController();
-            sgc.GetStudyGroupsFromServer();
+
 
         }
     }

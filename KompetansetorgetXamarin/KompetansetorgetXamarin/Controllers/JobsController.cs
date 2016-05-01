@@ -4,8 +4,11 @@ using System.Collections.Generic;
 
 using System.Net.Http;
 using System.Linq;
+using System.Net;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using KompetansetorgetXamarin.Controls;
 using KompetansetorgetXamarin.DAL;
 using KompetansetorgetXamarin.Models;
 using Newtonsoft.Json;
@@ -281,6 +284,7 @@ namespace KompetansetorgetXamarin.Controllers
 
         /// <summary>
         /// Gets a job based on optional filters.
+        /// All parameters are optional except for the BaseContentPage: GetJobsBasedOnFilter(this);
         /// Current implementation supports only 1 key on the filter param!
         /// </summary>
         /// <param name="studyGroups">studyGroups can be a list of numerous studygroups ex: helse, idrettsfag, datateknologi </param>
@@ -293,7 +297,7 @@ namespace KompetansetorgetXamarin.Controllers
         ///                      locations (values: vestagder, austagder), . 
         ///                      Supports only 1 key at this current implementation!</param>
         /// <returns></returns>
-        public async Task<IEnumerable<Job>> GetJobsBasedOnFilter(List<string> studyGroups = null,
+        public async Task<IEnumerable<Job>> GetJobsBasedOnFilter(BaseContentPage page, List<string> studyGroups = null,
             string sortBy = "", Dictionary<string, string> filter = null)
         {
             //string adress = "http://kompetansetorgetserver1.azurewebsites.net/api/v1/jobs";
@@ -315,18 +319,21 @@ namespace KompetansetorgetXamarin.Controllers
                 }
             }
 
-            if (filter != null && filter.Count == 1)
+            if (filter != null)
             {
-                if (string.IsNullOrWhiteSpace(queryParams))
+                System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter - amount of filters: " + filter.Keys.ToArray().Length);
+                foreach (var category in filter.Keys.ToArray())
                 {
-                    queryParams = "?";
+                    if (string.IsNullOrWhiteSpace(queryParams))
+                    {
+                        queryParams = "?";
+                    }
+                    else queryParams += "&";
+                    // removes whitespaces from a potential user typed parameters like title search.
+                    // And replaces them with +
+                    string value = filter[category].Replace(" ", "+");
+                    queryParams += category + "=" + value;
                 }
-                else queryParams += "&";
-                string category = filter.Keys.ToArray()[0];
-                // removes whitespaces from a potential user typed parameters like title search.
-                // And replaces them with +
-                string value = filter[category].Replace(" ", "+");
-                queryParams += category + "=" + value;
             }
 
             if (string.IsNullOrWhiteSpace(sortBy))
@@ -341,14 +348,46 @@ namespace KompetansetorgetXamarin.Controllers
 
             Uri url = new Uri(Adress + queryParams);
             System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter - url: " + url.ToString());
+
+            StudentsController sc = new StudentsController();
+            
+            string accessToken = sc.GetStudentAccessToken();
+
+            if (accessToken == null)
+            {
+                page.Authorized = false;
+                return null;
+            }
+            
+
             var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", accessToken);
+
             string jsonString = null;
+            IEnumerable<Job> jobs = null;
             try
             {
                 var response = await client.GetAsync(url).ConfigureAwait(false);
-                System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter response " + response.StatusCode.ToString());
-                jsonString = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    System.Diagnostics.Debug.WriteLine("StudentsController - UpdateStudyGroupStudent failed due to lack of Authorization");
+                    page.Authorized = false;
+                    
+                }
 
+                else if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter response " + response.StatusCode.ToString());
+                    jsonString = await response.Content.ReadAsStringAsync();
+                    jobs = DeserializeMany(jsonString);
+                    
+                }
+
+                else
+                {
+                    jobs = GetJobsFromDbBasedOnFilter(studyGroups, filter);
+                }
+                return jobs;
             }
             catch (Exception e)
             {
@@ -359,9 +398,335 @@ namespace KompetansetorgetXamarin.Controllers
                 return null;
                 // TODO Implement local db query for cached data.
             }
+        }
 
-            IEnumerable<Job> jobs = DeserializeMany(jsonString);
-            return jobs;
+        /// <summary>
+        ///  Used if the web api is unavailable (not 401)
+        /// </summary>
+        /// <param name="studyGroups">studyGroups can be a list of numerous studygroups ex: helse, idrettsfag, datateknologi </param>
+        /// <param name="filter">A dictionary where key can be: titles (values:title of the job), types (values: deltid, heltid, etc...),
+        ///                      locations (values: vestagder, austagder).
+        ///                      Supports only 1 key at this current implementation!</param>
+        /// <returns></returns>
+        public IEnumerable<Job> GetJobsFromDbBasedOnFilter(List<string> studyGroups = null, Dictionary<string, string> filter = null)
+        {
+            string query = "SELECT * FROM Job";
+
+            if (studyGroups != null && filter == null)
+            {
+                for (int i = 0; i < studyGroups.Count; i++)
+                {
+                    if (i == 0)
+                    {
+                        query += " INNER JOIN StudyGroupJob ON Job.uuid = StudyGroupJob.JobUuid "
+                                 + "INNER JOIN StudyGroup ON StudyGroupJob.StudyGroupId = StudyGroup.id "
+                                 + "WHERE StudyGroup.id = '" + studyGroups[i] + "'";
+                    }
+                    else
+                    {
+                        query += " OR StudyGroup.id = '" + studyGroups[i] + "'";
+                    }
+                }
+
+                System.Diagnostics.Debug.WriteLine("if (studyGroups != null && filter == null)");
+                System.Diagnostics.Debug.WriteLine("query: " + query); 
+                lock (DbContext.locker)
+                {
+                    return Db.Query<Job>(query);
+                }
+            }
+
+            if (filter != null && studyGroups == null)
+            {
+                string joins = "";
+                string whereAnd = "";
+
+                string prepValue = "";
+
+                foreach (var filterType in filter.Keys.ToArray())
+                {
+                    string value = filter[filterType];
+
+                    if (filterType == "titles")
+                    {
+                        prepValue = filter[filterType];
+
+                        if (string.IsNullOrWhiteSpace(whereAnd))
+                        {
+                            whereAnd += " WHERE Job.title = ?";
+                        }
+                        else
+                        {
+                            whereAnd += " AND Job.title = ?";
+                        }
+                    }
+
+                    if (filterType == "types")
+                    {
+                        joins += " INNER JOIN JobTypeJob ON Job.uuid = JobTypeJob.JobUuid"
+                               + " INNER JOIN JobType ON JobTypeJob.JobTypeId = JobType.id";
+
+                        if (string.IsNullOrWhiteSpace(whereAnd))
+                        {
+                            whereAnd += " WHERE JobType.id = '" + value + "'";
+                        }
+                        else
+                        {
+                            whereAnd += " AND JobType.id = '" + value + "'";
+                        }
+                    }
+
+                    if (filterType == "locations")
+                    {
+                        joins += " INNER JOIN LocationJob ON Job.uuid = LocationJob.JobUuid"
+                               + " INNER JOIN Location ON LocationJob.LocationId = Location.id";
+
+                        if (string.IsNullOrWhiteSpace(whereAnd))
+                        {
+                            whereAnd += " WHERE Location.id = '" + value + "'";
+                        }
+                        else
+                        {
+                            whereAnd += " AND Location.id = '" + value + "'";
+                        }
+                    }
+                }
+
+                query += joins + whereAnd;
+                System.Diagnostics.Debug.WriteLine("query: " + query);
+
+                if (string.IsNullOrWhiteSpace(prepValue))
+                {
+                    lock (DbContext.locker)
+                    {
+                        return Db.Query<Job>(query);
+                    }
+                }
+        
+                lock (DbContext.locker)
+                {
+                    return Db.Query<Job>(query, prepValue);
+                }                
+            }
+
+            if (filter != null && studyGroups != null)
+            {
+
+                string joins = "";
+                string whereAnd = "";
+                string prepValue = "";
+
+                foreach (var filterType in filter.Keys.ToArray())
+                {
+                    if (filterType == "titles")
+                    {
+                        prepValue = filter[filterType];
+
+                        if (string.IsNullOrWhiteSpace(whereAnd))
+                        {
+                            whereAnd += " WHERE Job.title = ?";
+                        }
+                        else
+                        {
+                            whereAnd += " AND Job.title = ?";
+                        }
+                    }
+
+                    string value = filter[filterType];
+                    if (filterType == "types")
+                    {
+                        joins += " INNER JOIN JobTypeJob ON Job.uuid = JobTypeJob.JobUuid"
+                               + " INNER JOIN JobType ON JobTypeJob.JobTypeId = JobType.id";
+                        // + " WHERE JobType.id = ?";
+
+                        if (string.IsNullOrWhiteSpace(whereAnd))
+                        {
+                            whereAnd += " WHERE JobType.id = '" + value + "'";
+                        }
+                        else
+                        {
+                            whereAnd += " AND JobType.id = '" + value + "'";
+                        }
+
+                        /*
+                        System.Diagnostics.Debug.WriteLine("if (filterType == \"types\")");
+                        System.Diagnostics.Debug.WriteLine("query before prepstatement insert:" + query);
+                        lock (DbContext.locker)
+                        {
+                            return Db.Query<Job>(query, value);
+                        }
+                        */
+                    }
+
+                    if (filterType == "locations")
+                    {
+                        joins += " INNER JOIN LocationJob ON Job.uuid = LocationJob.JobUuid"
+                               + " INNER JOIN Location ON LocationJob.LocationId = Location.id";
+                        //+ " WHERE Location.id = ?";
+
+                        if (string.IsNullOrWhiteSpace(whereAnd))
+                        {
+                            whereAnd += " WHERE Location.id = '" + value + "'";
+                        }
+                        else
+                        {
+                            whereAnd += " AND Location.id = '" + value + "'";
+                        }
+
+                        /*
+                        System.Diagnostics.Debug.WriteLine("if (filterType == \"locations\")");
+                        System.Diagnostics.Debug.WriteLine("query before prepstatement insert: " + query);
+                        lock (DbContext.locker)
+                        {
+                            return Db.Query<Job>(query, value);
+                        }
+                        */
+                    }
+                }
+
+                for (int i = 0; i < studyGroups.Count; i++)
+                {
+                    if (i == 0)
+                    {
+                        if (studyGroups.Count > 1)
+                        {
+                            joins += " INNER JOIN StudyGroupJob ON Job.uuid = StudyGroupJob.JobUuid "
+                                     + "INNER JOIN StudyGroup ON StudyGroupJob.StudyGroupId = StudyGroup.id ";
+
+                            if (string.IsNullOrWhiteSpace(whereAnd))
+                            {
+                                whereAnd += " WHERE (StudyGroup.id = '" + studyGroups[i] + "'";
+                            }
+                            else
+                            {
+                                whereAnd += " AND (StudyGroup.id = '" + studyGroups[i] + "'";
+                            }
+                            //+ "WHERE (StudyGroup.id = '" + studyGroups[i] + "'";
+                        }
+                        else
+                        {
+                            joins += " INNER JOIN StudyGroupJob ON Job.uuid = StudyGroupJob.JobUuid "
+                                     + "INNER JOIN StudyGroup ON StudyGroupJob.StudyGroupId = StudyGroup.id ";
+
+                            if (string.IsNullOrWhiteSpace(whereAnd))
+                            {
+                                whereAnd += " WHERE StudyGroup.id = '" + studyGroups[i] + "'";
+                            }
+
+                            else
+                            {
+                                whereAnd = " AND StudyGroup.id = '" + studyGroups[i] + "'";
+                            }
+                            
+                        }
+                    }
+
+                    else if (i != 0 && i + 1 == studyGroups.Count)
+                    {
+                        whereAnd += " OR StudyGroup.id = '" + studyGroups[i] + "')";
+                    }
+                    else
+                    {
+                        whereAnd += " OR StudyGroup.id = '" + studyGroups[i] + "'";
+                    }
+                }
+
+                System.Diagnostics.Debug.WriteLine("if(filter != null && studyGroups != null)");
+                System.Diagnostics.Debug.WriteLine("query: " + query + joins + whereAnd);
+                System.Diagnostics.Debug.WriteLine("full query: " + query + joins + whereAnd);
+                /*
+                SELECT* FROM Job
+INNER JOIN LocationJob ON Job.uuid = LocationJob.JobUuid
+INNER JOIN Location ON LocationJob.LocationId = Location.id
+INNER JOIN StudyGroupJob ON Job.uuid = StudyGroupJob.JobUuid
+INNER JOIN StudyGroup ON StudyGroupJob.StudyGroupId = StudyGroup.id
+WHERE(StudyGroup.id = 'helse'
+    OR StudyGroup.id = 'datateknologi')
+AND Location.id = 'vestagder'
+                    */
+
+                var rowsLocation =
+                    Db.Query<Location>("Select * FROM Location WHERE Location.id = ?", "vestagder")
+                        .Count;
+                System.Diagnostics.Debug.WriteLine("Query Location Count: " + rowsLocation);
+
+                var rowsLocationJob =
+                    Db.Query<LocationJob>("Select * FROM LocationJob WHERE LocationJob.LocationId = ?", "vestagder")
+                        .Count;
+                System.Diagnostics.Debug.WriteLine("Query LocationJob Count: " + rowsLocationJob);
+
+                var rowsLocationJob2 =
+                    Db.Query<LocationJob>("Select * FROM LocationJob WHERE LocationJob.JobUuid = ?", "09706b08-78b9-42a5-88f9-ba0a45705432")
+                        .Count;
+                System.Diagnostics.Debug.WriteLine("Query LocationJob on JobUuid Count: " + rowsLocationJob2);
+
+                var rowsStudyGroup =
+                     Db.Query<StudyGroup>("Select * FROM StudyGroup WHERE StudyGroup.id = ?", "helse")
+                        .Count;
+                System.Diagnostics.Debug.WriteLine("Query StudyGroup Count: " + rowsStudyGroup);
+
+                var rowsStudyGroupJob =
+                    Db.Query<StudyGroupJob>("Select * FROM StudyGroupJob WHERE StudyGroupJob.StudyGroupId = ?", "helse")
+                        .Count;
+                System.Diagnostics.Debug.WriteLine("Query StudyGroupJob on helse Count: " + rowsStudyGroupJob);
+
+                var rowsStudyGroupJob3 =
+                    Db.Query<StudyGroupJob>("Select * FROM StudyGroupJob WHERE StudyGroupJob.StudyGroupId = ?", "datateknologi")
+                    .Count;
+                System.Diagnostics.Debug.WriteLine("Query StudyGroupJob on datateknologi Count: " + rowsStudyGroupJob3);
+
+                var rowsStudyGroupJob4 =
+                    Db.Query<StudyGroupJob>("Select * FROM StudyGroupJob WHERE (StudyGroupJob.StudyGroupId = ? OR StudyGroupJob.StudyGroupId = ?)", "datateknologi", "helse")
+                        .Count;
+                System.Diagnostics.Debug.WriteLine("Query StudyGroupJob on datateknologi or helse Count: " + rowsStudyGroupJob4);
+
+                var rowsStudyGroupJob2 =
+                    Db.Query<StudyGroupJob>("Select * FROM StudyGroupJob WHERE StudyGroupJob.JobUuid = ?", "09706b08-78b9-42a5-88f9-ba0a45705432")
+                        .Count;
+                System.Diagnostics.Debug.WriteLine("Query StudyGroupJob on JobUuid Count: " + rowsStudyGroupJob2);
+
+                var rowsInner1 =
+                    Db.Query<Job>("Select * FROM Job INNER JOIN LocationJob WHERE LocationJob.JobUuid = Job.uuid")
+                        .Count;
+                System.Diagnostics.Debug.WriteLine("Query rowsInner1 Count: " + rowsInner1);
+
+                var rowsInner2 =
+                    Db.Query<Job>("Select * FROM Job INNER JOIN LocationJob WHERE LocationJob.JobUuid = Job.uuid AND LocationJob.LocationId = ?", "vestagder")
+                        .Count;
+                System.Diagnostics.Debug.WriteLine("Query rowsInner2 Count: " + rowsInner2);
+
+                var rowsJobs =
+                    Db.Query<Job>("Select * FROM Job")
+                        .Count;
+                System.Diagnostics.Debug.WriteLine("Query rowsInner2 Count: " + rowsJobs);
+
+                var rowsJob =
+                    Db.Query<Job>(query)
+                    .Count;
+                System.Diagnostics.Debug.WriteLine("Query Job without LastAnd, value count: " + rowsJob);
+
+                query += joins + whereAnd;
+
+
+                if (string.IsNullOrWhiteSpace(prepValue))
+                {
+                    lock (DbContext.locker)
+                    {
+                        return Db.Query<Job>(query);
+                    }
+                }
+                
+                return Db.Query<Job>(query, prepValue);
+                
+            }
+
+            System.Diagnostics.Debug.WriteLine("Filter and studyGroups is null");
+            System.Diagnostics.Debug.WriteLine("query: " + query);
+            // if both studyGroups and filter is null
+            lock (DbContext.locker)
+            {
+                return Db.Query<Job>(query);
+            }          
         }
 
         /// <summary>
@@ -405,6 +770,9 @@ namespace KompetansetorgetXamarin.Controllers
 
             Job j = new Job();
             j.companies = new List<Company>();
+            j.jobTypes = new List<JobType>();
+            j.locations = new List<Location>();
+            j.studyGroups = new List<StudyGroup>();
 
             CompaniesController cp = new CompaniesController();
 
@@ -445,7 +813,6 @@ namespace KompetansetorgetXamarin.Controllers
 
                 if (key.Equals("companies"))
                 {
-                    // if not true then company already exist and needs to be updated.
                     CompaniesController cc = new CompaniesController();
                     IEnumerable companies = (IEnumerable)dict[key];
                     //Newtonsoft.Json.Linq.JArray'
@@ -455,10 +822,187 @@ namespace KompetansetorgetXamarin.Controllers
                         System.Diagnostics.Debug.WriteLine("foreach initiated");
                         Dictionary<string, object> companyDict = JsonConvert.DeserializeObject<Dictionary<string, object>>(comp.ToString());
                         Company company = cc.DeserializeCompany(companyDict);
+                        System.Diagnostics.Debug.WriteLine("DeserializeOneJobs: company.id: " + company.id);
                         j.companies.Add(company);
+                        cc.UpdateCompany(company);
                         System.Diagnostics.Debug.WriteLine("DeserializeOneJobs: After j.companies.Add(company)");
+                       
+                        CompanyJob cj = new CompanyJob();
+                        cj.CompanyId = company.id;
+                        cj.JobUuid = dict["uuid"].ToString();
 
+                        lock (DbContext.locker)
+                        {
+
+                            //System.Diagnostics.Debug.WriteLine("DeserializeOneJobs: query: " + query);
+                            var rowsAffected = Db.Query<CompanyJob>("Select * FROM CompanyJob WHERE CompanyJob.CompanyId = ?" +
+                                           " AND CompanyJob.JobUuid = ?", cj.CompanyId, cj.JobUuid).Count;
+                            System.Diagnostics.Debug.WriteLine("DeserializeOneJobs: CompanyJobs rowsAffected: " +
+                                                               rowsAffected);
+                            if (rowsAffected == 0)
+                            {
+                                // The item does not exists in the database so safe to insert
+                                Db.Insert(cj);
+                            }
+                        }
                     }
+                }
+
+                if (key.Equals("studyGroups"))
+                {
+                    IEnumerable studyGroups = (IEnumerable)dict[key];
+                    //Newtonsoft.Json.Linq.JArray'
+                    System.Diagnostics.Debug.WriteLine("studyGroups created");
+                    foreach (var studyGroup in studyGroups)
+                    {
+                        System.Diagnostics.Debug.WriteLine("foreach initiated");
+                        Dictionary<string, object> studyGroupDict = JsonConvert.DeserializeObject<Dictionary<string, object>>(studyGroup.ToString());
+
+                        
+                        StudyGroup sg = new StudyGroup();
+                        if (studyGroupDict.ContainsKey("id"))
+                        {
+                            sg.id = studyGroupDict["id"].ToString();
+                        }
+
+                        if (studyGroupDict.ContainsKey("name"))
+                        {
+                            sg.name = studyGroupDict["name"].ToString();
+                        }
+
+                        j.studyGroups.Add(sg);
+
+                        System.Diagnostics.Debug.WriteLine("StudyGroupJob created");
+                        StudyGroupJob sgj = new StudyGroupJob();
+                        sgj.StudyGroupId = sg.id;
+                        sgj.JobUuid = dict["uuid"].ToString();
+                        System.Diagnostics.Debug.WriteLine("StudyGroupJob before insert");
+
+                        lock (DbContext.locker)
+                        {
+                            var rowsAffected =
+                                Db.Query<StudyGroupJob>(
+                                    "Select * FROM StudyGroupJob WHERE StudyGroupJob.StudyGroupId = ?" +
+                                    " AND StudyGroupJob.JobUuid = ?", sgj.StudyGroupId, sgj.JobUuid).Count;
+                            System.Diagnostics.Debug.WriteLine("DeserializeOneJobs: StudyGroupJob rowsAffected: " +
+                                                               rowsAffected);
+                            if (rowsAffected == 0)
+                            {
+                                // The item does not exists in the database so safe to insert
+                                Db.Insert(sgj);
+                            }
+                        }
+                        System.Diagnostics.Debug.WriteLine("StudyGroupJob after insert");
+                    }
+                }
+
+                if (key.Equals("locations"))
+                {
+                    IEnumerable locations = (IEnumerable)dict[key];
+                    //Newtonsoft.Json.Linq.JArray'
+                    System.Diagnostics.Debug.WriteLine("location created");
+                    foreach (var location in locations)
+                    {
+                        System.Diagnostics.Debug.WriteLine("foreach initiated");
+                        Dictionary<string, object> locationDict = JsonConvert.DeserializeObject<Dictionary<string, object>>(location.ToString());
+
+                        Location loc = new Location();
+                        if (locationDict.ContainsKey("id"))
+                        {
+                            
+                            loc.id = locationDict["id"].ToString();
+                            System.Diagnostics.Debug.WriteLine("location id: " + loc.id);
+                        }
+
+                        if (locationDict.ContainsKey("name"))
+                        {
+                            loc.name = locationDict["name"].ToString();
+                        }
+
+                        lock (DbContext.locker)
+                        {
+                            var rowsAffected = Db.Update(loc);
+                            if (rowsAffected == 0)
+                            {
+                                // The item does not exists in the database so safe to insert
+                                Db.Insert(loc);
+                            }
+                        }
+                        j.locations.Add(loc);
+
+                        LocationJob lj = new LocationJob();
+                        lj.LocationId = loc.id;
+                        lj.JobUuid = dict["uuid"].ToString();
+
+                        lock (DbContext.locker)
+                        {
+                            var rowsAffected =
+                                Db.Query<LocationJob>("Select * FROM LocationJob WHERE LocationJob.LocationId = ?" +
+                                                      " AND LocationJob.JobUuid = ?", lj.LocationId, lj.JobUuid).Count;
+                            System.Diagnostics.Debug.WriteLine("DeserializeOneJobs: StudyGroupJob rowsAffected: " +
+                                                               rowsAffected);
+                            if (rowsAffected == 0)
+                            {
+                                // The item does not exists in the database so safe to insert
+                                Db.Insert(lj);
+                            }
+                        }
+                    }
+                }
+
+
+                if (key.Equals("jobTypes"))
+                {
+
+                    IEnumerable jobTypes = (IEnumerable)dict[key];
+                    //Newtonsoft.Json.Linq.JArray'
+                    System.Diagnostics.Debug.WriteLine("jobTypes created");
+                    foreach (var jobType in jobTypes)
+                    {
+                        System.Diagnostics.Debug.WriteLine("foreach initiated");
+                        Dictionary<string, object> jtDict = JsonConvert.DeserializeObject<Dictionary<string, object>>(jobType.ToString());
+
+                        JobType jt = new JobType();
+                        if (jtDict.ContainsKey("id"))
+                        {
+                            jt.id = jtDict["id"].ToString();
+                        }
+
+                        if (jtDict.ContainsKey("name"))
+                        {
+                            jt.name = jtDict["name"].ToString();
+                        }
+                        lock (DbContext.locker)
+                        {
+                            var rowsAffected = Db.Update(jt);
+                            if (rowsAffected == 0)
+                            {
+                                // The item does not exists in the database so safe to insert
+                                Db.Insert(jt);
+                            }
+                        }
+                        System.Diagnostics.Debug.WriteLine("before j.jobTypes.Add(jt);");
+                        j.jobTypes.Add(jt);
+
+                        JobTypeJob jtj = new JobTypeJob();
+                        jtj.JobTypeId = jt.id;
+                        jtj.JobUuid = dict["uuid"].ToString();
+
+                        lock (DbContext.locker)
+                        {
+                            var rowsAffected =
+                                Db.Query<JobTypeJob>("Select * FROM JobTypeJob WHERE JobTypeJob.JobTypeId = ?" +
+                                                      " AND JobTypeJob.JobUuid = ?", jtj.JobTypeId, jtj.JobUuid).Count;
+                            System.Diagnostics.Debug.WriteLine("DeserializeOneJobs: StudyGroupJob rowsAffected: " +
+                                                               rowsAffected);
+                            if (rowsAffected == 0)
+                            {
+                                // The item does not exists in the database so safe to insert
+                                Db.Insert(jtj);
+                            }
+                        }
+                    }
+
                 }
 
                 /*
@@ -469,31 +1013,11 @@ namespace KompetansetorgetXamarin.Controllers
                     
                 }
 
-                if (key.Equals("studyGroups"))
-                {
-                    
-                    Same as companies implementation
-                    
-                }
-
-                if (key.Equals("locations"))
-                {
-                    
-                    Same as companies implementation
-                    
-                }
-
-
-                if (key.Equals("jobTypes"))
-                {
-                    
-                    Same as companies implementation
-                    
-                }
-
+                
                 */
 
             }
+            UpdateJob(j);
             return j;
         }
 

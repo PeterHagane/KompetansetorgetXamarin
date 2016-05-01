@@ -72,6 +72,7 @@ namespace KompetansetorgetXamarin.Controllers
         {
             System.Diagnostics.Debug.WriteLine("StudyGroupsController - GetStudyGroupsFromServer: initiated");
             Uri url = new Uri(Adress);
+            System.Diagnostics.Debug.WriteLine("StudyGroupsController - url " + url.ToString());
             var client = new HttpClient();
             try
             {
@@ -100,7 +101,8 @@ namespace KompetansetorgetXamarin.Controllers
         public void UpdateStudyGroups(StudyGroup studyGroup)
         {
             if (CheckIfStudyGroupExist(studyGroup.id)) 
-            { 
+            {
+                System.Diagnostics.Debug.WriteLine("StudyGroupsController - UpdateStudyGroups: updates: " + studyGroup.id);
                 lock (DbContext.locker)
                 {
                     Db.Update(studyGroup);
@@ -111,6 +113,8 @@ namespace KompetansetorgetXamarin.Controllers
             { 
                 lock (DbContext.locker)
                 {
+                    System.Diagnostics.Debug.WriteLine("StudyGroupsController - UpdateStudyGroups: inserts: + " + studyGroup.id);
+                    
                     Db.Insert(studyGroup);
                 }
             }            

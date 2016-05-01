@@ -376,7 +376,6 @@ namespace KompetansetorgetXamarin.Controllers
                 if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
                     System.Diagnostics.Debug.WriteLine("StudentsController - UpdateStudyGroupStudent failed due to lack of Authorization");
-                    // THIS DOES NOT WORK!!
                     page.Authorized = false;
                     return;
                 }
