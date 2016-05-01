@@ -210,6 +210,35 @@ namespace KompetansetorgetXamarin.Views
             TextBox.Text = sb.ToString();
             */
 
+        private async void GetAllJobsFromWebApi_OnClicked(object sender, EventArgs e)
+        {
+            JobsController jc = new JobsController();
+            IEnumerable<Job> jobs = await jc.GetJobsBasedOnFilter(this);
+            if (!Authorized)
+            {
+                GoToLogin();
+            }
+            if (jobs != null)
+            {
+                System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter: jobs.Count(): " +
+                                   jobs.Count());
+            }
+        }
+
+        private async void GetAllProjectsFromWebApi_OnClicked(object sender, EventArgs e)
+        {
+            ProjectsController jc = new ProjectsController();
+            IEnumerable<Project> projects = await jc.GetProjectsBasedOnFilter(this);
+            if (!Authorized)
+            {
+                GoToLogin();
+            }
+            if (projects != null)
+            {
+                System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter: jobs.Count(): " +
+                                   projects.Count());
+            }
+        }
 
         private async void TestJobsStudyGroup_OnClicked(object sender, EventArgs e)
         {
@@ -224,20 +253,16 @@ namespace KompetansetorgetXamarin.Views
             filter.Add("types", "heltid");
 
             JobsController jc = new JobsController();
-            Task<IEnumerable<Job>> jobs = jc.GetJobsBasedOnFilter(this, studyGroups, "-published", filter);
+            IEnumerable<Job> jobs = await jc.GetJobsBasedOnFilter(this, studyGroups, "-published", filter);
 
             if (!Authorized)
             {
                 GoToLogin();
             }
-
-            IEnumerable<Job> job = jobs.Result;
-            if (job == null)
-            {
-                System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter: ");
+            if (jobs != null) { 
+                System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter: jobs.Count(): " +
+                                   jobs.Count());
             }
-            System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter: jobs.Count(): " +
-                                   job.Count());
         }
 
         private async void TestGetStudyGroupStudent_OnClicked(object sender, EventArgs e)
@@ -293,17 +318,19 @@ namespace KompetansetorgetXamarin.Views
             {
                 System.Diagnostics.Debug.WriteLine("TestJobsFilterDb:  was null aka failed!");
             }
-            System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter: jobs.Count(): " +
-                                   jobs.Count());
+            else { 
+                System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter: jobs.Count(): " +
+                                       jobs.Count());
 
-            foreach (var job in jobs)
-            {
-                System.Diagnostics.Debug.WriteLine("Jobs title: " + job.title);
-                if (job.companies != null)
+                foreach (var job in jobs)
                 {
-                    System.Diagnostics.Debug.WriteLine("Companies is not null: " + job.companies[0].id);
+                    System.Diagnostics.Debug.WriteLine("Jobs title: " + job.title);
+                    if (job.companies != null)
+                    {
+                        System.Diagnostics.Debug.WriteLine("Companies is not null: " + job.companies[0].id);
 
-                }
+                    }
+            }
             }
 
             var jobs2 = jc.GetJobsFromDbBasedOnFilter(studyGroups);
@@ -312,16 +339,18 @@ namespace KompetansetorgetXamarin.Views
             {
                 System.Diagnostics.Debug.WriteLine("TestJobsFilterDb:  was null aka failed!");
             }
-            System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter: jobs2.Count(): " +
-                                   jobs2.Count());
+            else { 
+                System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter: jobs2.Count(): " +
+                                       jobs2.Count());
 
-            foreach (var job in jobs2)
-            {
-                System.Diagnostics.Debug.WriteLine("Jobs2 title: " + job.title);
-                if (job.companies != null)
+                foreach (var job in jobs2)
                 {
-                    System.Diagnostics.Debug.WriteLine("Companies is not null: " + job.companies[0].id);
+                    System.Diagnostics.Debug.WriteLine("Jobs2 title: " + job.title);
+                    if (job.companies != null)
+                    {
+                        System.Diagnostics.Debug.WriteLine("Companies is not null: " + job.companies[0].id);
 
+                    }
                 }
             }
 
@@ -331,40 +360,178 @@ namespace KompetansetorgetXamarin.Views
             {
                 System.Diagnostics.Debug.WriteLine("TestJobsFilterDb:  was null aka failed!");
             }
-            System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter: jobs3.Count(): " +
-                                   jobs.Count());
+            else { 
+                System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter: jobs3.Count(): " +
+                                       jobs3.Count());
 
-            foreach (var job in jobs3)
-            {
-                System.Diagnostics.Debug.WriteLine("Jobs3 title: " + job.title);
-                if (job.companies != null)
+                foreach (var job in jobs3)
                 {
-                    System.Diagnostics.Debug.WriteLine("Companies is not null: " + job.companies[0].id);
+                    System.Diagnostics.Debug.WriteLine("Jobs3 title: " + job.title);
+                    if (job.companies != null)
+                    {
+                        System.Diagnostics.Debug.WriteLine("Companies is not null: " + job.companies[0].id);
 
+                    }
                 }
             }
 
             Dictionary<string, string> filter2 = new Dictionary<string, string>();
-            filter.Add("titles", "Database ansvarlig");
+            filter2.Add("titles", "Database ansvarlig");
 
-            var jobs4 = jc.GetJobsFromDbBasedOnFilter(studyGroups, filter);
+            var jobs4 = jc.GetJobsFromDbBasedOnFilter(studyGroups, filter2);
 
             if (jobs4 == null)
             {
                 System.Diagnostics.Debug.WriteLine("TestJobsFilterDb:  was null aka failed!");
             }
-            System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter: jobs4.Count(): " +
-                                   jobs.Count());
+            else { 
+                System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter: jobs4.Count(): " +
+                                       jobs4.Count());
 
-            foreach (var job in jobs4)
-            {
-                System.Diagnostics.Debug.WriteLine("Jobs4 title: " + job.title);
-                if (job.companies != null)
+                foreach (var job in jobs4)
                 {
-                    System.Diagnostics.Debug.WriteLine("Companies is not null: " + job.companies[0].id);
+                    System.Diagnostics.Debug.WriteLine("Jobs4 title: " + job.title);
+                    if (job.companies != null)
+                    {
+                        System.Diagnostics.Debug.WriteLine("Companies is not null: " + job.companies[0].id);
 
+                    }
                 }
             }
         }
+
+
+        private async void TestProjectsFilter_OnClicked(object sender, EventArgs e)
+        {
+            List<string> studyGroups = new List<string>();
+            studyGroups.Add("helse");
+            studyGroups.Add("datateknologi");
+            //LEGG FAGOMRÅDER TIL AKTIVT FILTER HER MED EN SWITCH ELLER LIGNENDE
+
+
+            Dictionary<string, string> filter = new Dictionary<string, string>();
+            filter.Add("courses", "DAT-304");
+            filter.Add("types", "virksomhet");
+
+            ProjectsController jc = new ProjectsController();
+            IEnumerable<Project> projects = await jc.GetProjectsBasedOnFilter(this, studyGroups, "-published", filter);
+
+            if (!Authorized)
+            {
+                GoToLogin();
+            }
+            if (projects != null) { 
+                System.Diagnostics.Debug.WriteLine("GetProjectsBasedOnFilter: projects.Count(): " +
+                                    projects.Count());
+            }
+        }
+
+        /// <summary>
+        /// Peter ikke se på denne metoden, den er kun for å teste databasen :D
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void TestProjectsFilterDb_OnClicked(object sender, EventArgs e)
+        {
+            List<string> studyGroups = new List<string>();
+            studyGroups.Add("helse");
+            studyGroups.Add("datateknologi");
+            //LEGG FAGOMRÅDER TIL AKTIVT FILTER HER MED EN SWITCH ELLER LIGNENDE
+
+
+            Dictionary<string, string> filter = new Dictionary<string, string>();
+            filter.Add("courses", "DAT-304");
+            filter.Add("types", "virksomhet");
+
+            ProjectsController pc = new ProjectsController();
+            var projects = pc.GetProjectsFromDbBasedOnFilter(null, filter);
+
+            if (projects == null)
+            {
+                System.Diagnostics.Debug.WriteLine("TestProjectsFilterDb:  was null aka failed!");
+            }
+
+            else { 
+                System.Diagnostics.Debug.WriteLine("TestProjectsFilterDb: projects.Count(): " +
+                                       projects.Count());
+
+                foreach (var project in projects)
+                {
+                    System.Diagnostics.Debug.WriteLine("projects title: " + project.title);
+                    if (project.companies != null)
+                    {
+                        System.Diagnostics.Debug.WriteLine("Companies is not null: " + project.companies[0].id);
+
+                    }
+                }
+            }
+
+            var projects2 = pc.GetProjectsFromDbBasedOnFilter(studyGroups);
+
+            if (projects2 == null)
+            {
+                System.Diagnostics.Debug.WriteLine("TestProjectsFilterDb:  was null aka failed!");
+            }
+            else { 
+                System.Diagnostics.Debug.WriteLine("GetProjectsFromDbBasedOnFilter: projects2.Count(): " +
+                                       projects2.Count());
+
+                foreach (var project in projects2)
+                {
+                    System.Diagnostics.Debug.WriteLine("project2 title: " + project.title);
+                    if (project.companies != null)
+                    {
+                        System.Diagnostics.Debug.WriteLine("Companies is not null: " + project.companies[0].id);
+
+                    }
+                }
+            }
+
+            var projects3 = pc.GetProjectsFromDbBasedOnFilter(studyGroups, filter);
+
+            if (projects3 == null)
+            {
+                System.Diagnostics.Debug.WriteLine("TestProjectsFilterDb:  was null aka failed!");
+            }
+            else { 
+                System.Diagnostics.Debug.WriteLine("GetProjectsFromDbBasedOnFilter: projects3.Count(): " +
+                                       projects3.Count());
+
+                foreach (var project in projects3)
+                {
+                    System.Diagnostics.Debug.WriteLine("projects3 title: " + project.title);
+                    if (project.companies != null)
+                    {
+                        System.Diagnostics.Debug.WriteLine("Companies is not null: " + project.companies[0].id);
+
+                    }
+                }
+            }
+            
+            Dictionary<string, string> filter2 = new Dictionary<string, string>();
+            filter2.Add("titles", "Strømavleser vha gammel mobil");
+
+            var projects4 = pc.GetProjectsFromDbBasedOnFilter(studyGroups, filter2);
+
+            if (projects4 == null)
+            {
+                System.Diagnostics.Debug.WriteLine("TestProjectsFilterDb:  was null aka failed!");
+            }
+            else { 
+                System.Diagnostics.Debug.WriteLine("GetProjectsFromDbBasedOnFilter: projects4.Count(): " +
+                                       projects4.Count());
+
+                foreach (var project in projects4)
+                {
+                    System.Diagnostics.Debug.WriteLine("projects4 title: " + project.title);
+                    if (project.companies != null)
+                    {
+                        System.Diagnostics.Debug.WriteLine("Companies is not null: " + project.companies[0].id);
+
+                    }
+                }
+            }
+        }
+
     }
 }

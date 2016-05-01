@@ -285,7 +285,6 @@ namespace KompetansetorgetXamarin.Controllers
         /// <summary>
         /// Gets a job based on optional filters.
         /// All parameters are optional except for the BaseContentPage: GetJobsBasedOnFilter(this);
-        /// Current implementation supports only 1 key on the filter param!
         /// </summary>
         /// <param name="studyGroups">studyGroups can be a list of numerous studygroups ex: helse, idrettsfag, datateknologi </param>
         /// <param name="sortBy">published - oldest to newest
@@ -336,7 +335,7 @@ namespace KompetansetorgetXamarin.Controllers
                 }
             }
 
-            if (string.IsNullOrWhiteSpace(sortBy))
+            if (!string.IsNullOrWhiteSpace(sortBy))
             {
                 if (string.IsNullOrWhiteSpace(queryParams))
                 {
@@ -353,7 +352,7 @@ namespace KompetansetorgetXamarin.Controllers
             
             string accessToken = sc.GetStudentAccessToken();
 
-            if (accessToken == null)
+            if (string.IsNullOrWhiteSpace(accessToken))
             {
                 page.Authorized = false;
                 return null;
@@ -406,7 +405,7 @@ namespace KompetansetorgetXamarin.Controllers
         /// <param name="studyGroups">studyGroups can be a list of numerous studygroups ex: helse, idrettsfag, datateknologi </param>
         /// <param name="filter">A dictionary where key can be: titles (values:title of the job), types (values: deltid, heltid, etc...),
         ///                      locations (values: vestagder, austagder).
-        ///                      Supports only 1 key at this current implementation!</param>
+        ///                      </param>
         /// <returns></returns>
         public IEnumerable<Job> GetJobsFromDbBasedOnFilter(List<string> studyGroups = null, Dictionary<string, string> filter = null)
         {
@@ -634,76 +633,7 @@ namespace KompetansetorgetXamarin.Controllers
                 System.Diagnostics.Debug.WriteLine("if(filter != null && studyGroups != null)");
                 System.Diagnostics.Debug.WriteLine("query: " + query + joins + whereAnd);
                 System.Diagnostics.Debug.WriteLine("full query: " + query + joins + whereAnd);
-                /*
-                SELECT* FROM Job
-INNER JOIN LocationJob ON Job.uuid = LocationJob.JobUuid
-INNER JOIN Location ON LocationJob.LocationId = Location.id
-INNER JOIN StudyGroupJob ON Job.uuid = StudyGroupJob.JobUuid
-INNER JOIN StudyGroup ON StudyGroupJob.StudyGroupId = StudyGroup.id
-WHERE(StudyGroup.id = 'helse'
-    OR StudyGroup.id = 'datateknologi')
-AND Location.id = 'vestagder'
-                    */
 
-                var rowsLocation =
-                    Db.Query<Location>("Select * FROM Location WHERE Location.id = ?", "vestagder")
-                        .Count;
-                System.Diagnostics.Debug.WriteLine("Query Location Count: " + rowsLocation);
-
-                var rowsLocationJob =
-                    Db.Query<LocationJob>("Select * FROM LocationJob WHERE LocationJob.LocationId = ?", "vestagder")
-                        .Count;
-                System.Diagnostics.Debug.WriteLine("Query LocationJob Count: " + rowsLocationJob);
-
-                var rowsLocationJob2 =
-                    Db.Query<LocationJob>("Select * FROM LocationJob WHERE LocationJob.JobUuid = ?", "09706b08-78b9-42a5-88f9-ba0a45705432")
-                        .Count;
-                System.Diagnostics.Debug.WriteLine("Query LocationJob on JobUuid Count: " + rowsLocationJob2);
-
-                var rowsStudyGroup =
-                     Db.Query<StudyGroup>("Select * FROM StudyGroup WHERE StudyGroup.id = ?", "helse")
-                        .Count;
-                System.Diagnostics.Debug.WriteLine("Query StudyGroup Count: " + rowsStudyGroup);
-
-                var rowsStudyGroupJob =
-                    Db.Query<StudyGroupJob>("Select * FROM StudyGroupJob WHERE StudyGroupJob.StudyGroupId = ?", "helse")
-                        .Count;
-                System.Diagnostics.Debug.WriteLine("Query StudyGroupJob on helse Count: " + rowsStudyGroupJob);
-
-                var rowsStudyGroupJob3 =
-                    Db.Query<StudyGroupJob>("Select * FROM StudyGroupJob WHERE StudyGroupJob.StudyGroupId = ?", "datateknologi")
-                    .Count;
-                System.Diagnostics.Debug.WriteLine("Query StudyGroupJob on datateknologi Count: " + rowsStudyGroupJob3);
-
-                var rowsStudyGroupJob4 =
-                    Db.Query<StudyGroupJob>("Select * FROM StudyGroupJob WHERE (StudyGroupJob.StudyGroupId = ? OR StudyGroupJob.StudyGroupId = ?)", "datateknologi", "helse")
-                        .Count;
-                System.Diagnostics.Debug.WriteLine("Query StudyGroupJob on datateknologi or helse Count: " + rowsStudyGroupJob4);
-
-                var rowsStudyGroupJob2 =
-                    Db.Query<StudyGroupJob>("Select * FROM StudyGroupJob WHERE StudyGroupJob.JobUuid = ?", "09706b08-78b9-42a5-88f9-ba0a45705432")
-                        .Count;
-                System.Diagnostics.Debug.WriteLine("Query StudyGroupJob on JobUuid Count: " + rowsStudyGroupJob2);
-
-                var rowsInner1 =
-                    Db.Query<Job>("Select * FROM Job INNER JOIN LocationJob WHERE LocationJob.JobUuid = Job.uuid")
-                        .Count;
-                System.Diagnostics.Debug.WriteLine("Query rowsInner1 Count: " + rowsInner1);
-
-                var rowsInner2 =
-                    Db.Query<Job>("Select * FROM Job INNER JOIN LocationJob WHERE LocationJob.JobUuid = Job.uuid AND LocationJob.LocationId = ?", "vestagder")
-                        .Count;
-                System.Diagnostics.Debug.WriteLine("Query rowsInner2 Count: " + rowsInner2);
-
-                var rowsJobs =
-                    Db.Query<Job>("Select * FROM Job")
-                        .Count;
-                System.Diagnostics.Debug.WriteLine("Query rowsInner2 Count: " + rowsJobs);
-
-                var rowsJob =
-                    Db.Query<Job>(query)
-                    .Count;
-                System.Diagnostics.Debug.WriteLine("Query Job without LastAnd, value count: " + rowsJob);
 
                 query += joins + whereAnd;
 
@@ -772,7 +702,7 @@ AND Location.id = 'vestagder'
             j.companies = new List<Company>();
             j.jobTypes = new List<JobType>();
             j.locations = new List<Location>();
-            j.studyGroups = new List<StudyGroup>();
+            j.studyGroups = new List<StudyGroup>();           
 
             CompaniesController cp = new CompaniesController();
 
@@ -791,6 +721,12 @@ AND Location.id = 'vestagder'
                 {
                     j.title = dict[key].ToString();
                 }
+
+                if (key.Equals("description"))
+                {
+                    j.description = dict[key].ToString();
+                }
+                
                 if (key.Equals("webpage"))
                 {
                     j.webpage = dict[key].ToString();
@@ -993,7 +929,7 @@ AND Location.id = 'vestagder'
                             var rowsAffected =
                                 Db.Query<JobTypeJob>("Select * FROM JobTypeJob WHERE JobTypeJob.JobTypeId = ?" +
                                                       " AND JobTypeJob.JobUuid = ?", jtj.JobTypeId, jtj.JobUuid).Count;
-                            System.Diagnostics.Debug.WriteLine("DeserializeOneJobs: StudyGroupJob rowsAffected: " +
+                            System.Diagnostics.Debug.WriteLine("DeserializeOneJobs: JobTypeJob rowsAffected: " +
                                                                rowsAffected);
                             if (rowsAffected == 0)
                             {
@@ -1002,20 +938,7 @@ AND Location.id = 'vestagder'
                             }
                         }
                     }
-
                 }
-
-                /*
-                if (key.Equals("courses"))
-                {
-                    
-                    Same as companies implementation
-                    
-                }
-
-                
-                */
-
             }
             UpdateJob(j);
             return j;
@@ -1023,3 +946,67 @@ AND Location.id = 'vestagder'
 
     }
 }
+
+
+/* Kan kanskje brukes for tester
+                var rowsLocation =
+                    Db.Query<Location>("Select * FROM Location WHERE Location.id = ?", "vestagder")
+                        .Count;
+                System.Diagnostics.Debug.WriteLine("Query Location Count: " + rowsLocation);
+
+                var rowsLocationJob =
+                    Db.Query<LocationJob>("Select * FROM LocationJob WHERE LocationJob.LocationId = ?", "vestagder")
+                        .Count;
+                System.Diagnostics.Debug.WriteLine("Query LocationJob Count: " + rowsLocationJob);
+
+                var rowsLocationJob2 =
+                    Db.Query<LocationJob>("Select * FROM LocationJob WHERE LocationJob.JobUuid = ?", "09706b08-78b9-42a5-88f9-ba0a45705432")
+                        .Count;
+                System.Diagnostics.Debug.WriteLine("Query LocationJob on JobUuid Count: " + rowsLocationJob2);
+
+                var rowsStudyGroup =
+                     Db.Query<StudyGroup>("Select * FROM StudyGroup WHERE StudyGroup.id = ?", "helse")
+                        .Count;
+                System.Diagnostics.Debug.WriteLine("Query StudyGroup Count: " + rowsStudyGroup);
+
+                var rowsStudyGroupJob =
+                    Db.Query<StudyGroupJob>("Select * FROM StudyGroupJob WHERE StudyGroupJob.StudyGroupId = ?", "helse")
+                        .Count;
+                System.Diagnostics.Debug.WriteLine("Query StudyGroupJob on helse Count: " + rowsStudyGroupJob);
+
+                var rowsStudyGroupJob3 =
+                    Db.Query<StudyGroupJob>("Select * FROM StudyGroupJob WHERE StudyGroupJob.StudyGroupId = ?", "datateknologi")
+                    .Count;
+                System.Diagnostics.Debug.WriteLine("Query StudyGroupJob on datateknologi Count: " + rowsStudyGroupJob3);
+
+                var rowsStudyGroupJob4 =
+                    Db.Query<StudyGroupJob>("Select * FROM StudyGroupJob WHERE (StudyGroupJob.StudyGroupId = ? OR StudyGroupJob.StudyGroupId = ?)", "datateknologi", "helse")
+                        .Count;
+                System.Diagnostics.Debug.WriteLine("Query StudyGroupJob on datateknologi or helse Count: " + rowsStudyGroupJob4);
+
+                var rowsStudyGroupJob2 =
+                    Db.Query<StudyGroupJob>("Select * FROM StudyGroupJob WHERE StudyGroupJob.JobUuid = ?", "09706b08-78b9-42a5-88f9-ba0a45705432")
+                        .Count;
+                System.Diagnostics.Debug.WriteLine("Query StudyGroupJob on JobUuid Count: " + rowsStudyGroupJob2);
+
+                var rowsInner1 =
+                    Db.Query<Job>("Select * FROM Job INNER JOIN LocationJob WHERE LocationJob.JobUuid = Job.uuid")
+                        .Count;
+                System.Diagnostics.Debug.WriteLine("Query rowsInner1 Count: " + rowsInner1);
+
+                var rowsInner2 =
+                    Db.Query<Job>("Select * FROM Job INNER JOIN LocationJob WHERE LocationJob.JobUuid = Job.uuid AND LocationJob.LocationId = ?", "vestagder")
+                        .Count;
+                System.Diagnostics.Debug.WriteLine("Query rowsInner2 Count: " + rowsInner2);
+
+                var rowsJobs =
+                    Db.Query<Job>("Select * FROM Job")
+                        .Count;
+                System.Diagnostics.Debug.WriteLine("Query rowsInner2 Count: " + rowsJobs);
+
+                var rowsJob =
+                    Db.Query<Job>(query)
+                    .Count;
+                System.Diagnostics.Debug.WriteLine("Query Job without LastAnd, value count: " + rowsJob);
+
+                */

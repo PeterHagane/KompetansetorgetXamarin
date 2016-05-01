@@ -105,6 +105,7 @@ namespace KompetansetorgetXamarin.Controllers
 
         /// <summary>
         /// Gets the student
+        /// Warning, student can be null, if thats the case set Page.Authorized = false;
         /// </summary>
         /// <returns></returns>
         public Student GetStudent()
@@ -119,11 +120,21 @@ namespace KompetansetorgetXamarin.Controllers
                         // SHOULD NOT BE ALLOWED, IMPLEMENT SOMETHING AGAINST THIS
                         //return null;
                     }
-                    Student student = students[0];
-                    List<Device> devices = GetAllDevicesRelatedToStudent(student);
-                    //List<StudyGroup> studyGroups = GetAllStudyGroupsRelatedToStudent(student);
-                    student.devices = devices;
-                    //student.studyGroup = studyGroups;
+                    Student student;
+                    try
+                    {
+                        student = students[0];
+                        List<Device> devices = GetAllDevicesRelatedToStudent(student);
+                        //List<StudyGroup> studyGroups = GetAllStudyGroupsRelatedToStudent(student);
+                        student.devices = devices;
+                        //student.studyGroup = studyGroups;
+                    }
+                    catch (Exception)
+                    {
+                        // very ugly hack, if student is null go to login.
+                        student = null;
+                    }
+
                     return student;
                 }
             }
@@ -138,6 +149,7 @@ namespace KompetansetorgetXamarin.Controllers
 
         /// <summary>
         /// Gets the student with the specified username
+        /// Warning, student can be null, if thats the case set Page.Authorized = false;
         /// </summary>
         /// <returns></returns>
         public Student GetStudent(string username)
@@ -188,9 +200,20 @@ namespace KompetansetorgetXamarin.Controllers
         }
         */
 
+        /// <summary>
+        /// Gets the students accessToken.
+        /// Warning, check for Null
+        /// </summary>
+        /// <returns></returns>
         public string GetStudentAccessToken()
         {
-            return GetStudent().accessToken;
+            Student student = GetStudent();
+            string accessToken = null;
+            if (student != null)
+            {
+                accessToken = student.accessToken;
+            }
+            return accessToken;
         }
 
         /// <summary>

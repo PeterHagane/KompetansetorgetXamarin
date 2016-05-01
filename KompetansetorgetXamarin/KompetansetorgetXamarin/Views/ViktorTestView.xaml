@@ -5,19 +5,25 @@
              x:Class="KompetansetorgetXamarin.Views.ViktorTestView">
   <ContentPage.Content>
     <StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Orientation="Vertical" Spacing="15">
-      <local:BaseButton Clicked="StudentButton_OnClicked" x:Name="Button" Text="Hent Studenter" Style="{DynamicResource baseButtonStyle}" />
+      <!--<local:BaseButton Clicked="StudentButton_OnClicked" x:Name="Button" Text="Hent Studenter" Style="{DynamicResource baseButtonStyle}" />
      
-     <!-- 
+      
        <local:BaseButton x:Name="FagButton1" Text="Hent Fagområder" Style="{DynamicResource baseButtonStyle}" />
       <local:BaseButton Clicked="PathButton_OnClicked" x:Name= "PathButton" Text="Get Path" Style="{DynamicResource baseButtonStyle}"  />
       <local:BaseButton Clicked="TokenButton_OnClicked"  x:Name="TokenButton" Text="Hent token fra fil" Style="{DynamicResource baseButtonStyle}" />
       <local:BaseButton Clicked="DeviceIdButton_OnClicked"  x:Name="DeviceIdButton" Text="Hent device id fra fil" Style="{DynamicResource baseButtonStyle}" />
       <local:BaseButton Clicked="GetJobsFromServer_OnClicked"  x:Name="ServerJobsButton" Text="Hent jobbstillinger fra server" Style="{DynamicResource baseButtonStyle}" />
-     --> <local:BaseButton Clicked="NotificationsFromDb_OnClicked"  x:Name="NotificationsFromDbButton" Text="Hent varsler fra database" Style="{DynamicResource baseButtonStyle}" />
+           <local:BaseButton Clicked="NotificationsFromDb_OnClicked"  x:Name="NotificationsFromDbButton" Text="Hent varsler fra database" Style="{DynamicResource baseButtonStyle}" />
+     --> 
       <local:BaseButton Clicked="TestJobsStudyGroup_OnClicked"  x:Name="TestJobsStudyGroupButton" Text="Henter jobber basert på hardkodet filter" Style="{DynamicResource baseButtonStyle}" />
       <local:BaseButton Clicked="TestGetStudyGroupStudent_OnClicked"  x:Name="TestGetStudyGroupStudentButton" Text="Henter studentes registrerte fagområder" Style="{DynamicResource baseButtonStyle}" />
       <local:BaseButton Clicked="TestJobsFilterDb_OnClicked"  x:Name="TestJobsFilterDbButton" Text="Querier Job i databasen utifra et bestemt filter" Style="{DynamicResource baseButtonStyle}" />
+      <local:BaseButton Clicked="TestProjectsFilter_OnClicked"  x:Name="TestProjectsFilterButton" Text="Henter projecter basert på hardkodet filter" Style="{DynamicResource baseButtonStyle}" />
+      <local:BaseButton Clicked="TestProjectsFilterDb_OnClicked"  x:Name="TestProjectsFilterDbButton" Text="Querier Project i databasen utifra et bestemt filter" Style="{DynamicResource baseButtonStyle}" />
+      <local:BaseButton Clicked="GetAllJobsFromWebApi_OnClicked"  x:Name="GetAllJobsFromWebApiButton" Text="Henter alle jobber fra web api" Style="{DynamicResource baseButtonStyle}" />
+      <local:BaseButton Clicked="GetAllProjectsFromWebApi_OnClicked"  x:Name="GetAllProjectsFromWebApiButton" Text="Henter alle oppgaver fra web api" Style="{DynamicResource baseButtonStyle}" />
 
+      
 
       <Label x:Name="TextBox" Text="Information"/>
     </StackLayout>

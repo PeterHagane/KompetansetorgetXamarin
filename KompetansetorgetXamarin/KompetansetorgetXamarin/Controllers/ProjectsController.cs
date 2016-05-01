@@ -2,9 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using KompetansetorgetXamarin.Controls;
 using KompetansetorgetXamarin.DAL;
 using KompetansetorgetXamarin.Models;
 using Newtonsoft.Json;
@@ -122,27 +125,25 @@ namespace KompetansetorgetXamarin.Controllers
 
         /// <summary>
         /// Gets a project based on optional filters.
-        /// Current implementation supports only 1 key on the filter param!
+        /// All parameters are optional except for the BaseContentPage: GetProjectsBasedOnFilter(this);
         /// </summary>
         /// <param name="studyGroups">studyGroups can be a list of numerous studygroups ex: helse, idrettsfag, datateknologi </param>
         /// <param name="sortBy">published - oldest to newest
-        ///                      -published - newest to oldest</param>
-        /// <param name="filter">A dictionary where key can be: titles (values:title of the project), types (values: virksomhet, faglærer). 
+        ///                      -published - newest to oldest
+        ///                      expirydate - descending order
+        ///                      -expirydate - ascending order
+        /// </param>
+        /// <param name="filter">A dictionary where key can be: titles (values:title of the project), types (values: virksomhet, faglærer, etc...),
+        ///                      courses (values: "IS-304" "DAT-304" osv). 
         ///                      Supports only 1 key at this current implementation!</param>
         /// <returns></returns>
-        public async Task<IEnumerable<Project>> GetProjectsBasedOnFilter(List<string> studyGroups = null, 
+        public async Task<IEnumerable<Project>> GetProjectsBasedOnFilter(BaseContentPage page, List<string> studyGroups = null,
             string sortBy = "", Dictionary<string, string> filter = null)
         {
-            // Projects: types, title, sortby=published (oldest to newest), sortby=-published (newest to oldest)
-            // Extra for jobs: 
-            // jobs: types, Location, og sorterting sortby=expirydate (descending order), sortby=-expirydate (ascending order)
-            // api/v1/jobs?locations=vestagder&sortby=published  elste til nyeste
-            // api/v1/jobs?locations=vestagder&sortby=-published nyeste til eldste
-
-            //api/v1/projects?studygroups=datateknologi&sortby=published
-
+            //string adress = "http://kompetansetorgetserver1.azurewebsites.net/api/v1/projects";
             string queryParams = "";
-            if (studyGroups != null) {
+            if (studyGroups != null)
+            {
                 System.Diagnostics.Debug.WriteLine("GetProjectsBasedOnFilter - studyGroups.Count(): " + studyGroups.Count());
                 for (int i = 0; i < studyGroups.Count(); i++)
                 {
@@ -158,21 +159,24 @@ namespace KompetansetorgetXamarin.Controllers
                 }
             }
 
-            if (filter != null && filter.Count == 1)
+            if (filter != null)
             {
-                if (string.IsNullOrWhiteSpace(queryParams))
+                System.Diagnostics.Debug.WriteLine("GetProjectsBasedOnFilter - amount of filters: " + filter.Keys.ToArray().Length);
+                foreach (var category in filter.Keys.ToArray())
                 {
-                    queryParams = "?";
+                    if (string.IsNullOrWhiteSpace(queryParams))
+                    {
+                        queryParams = "?";
+                    }
+                    else queryParams += "&";
+                    // removes whitespaces from a potential user typed parameters like title search.
+                    // And replaces them with +
+                    string value = filter[category].Replace(" ", "+");
+                    queryParams += category + "=" + value;
                 }
-                else queryParams += "&";
-                string category = filter.Keys.ToArray()[0];
-                // removes whitespaces from a potential user typed parameters like title search.
-                // And replaces them with +
-                string value = filter[category].Replace(" ", "+");
-                queryParams += category + "=" + value;
             }
 
-            if (string.IsNullOrWhiteSpace(sortBy))
+            if (!string.IsNullOrWhiteSpace(sortBy))
             {
                 if (string.IsNullOrWhiteSpace(queryParams))
                 {
@@ -183,28 +187,55 @@ namespace KompetansetorgetXamarin.Controllers
             }
 
             Uri url = new Uri(Adress + queryParams);
-            System.Diagnostics.Debug.WriteLine("GetProjectsBasedOnFilter - adress: " + Adress);
+            System.Diagnostics.Debug.WriteLine("GetProjectsBasedOnFilter - url: " + url.ToString());
+
+            StudentsController sc = new StudentsController();
+
+            string accessToken = sc.GetStudentAccessToken();
+
+            if (string.IsNullOrWhiteSpace(accessToken))
+            {
+                page.Authorized = false;
+                return null;
+            }
+
+
             var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", accessToken);
+
             string jsonString = null;
+            IEnumerable<Project> projects = null;
             try
             {
                 var response = await client.GetAsync(url).ConfigureAwait(false);
-                System.Diagnostics.Debug.WriteLine("GetProjectsBasedOnFilter response " + response.StatusCode.ToString());
-                jsonString = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    System.Diagnostics.Debug.WriteLine("StudentsController - UpdateStudyGroupStudent failed due to lack of Authorization");
+                    page.Authorized = false;
+                }
 
+                else if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    System.Diagnostics.Debug.WriteLine("GetProjectsBasedOnFilter response " + response.StatusCode.ToString());
+                    jsonString = await response.Content.ReadAsStringAsync();
+                    projects = DeserializeMany(jsonString);
+                }
+
+                else
+                {
+                    projects = GetProjectsFromDbBasedOnFilter(studyGroups, filter);
+                }
+                return projects;
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine("ProjectController - GetProjectsBasedOnFilter: await client.GetAsync(\"url\") Failed");
-                System.Diagnostics.Debug.WriteLine("ProjectController - GetProjectsBasedOnFilter: Exception msg: " + e.Message);
-                System.Diagnostics.Debug.WriteLine("ProjectController - GetProjectsBasedOnFilter: Stack Trace: \n" + e.StackTrace);
-                System.Diagnostics.Debug.WriteLine("ProjectController - GetProjectsBasedOnFilter: End Of Stack Trace");
+                System.Diagnostics.Debug.WriteLine("ProjectsController - GetProjectsBasedOnFilter: await client.GetAsync(\"url\") Failed");
+                System.Diagnostics.Debug.WriteLine("ProjectsController - GetProjectsBasedOnFilter: Exception msg: " + e.Message);
+                System.Diagnostics.Debug.WriteLine("ProjectsController - GetProjectsBasedOnFilter: Stack Trace: \n" + e.StackTrace);
+                System.Diagnostics.Debug.WriteLine("ProjectsController - GetProjectsBasedOnFilter: End Of Stack Trace");
                 return null;
                 // TODO Implement local db query for cached data.
             }
-
-            IEnumerable<Project> projects = DeserializeMany(jsonString);
-            return projects;
         }
 
         /// <summary>
@@ -392,6 +423,266 @@ namespace KompetansetorgetXamarin.Controllers
         }
 
         /// <summary>
+        ///  Used if the web api is unavailable (not 401)
+        /// </summary>
+        /// <param name="studyGroups">studyGroups can be a list of numerous studygroups ex: helse, idrettsfag, datateknologi </param>
+        /// <param name="filter">A dictionary where key can be: titles (values:title of the job), types (values: faglærer, virksomhet, etc...),
+        ///                      courses (values: IS-304, IS-201).
+        ///                      </param>
+        /// <returns></returns>
+        public IEnumerable<Project> GetProjectsFromDbBasedOnFilter(List<string> studyGroups = null, Dictionary<string, string> filter = null)
+        {
+            string query = "SELECT * FROM Project";
+
+            if (studyGroups != null && filter == null)
+            {
+                for (int i = 0; i < studyGroups.Count; i++)
+                {
+                    if (i == 0)
+                    {
+                        query += " INNER JOIN StudyGroupProject ON Project.uuid = StudyGroupProject.ProjectUuid "
+                                 + "INNER JOIN StudyGroup ON StudyGroupProject.StudyGroupId = StudyGroup.id "
+                                 + "WHERE StudyGroup.id = '" + studyGroups[i] + "'";
+                    }
+                    else
+                    {
+                        query += " OR StudyGroup.id = '" + studyGroups[i] + "'";
+                    }
+                }
+
+                System.Diagnostics.Debug.WriteLine("if (studyGroups != null && filter == null)");
+                System.Diagnostics.Debug.WriteLine("query: " + query);
+                lock (DbContext.locker)
+                {
+                    return Db.Query<Project>(query);
+                }
+            }
+
+            if (filter != null && studyGroups == null)
+            {
+                string joins = "";
+                string whereAnd = "";
+
+                string prepValue = "";
+
+                foreach (var filterType in filter.Keys.ToArray())
+                {
+                    string value = filter[filterType];
+
+                    if (filterType == "titles")
+                    {
+                        prepValue = filter[filterType];
+
+                        if (string.IsNullOrWhiteSpace(whereAnd))
+                        {
+                            whereAnd += " WHERE Project.title = ?";
+                        }
+                        else
+                        {
+                            whereAnd += " AND Project.title = ?";
+                        }
+                    }
+
+                    if (filterType == "types")
+                    {
+                        joins += " INNER JOIN JobTypeProject ON Project.uuid = JobTypeProject.ProjectUuid"
+                               + " INNER JOIN JobType ON JobTypeProject.JobTypeId = JobType.id";
+
+                        if (string.IsNullOrWhiteSpace(whereAnd))
+                        {
+                            whereAnd += " WHERE JobType.id = '" + value + "'";
+                        }
+                        else
+                        {
+                            whereAnd += " AND JobType.id = '" + value + "'";
+                        }
+                    }
+
+                    if (filterType == "courses")
+                    {
+                        joins += " INNER JOIN CourseProject ON Project.uuid = CourseProject.ProjectUuid"
+                               + " INNER JOIN Course ON CourseProject.CourseId = Course.id";
+
+                        if (string.IsNullOrWhiteSpace(whereAnd))
+                        {
+                            whereAnd += " WHERE Course.id = '" + value + "'";
+                        }
+                        else
+                        {
+                            whereAnd += " AND Course.id = '" + value + "'";
+                        }
+                    }
+                }
+
+                query += joins + whereAnd;
+                System.Diagnostics.Debug.WriteLine("query: " + query);
+
+                if (string.IsNullOrWhiteSpace(prepValue))
+                {
+                    lock (DbContext.locker)
+                    {
+                        return Db.Query<Project>(query);
+                    }
+                }
+
+                lock (DbContext.locker)
+                {
+                    return Db.Query<Project>(query, prepValue);
+                }
+            }
+
+            if (filter != null && studyGroups != null)
+            {
+
+                string joins = "";
+                string whereAnd = "";
+                string prepValue = "";
+
+                foreach (var filterType in filter.Keys.ToArray())
+                {
+                    if (filterType == "titles")
+                    {
+                        prepValue = filter[filterType];
+
+                        if (string.IsNullOrWhiteSpace(whereAnd))
+                        {
+                            whereAnd += " WHERE Project.title = ?";
+                        }
+                        else
+                        {
+                            whereAnd += " AND Project.title = ?";
+                        }
+                    }
+
+                    string value = filter[filterType];
+                    if (filterType == "types")
+                    {
+                        joins += " INNER JOIN JobTypeProject ON Project.uuid = JobTypeProject.ProjectUuid"
+                               + " INNER JOIN JobType ON JobTypeProject.JobTypeId = JobType.id";
+                        // + " WHERE JobType.id = ?";
+
+                        if (string.IsNullOrWhiteSpace(whereAnd))
+                        {
+                            whereAnd += " WHERE JobType.id = '" + value + "'";
+                        }
+                        else
+                        {
+                            whereAnd += " AND JobType.id = '" + value + "'";
+                        }
+
+                        /*
+                        System.Diagnostics.Debug.WriteLine("if (filterType == \"types\")");
+                        System.Diagnostics.Debug.WriteLine("query before prepstatement insert:" + query);
+                        lock (DbContext.locker)
+                        {
+                            return Db.Query<Project>(query, value);
+                        }
+                        */
+                    }
+
+                    if (filterType == "courses")
+                    {
+                        joins += " INNER JOIN CourseProject ON Project.uuid = CourseProject.ProjectUuid"
+                               + " INNER JOIN Course ON CourseProject.CourseId = Course.id";
+                        //+ " WHERE Course.id = ?";
+
+                        if (string.IsNullOrWhiteSpace(whereAnd))
+                        {
+                            whereAnd += " WHERE Course.id = '" + value + "'";
+                        }
+                        else
+                        {
+                            whereAnd += " AND Course.id = '" + value + "'";
+                        }
+
+                        /*
+                        System.Diagnostics.Debug.WriteLine("if (filterType == \"courses\")");
+                        System.Diagnostics.Debug.WriteLine("query before prepstatement insert: " + query);
+                        lock (DbContext.locker)
+                        {
+                            return Db.Query<Project>(query, value);
+                        }
+                        */
+                    }
+                }
+
+                for (int i = 0; i < studyGroups.Count; i++)
+                {
+                    if (i == 0)
+                    {
+                        if (studyGroups.Count > 1)
+                        {
+                            joins += " INNER JOIN StudyGroupProject ON Project.uuid = StudyGroupProject.ProjectUuid "
+                                     + "INNER JOIN StudyGroup ON StudyGroupProject.StudyGroupId = StudyGroup.id ";
+
+                            if (string.IsNullOrWhiteSpace(whereAnd))
+                            {
+                                whereAnd += " WHERE (StudyGroup.id = '" + studyGroups[i] + "'";
+                            }
+                            else
+                            {
+                                whereAnd += " AND (StudyGroup.id = '" + studyGroups[i] + "'";
+                            }
+                            //+ "WHERE (StudyGroup.id = '" + studyGroups[i] + "'";
+                        }
+                        else
+                        {
+                            joins += " INNER JOIN StudyGroupProject ON Project.uuid = StudyGroupProject.ProjectUuid "
+                                     + "INNER JOIN StudyGroup ON StudyGroupProject.StudyGroupId = StudyGroup.id ";
+
+                            if (string.IsNullOrWhiteSpace(whereAnd))
+                            {
+                                whereAnd += " WHERE StudyGroup.id = '" + studyGroups[i] + "'";
+                            }
+
+                            else
+                            {
+                                whereAnd = " AND StudyGroup.id = '" + studyGroups[i] + "'";
+                            }
+
+                        }
+                    }
+
+                    else if (i != 0 && i + 1 == studyGroups.Count)
+                    {
+                        whereAnd += " OR StudyGroup.id = '" + studyGroups[i] + "')";
+                    }
+                    else
+                    {
+                        whereAnd += " OR StudyGroup.id = '" + studyGroups[i] + "'";
+                    }
+                }
+
+                System.Diagnostics.Debug.WriteLine("if(filter != null && studyGroups != null)");
+                System.Diagnostics.Debug.WriteLine("query: " + query + joins + whereAnd);
+                System.Diagnostics.Debug.WriteLine("full query: " + query + joins + whereAnd);
+
+
+                query += joins + whereAnd;
+
+
+                if (string.IsNullOrWhiteSpace(prepValue))
+                {
+                    lock (DbContext.locker)
+                    {
+                        return Db.Query<Project>(query);
+                    }
+                }
+
+                return Db.Query<Project>(query, prepValue);
+
+            }
+
+            System.Diagnostics.Debug.WriteLine("Filter and studyGroups is null");
+            System.Diagnostics.Debug.WriteLine("query: " + query);
+            // if both studyGroups and filter is null
+            lock (DbContext.locker)
+            {
+                return Db.Query<Project>(query);
+            }
+        }
+
+        /// <summary>
         /// Deserializes a singular Project with childrem. 
         /// This method is not fully completed and should be used with caution.
         /// </summary>
@@ -406,8 +697,9 @@ namespace KompetansetorgetXamarin.Controllers
 
             Project p = new Project();
             p.companies = new List<Company>();
-
-            CompaniesController cp = new CompaniesController();
+            p.courses = new List<Course>();
+            p.studyGroups = new List<StudyGroup>();
+            p.jobTypes = new List<JobType>();
 
             foreach (var key in keys)
             {
@@ -424,6 +716,12 @@ namespace KompetansetorgetXamarin.Controllers
                 {
                     p.title = dict[key].ToString();
                 }
+
+                if (key.Equals("description"))
+                {
+                    p.description = dict[key].ToString();
+                }
+
                 if (key.Equals("webpage"))
                 {
                     p.webpage = dict[key].ToString();
@@ -450,27 +748,137 @@ namespace KompetansetorgetXamarin.Controllers
                         System.Diagnostics.Debug.WriteLine("foreach initiated");
                         Dictionary<string, object> companyDict = JsonConvert.DeserializeObject<Dictionary<string, object>>(comp.ToString());
                         Company company = cc.DeserializeCompany(companyDict);
+                        System.Diagnostics.Debug.WriteLine("Deserialize: company.id: " + company.id);
                         p.companies.Add(company);
-                        System.Diagnostics.Debug.WriteLine("DeserializeOneProject: After p.companies.Add(company)");
+                        cc.UpdateCompany(company);
+                        System.Diagnostics.Debug.WriteLine("Deserialize: After j.companies.Add(company)");
 
+                        CompanyProject cp = new CompanyProject();
+                        cp.CompanyId = company.id;
+                        cp.ProjectUuid = dict["uuid"].ToString();
+
+                        lock (DbContext.locker)
+                        {
+
+                            //System.Diagnostics.Debug.WriteLine("Deserialize: query: " + query);
+                            var rowsAffected = Db.Query<CompanyProject>("Select * FROM CompanyProject WHERE CompanyProject.CompanyId = ?" +
+                                           " AND CompanyProject.ProjectUuid = ?", cp.CompanyId, cp.ProjectUuid).Count;
+                            System.Diagnostics.Debug.WriteLine("Deserialize: CompanyProject rowsAffected: " +
+                                                               rowsAffected);
+                            if (rowsAffected == 0)
+                            {
+                                // The item does not exists in the database so safe to insert
+                                Db.Insert(cp);
+                            }
+                        }
                     }
                 }
 
-                /*
+                
                 if (key.Equals("courses"))
                 {
-                    
-                    Same as companies implementation
-                    
-                }
 
-                if (key.Equals("studyGroups"))
+                    IEnumerable courses = (IEnumerable)dict[key];
+                    //Newtonsoft.Json.Linq.JArray'
+                    System.Diagnostics.Debug.WriteLine("location created");
+                    foreach (var course in courses)
+                    {
+                        System.Diagnostics.Debug.WriteLine("foreach initiated");
+                        Dictionary<string, object> courseDict = JsonConvert.DeserializeObject<Dictionary<string, object>>(course.ToString());
+
+                        Course co = new Course();
+                        if (courseDict.ContainsKey("id"))
+                        {
+
+                            co.id = courseDict["id"].ToString();
+                            System.Diagnostics.Debug.WriteLine("Course id: " + co.id);
+                        }
+
+                        if (courseDict.ContainsKey("name"))
+                        {
+                            co.name = courseDict["name"].ToString();
+                        }
+
+                        lock (DbContext.locker)
+                        {
+                            var rowsAffected = Db.Update(co);
+                            if (rowsAffected == 0)
+                            {
+                                // The item does not exists in the database so safe to insert
+                                Db.Insert(co);
+                            }
+                        }
+                        p.courses.Add(co);
+
+                        CourseProject cp = new CourseProject();
+                        cp.CourseId = co.id;
+                        cp.ProjectUuid = dict["uuid"].ToString();
+
+                        lock (DbContext.locker)
+                        {
+                            var rowsAffected =
+                                Db.Query<CourseProject>("Select * FROM CourseProject WHERE CourseProject.CourseId = ?" +
+                                                      " AND CourseProject.ProjectUuid = ?", cp.CourseId, cp.ProjectUuid).Count;
+                            System.Diagnostics.Debug.WriteLine("Deserialize: CourseProject rowsAffected: " +
+                                                               rowsAffected);
+                            if (rowsAffected == 0)
+                            {
+                                // The item does not exists in the database so safe to insert
+                                Db.Insert(cp);
+                            }
+                        }
+                    }
+
+                }
+                
+               if (key.Equals("studyGroups"))
                 {
-                    
-                    Same as companies implementation
-                    
-                }
+                    IEnumerable studyGroups = (IEnumerable)dict[key];
+                    //Newtonsoft.Json.Linq.JArray'
+                    System.Diagnostics.Debug.WriteLine("studyGroups created");
+                    foreach (var studyGroup in studyGroups)
+                    {
+                        System.Diagnostics.Debug.WriteLine("foreach initiated");
+                        Dictionary<string, object> studyGroupDict = JsonConvert.DeserializeObject<Dictionary<string, object>>(studyGroup.ToString());
 
+                        
+                        StudyGroup sg = new StudyGroup();
+                        if (studyGroupDict.ContainsKey("id"))
+                        {
+                            sg.id = studyGroupDict["id"].ToString();
+                        }
+
+                        if (studyGroupDict.ContainsKey("name"))
+                        {
+                            sg.name = studyGroupDict["name"].ToString();
+                        }
+
+                        p.studyGroups.Add(sg);
+
+                        System.Diagnostics.Debug.WriteLine("StudyGroupProject created");
+                        StudyGroupProject sgp = new StudyGroupProject();
+                        sgp.StudyGroupId = sg.id;
+                        sgp.ProjectUuid = dict["uuid"].ToString();
+                        System.Diagnostics.Debug.WriteLine("StudyGroupProject before insert");
+
+                        lock (DbContext.locker)
+                        {
+                            var rowsAffected =
+                                Db.Query<StudyGroupProject>(
+                                    "Select * FROM StudyGroupProject WHERE StudyGroupProject.StudyGroupId = ?" +
+                                    " AND StudyGroupProject.ProjectUuid = ?", sgp.StudyGroupId, sgp.ProjectUuid).Count;
+                            System.Diagnostics.Debug.WriteLine("Deserialize: StudyGroupProject rowsAffected: " +
+                                                               rowsAffected);
+                            if (rowsAffected == 0)
+                            {
+                                // The item does not exists in the database so safe to insert
+                                Db.Insert(sgp);
+                            }
+                        }
+                        System.Diagnostics.Debug.WriteLine("StudyGroupProject after insert");
+                    }
+                }
+                /*
                 if (key.Equals("approvedCourses"))
                 {
                     
@@ -484,19 +892,64 @@ namespace KompetansetorgetXamarin.Controllers
                     Same as companies implementation
                     
                 }
-
+                */
                 if (key.Equals("jobTypes"))
                 {
-                    
-                    Same as companies implementation
-                    
+
+                    IEnumerable jobTypes = (IEnumerable)dict[key];
+                    //Newtonsoft.Json.Linq.JArray'
+                    System.Diagnostics.Debug.WriteLine("jobTypes created");
+                    foreach (var jobType in jobTypes)
+                    {
+                        System.Diagnostics.Debug.WriteLine("foreach initiated");
+                        Dictionary<string, object> jtDict = JsonConvert.DeserializeObject<Dictionary<string, object>>(jobType.ToString());
+
+                        JobType jt = new JobType();
+                        if (jtDict.ContainsKey("id"))
+                        {
+                            jt.id = jtDict["id"].ToString();
+                        }
+
+                        if (jtDict.ContainsKey("name"))
+                        {
+                            jt.name = jtDict["name"].ToString();
+                        }
+                        lock (DbContext.locker)
+                        {
+                            var rowsAffected = Db.Update(jt);
+                            if (rowsAffected == 0)
+                            {
+                                // The item does not exists in the database so safe to insert
+                                Db.Insert(jt);
+                            }
+                        }
+                        System.Diagnostics.Debug.WriteLine("before p.jobTypes.Add(jt);");
+                        p.jobTypes.Add(jt);
+
+                        JobTypeProject jtp = new JobTypeProject();
+                        jtp.JobTypeId = jt.id;
+                        jtp.ProjectUuid = dict["uuid"].ToString();
+
+                        lock (DbContext.locker)
+                        {
+                            var rowsAffected =
+                                Db.Query<JobTypeProject>("Select * FROM JobTypeProject WHERE JobTypeProject.JobTypeId = ?" +
+                                                      " AND JobTypeProject.ProjectUuid = ?", jtp.JobTypeId, jtp.ProjectUuid).Count;
+                            System.Diagnostics.Debug.WriteLine("DeserializeOneProjects: JobTypeProject rowsAffected: " +
+                                                               rowsAffected);
+                            if (rowsAffected == 0)
+                            {
+                                // The item does not exists in the database so safe to insert
+                                Db.Insert(jtp);
+                            }
+                        }
+                    }
                 }
-
-                */
-
             }
+            UpdateProject(p);
             return p;
         }
+
 
         /*
         public async void GetProjectsFromServer()
