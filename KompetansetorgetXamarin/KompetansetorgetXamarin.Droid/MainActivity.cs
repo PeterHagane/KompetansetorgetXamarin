@@ -27,6 +27,8 @@ namespace KompetansetorgetXamarin.Droid
             UAuth.Auth.auth = new UAuthImpl.Auth(this);
             LoadApplication(new App());
             // This check get run once every startup
+            
+
             if (IsPlayServicesAvailable())
             {
                 var intent = new Intent(this, typeof(RegistrationIntentService));
@@ -38,7 +40,8 @@ namespace KompetansetorgetXamarin.Droid
         }
 
         public void SetActionBar() {
-
+            //var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
+            //SetActionBar(toolbar);
             ActionBar.SetIcon(Android.Resource.Color.Transparent);
         }
 

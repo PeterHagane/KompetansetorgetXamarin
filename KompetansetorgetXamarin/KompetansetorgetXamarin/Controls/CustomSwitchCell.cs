@@ -27,7 +27,7 @@ namespace KompetansetorgetXamarin.Controls
             NameLabel.HorizontalOptions = LayoutOptions.FillAndExpand;
             NameLabel.FontSize = Device.GetNamedSize(NamedSize.Default, typeof(Label));
             NameLabel.LineBreakMode = LineBreakMode.NoWrap;
-            NameLabel.TextColor = Color.White;
+            NameLabel.TextColor = Color.Black;
             NameLabel.SetBinding(Label.TextProperty, "Name");
             stack.Children.Add(NameLabel);
 

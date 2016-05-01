@@ -5,7 +5,18 @@
              xmlns:local="clr-namespace:KompetansetorgetXamarin.Controls;assembly=KompetansetorgetXamarin">
 
   <local:BaseContentPage Padding="0,0,0,0">
-    <ContentPage.Padding>
+    
+    
+    <ContentPage.ToolbarItems>
+      <ToolbarItem Name="Log Out" Command="{Binding LogOut}" Order="Primary" Priority="0">
+        <ToolbarItem.Icon>
+          <OnPlatform x:TypeArguments="FileImageSource"
+                      Android="uia_logo.png" />
+        </ToolbarItem.Icon>
+      </ToolbarItem>
+    </ContentPage.ToolbarItems>
+
+    <ContentPage.Padding> 
       <OnPlatform x:TypeArguments="Thickness" iOS="0,0,0,0" Android="0,0,0,0" />
     </ContentPage.Padding>
 

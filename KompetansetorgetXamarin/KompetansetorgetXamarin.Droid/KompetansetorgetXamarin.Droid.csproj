@@ -157,9 +157,13 @@
     <AndroidResource Include="Resources\drawable-xhdpi\kompetansetorget_logo_dark.9.png" />
     <AndroidResource Include="Resources\drawable-xxhdpi\kompetansetorget_logo_dark.9.png" />
     <Content Include="Resources\drawable-hdpi\KTbanner.jpg" />
+    <AndroidResource Include="Resources\drawable-hdpi\uia_logo.png" />
     <Content Include="Resources\drawable-xhdpi\KTbanner.jpg" />
+    <AndroidResource Include="Resources\drawable-xhdpi\uia_logo.png" />
     <Content Include="Resources\drawable-xxhdpi\KTbanner.jpg" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\uia_logo.png" />
     <Content Include="Resources\drawable\KTbanner.jpg" />
+    <AndroidResource Include="Resources\drawable\uia_logo.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\KompetansetorgetXamarin\KompetansetorgetXamarin.csproj">
