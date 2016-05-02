@@ -27,15 +27,7 @@ namespace KompetansetorgetXamarin.Controllers
             Adress += "v1/students";
         }
 
-        /// <summary>
-        /// WARNING, this is a hack workaround.
-        /// How to use:
-        /// 1: Call UpdateStudyGroupStudent before calling this method
-        /// 2: Check BaseContentPage.Authorized before 
-        /// 3. Call this method, but check for null. 
-        /// If this list is null and Authorized is true then communication with server has failed.
-        /// </summary>
-        public List<StudyGroup> StudyGroupStudentId { get; set; }
+
 
         /// <summary>
         /// Inserts the project and its respective children (only Company and CompanyProject) 
@@ -160,9 +152,9 @@ namespace KompetansetorgetXamarin.Controllers
                 {
                     Student student = Db.Get<Student>(username);
                     List<Device> devices = GetAllDevicesRelatedToStudent(student);
-                    List<StudyGroup> studyGroups = GetAllStudyGroupsRelatedToStudent(student);
+                    //List<StudyGroup> studyGroups = GetAllStudyGroupsRelatedToStudent(student);
                     student.devices = devices;
-                    student.studyGroup = studyGroups;
+                    //student.studyGroup = studyGroups;
                     return student;
                 }
             }
@@ -188,17 +180,6 @@ namespace KompetansetorgetXamarin.Controllers
                                         "Where Device.username = ?", student.username);
             }
         }
-
-
-
-
-        /*
-        public bool UpdateOAuthToken(string accessToken)
-        {
-            // IMPLEMENT
-            return false;
-        }
-        */
 
         /// <summary>
         /// Gets the students accessToken.
@@ -280,6 +261,7 @@ namespace KompetansetorgetXamarin.Controllers
                 }
             }
 
+            /*
             if (student.studyGroup != null)
             {
                 
@@ -306,7 +288,7 @@ namespace KompetansetorgetXamarin.Controllers
                     }
                 }
             }
-
+            */
             try
             {
                 lock (DbContext.locker)
@@ -342,40 +324,21 @@ namespace KompetansetorgetXamarin.Controllers
             }
         }
 
-        public void DeleteStudentWithChilds(Student student)
-        {
-            if (CheckIfStudentExist(student.username))
-            {
-                DevicesController dc = new DevicesController();
-                foreach (Device d in student.devices)
-                {
-                    dc.DeleteDevice(d);
-                }
-                
-                lock (DbContext.locker)
-                {
-                    System.Diagnostics.Debug.WriteLine("StudentsController - DeleteStudentWithChilds: Before delete.");
-                    Db.Delete<Student>(student.username);
-                    System.Diagnostics.Debug.WriteLine("StudentsController - DeleteStudentWithChilds: After delete.");
-                }
-            }
-        }
-
         /// <summary>
-        /// Creates a list of the Ids of the studygroups used for push notifications
+        /// Gets the Students StudyGroups used for push notifications from the server.
         /// </summary>
         /// <param name="page"></param>
         /// <returns></returns>
-        public async Task UpdateStudyGroupStudent(BaseContentPage page)
+        public async Task<List<StudyGroup>> GetStudentsStudyGroupFromServer(BaseContentPage page)
         {
             Student student = GetStudent();
 
             if (student == null)
             {
-                return;
+                page.Authorized = false;
+                return null;
             }
 
-           
             string encodedUsername = Base64Encode(student.username);
             Uri url = new Uri(Adress + "/" + encodedUsername);
             
@@ -385,7 +348,7 @@ namespace KompetansetorgetXamarin.Controllers
             if (accessToken == null)
             {
                 page.Authorized = false;
-                return;
+                return null;
             }
 
             var client = new HttpClient();
@@ -395,12 +358,11 @@ namespace KompetansetorgetXamarin.Controllers
             try
             {
                 var response = await client.GetAsync(url).ConfigureAwait(false);
-                // doesnt activate even if unauthorized, so fix this if. 21:35
                 if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
                     System.Diagnostics.Debug.WriteLine("StudentsController - UpdateStudyGroupStudent failed due to lack of Authorization");
                     page.Authorized = false;
-                    return;
+                    return null;
                 }
                 System.Diagnostics.Debug.WriteLine("UpdateStudyGroupStudent response " + response.StatusCode.ToString());
                 jsonString = await response.Content.ReadAsStringAsync();
@@ -411,17 +373,180 @@ namespace KompetansetorgetXamarin.Controllers
                 System.Diagnostics.Debug.WriteLine("StudentsController - UpdateStudyGroupStudent: Exception msg: " + e.Message);
                 System.Diagnostics.Debug.WriteLine("StudentsController - UpdateStudyGroupStudent: Stack Trace: \n" + e.StackTrace);
                 System.Diagnostics.Debug.WriteLine("StudentsController - UpdateStudyGroupStudent: End Of Stack Trace");
-                return;
+                return null;
             }
 
             if (jsonString != null)
             {
-                StudyGroupStudentId = ExtractStudyGroupId(jsonString);
+                return ExtractStudyGroupsFromJson(jsonString);
                 //DeleteAllStudyGroupStudent();
                 //CreateStudyGroupStudents(student.username, studyGroupIds);
             }
+            return null;
         }
 
+        /// <summary>
+        /// Posts the Students StudyGroups used for push notifications to the server.
+        /// </summary>
+        /// <param name="page"></param>
+        /// <returns></returns>
+        public async Task<bool> PostStudentsStudyGroupToServer(BaseContentPage page, List<StudyGroup> studyGroups)
+        {
+            /*
+            Student student = GetStudent();
+            string accessToken = GetStudentAccessToken();
+            if (student == null || accessToken == null)
+            {
+                page.Authorized = false;
+                return false;
+            }
+            */
+            string jsonString = "";
+            foreach (var studyGroup in studyGroups)
+            {
+                if (string.IsNullOrWhiteSpace(jsonString))
+                {
+                    jsonString = "{\"studygroups\":[{\"id\":\"" + studyGroup.id + "\"}";
+                }
+
+                else
+                {
+                    jsonString += ",{\"id\":\"" + studyGroup.id + "\"}";
+                }
+            }
+            jsonString += "]}";
+            // {"studygroups":[{"id":"idrettsfag"},{"id":"datateknologi"}]}
+            // {"studyGroups":[{"id":"helse"},{"id":"ingeniør"},{"id":"samfunnsfag"}]} 
+            System.Diagnostics.Debug.WriteLine("StudentsController - PostStudentsStudyGroupToServer jsonString: " + jsonString);
+
+            string encodedUsername = Base64Encode("setervang@gmail.com");
+            //string encodedUsername = Base64Encode(student.username);
+            Uri url = new Uri(Adress + "/" + encodedUsername);
+            System.Diagnostics.Debug.WriteLine("StudentsController - PostStudentsStudyGroupToServer uri: " + url.ToString());
+
+            var client = new HttpClient();
+            //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", accessToken);         
+
+            var content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+            try
+            {
+                var response = await client.PostAsync(url, content);
+                System.Diagnostics.Debug.WriteLine("PostStudentsStudyGroupToServer response " + response.StatusCode.ToString());
+
+                //var response = await client.PostAsJsonAsync(); //.ConfigureAwait(false);
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    return true;
+                }
+
+                if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    System.Diagnostics.Debug.WriteLine("StudentsController - PostStudentsStudyGroupToServer failed due to lack of Authorization");
+                    page.Authorized = false;
+                }
+
+                // response.StatusCode is either unauthorized or another failed status.
+                return false;
+
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine("StudentsController - PostStudentsStudyGroupToServer: await client.PostAsJsonAsync(url, jsonString) Failed");
+                System.Diagnostics.Debug.WriteLine("StudentsController - PostStudentsStudyGroupToServer: Exception msg: " + e.Message);
+                System.Diagnostics.Debug.WriteLine("StudentsController - PostStudentsStudyGroupToServer: Stack Trace: \n" + e.StackTrace);
+                System.Diagnostics.Debug.WriteLine("StudentsController - PostStudentsStudyGroupToServer: End Of Stack Trace");
+                return false;
+            }     
+        }
+
+        /// <summary>
+        /// Extracts the StudyGroup ids from a json string, then builds a list from those ids by querying the local database. 
+        /// </summary>
+        /// <param name="jsonString"></param>
+        /// <returns></returns>
+        private List<StudyGroup> ExtractStudyGroupsFromJson(string jsonString)
+        {
+            Dictionary<string, object> dict = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonString);
+            System.Diagnostics.Debug.WriteLine("DeserializeApiData. Printing Key Value:");
+
+            string[] keys = dict.Keys.ToArray();
+            List<StudyGroup> studyGroupList = new List<StudyGroup>();
+
+            StudyGroupsController sgc = new StudyGroupsController();
+
+            foreach (var key in keys)
+            {
+                System.Diagnostics.Debug.WriteLine("key: " + key);
+                System.Diagnostics.Debug.WriteLine("value: " + dict[key].ToString());
+
+                if (key.Equals("studyGroups"))
+                {
+                    IEnumerable studyGroups = (IEnumerable)dict[key];
+                    foreach (var studyGroup in studyGroups)
+                    {
+                        Dictionary<string, object> studyGroupDict =
+                            JsonConvert.DeserializeObject<Dictionary<string, object>>(studyGroup.ToString());
+
+                        string id = studyGroupDict["id"].ToString();
+                        studyGroupList.Add(sgc.GetStudygroup(id));
+                    }
+                    return studyGroupList;
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Base64Encodes a string, should be used on all query strings that 
+        /// can contain special characters not suitable for in a url adress.  
+        /// </summary>
+        /// <param name="plainText"></param>
+        /// <returns></returns>
+        public static string Base64Encode(string plainText)
+        {
+            var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
+            return System.Convert.ToBase64String(plainTextBytes);
+        }
+
+        /// <summary>
+        /// Deletes all students from the local database.
+        /// </summary>
+        public void DeleteAllStudents()
+        {
+            lock (DbContext.locker)
+            {
+                System.Diagnostics.Debug.WriteLine("StudentsController - DeleteAllStudents: Before delete.");
+                Db.Execute("delete from " + "Student");
+                System.Diagnostics.Debug.WriteLine("StudentsController - DeleteAllStudents: After delete.");
+            }
+        }
+
+        /// <summary>
+        /// Deletes a student and its related devices.
+        /// </summary>
+        /// <param name="student"></param>
+        public void DeleteStudentWithChilds(Student student)
+        {
+            if (CheckIfStudentExist(student.username))
+            {
+                DevicesController dc = new DevicesController();
+                foreach (Device d in student.devices)
+                {
+                    dc.DeleteDevice(d);
+                }
+
+                lock (DbContext.locker)
+                {
+                    System.Diagnostics.Debug.WriteLine("StudentsController - DeleteStudentWithChilds: Before delete.");
+                    Db.Delete<Student>(student.username);
+                    System.Diagnostics.Debug.WriteLine("StudentsController - DeleteStudentWithChilds: After delete.");
+                }
+            }
+        }
+
+        /*
+
+        [Obsolete("CreateStudyGroupStudents is deprecated, StudyGroupStudent should not be stored on client anymore.")]
         private void CreateStudyGroupStudents(string username, List<string> studyGroupIds)
         {
             foreach (var id in studyGroupIds)
@@ -436,38 +561,46 @@ namespace KompetansetorgetXamarin.Controllers
                 }
             }
         }
-
-        private List<StudyGroup> ExtractStudyGroupId(string jsonString)
+        
+        /// <summary>
+        /// Gets a list of all studyGroups that are related to the student
+        /// </summary>
+        /// <param name="student"></param>
+        /// <returns></returns>
+        [Obsolete("GetAllStudyGroupsRelatedToStudent is deprecated, StudyGroupStudent should not be stored on client anymore.")]
+        public List<StudyGroup> GetAllStudyGroupsRelatedToStudent(Student student)
         {
-            Dictionary<string, object> dict = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonString);
-            System.Diagnostics.Debug.WriteLine("DeserializeApiData. Printing Key Value:");
-
-            string[] keys = dict.Keys.ToArray();
-            List<StudyGroup> studyGroupList = new List<StudyGroup>();
-
-            StudyGroupsController sgc = new StudyGroupsController();
-             
-            foreach (var key in keys)
+            lock (DbContext.locker)
             {
-                System.Diagnostics.Debug.WriteLine("key: " + key);
-                System.Diagnostics.Debug.WriteLine("value: " + dict[key].ToString());
-
-                if (key.Equals("studyGroups"))
-                {
-                    IEnumerable studyGroups = (IEnumerable)dict[key];
-                    foreach (var studyGroup in studyGroups)
-                    {
-                        Dictionary<string, object> studyGroupDict =
-                            JsonConvert.DeserializeObject<Dictionary<string, object>>(studyGroup.ToString());
-
-                        studyGroupList.Add(sgc.GetStudygroup(studyGroupDict["id"].ToString()));
-                    }
-                    return studyGroupList;
-                }
-                
+                return Db.Query<StudyGroup>("SELECT * FROM StudyGroup" +
+                                        " INNER JOIN StudyGroupStudent ON StudyGroup.id = StudyGroupStudent.StudyGroupId" +
+                                        " WHERE StudyGroupStudent.StudentUsername = ?", student.username);
             }
-            return null;
         }
+
+        [Obsolete("ExtractStudyGroupId is deprecated, StudyGroupStudent should not be stored on client anymore.")]
+        public void DeleteAllStudyGroupStudent()
+        {
+            lock (DbContext.locker)
+            {
+                System.Diagnostics.Debug.WriteLine("StudentsController - DeleteAllStudyGroupStudent: Before delete.");
+                Db.Execute("delete from " + "StudyGroupStudent");
+                System.Diagnostics.Debug.WriteLine("StudentsController - DeleteAllStudyGroupStudent: After delete.");
+            }
+        }
+
+        */
+        /*
+        /// <summary>
+        /// WARNING, this is a hack workaround.
+        /// How to use:
+        /// 1: Call UpdateStudyGroupStudent before calling this method
+        /// 2: Check BaseContentPage.Authorized before 
+        /// 3. Call this method, but check for null. 
+        /// If this list is null and Authorized is true then communication with server has failed.
+        /// </summary>
+        */
+        //public List<StudyGroup> StudyGroupStudentId { get; set; }
 
         /*
         private List<string> ExtractStudyGroupId(string jsonString)
@@ -494,52 +627,11 @@ namespace KompetansetorgetXamarin.Controllers
                     }
                     return idList;
                 }
-                
+
             }
             return null;
         }
 
         */
-
-        public static string Base64Encode(string plainText)
-        {
-            var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
-            return System.Convert.ToBase64String(plainTextBytes);
-        }
-
-        /// <summary>
-        /// Gets a list of all studyGroups that are related to the student
-        /// </summary>
-        /// <param name="student"></param>
-        /// <returns></returns>
-        public List<StudyGroup> GetAllStudyGroupsRelatedToStudent(Student student)
-        {
-            lock (DbContext.locker)
-            {
-                return Db.Query<StudyGroup>("SELECT * FROM StudyGroup" +
-                                        " INNER JOIN StudyGroupStudent ON StudyGroup.id = StudyGroupStudent.StudyGroupId" +
-                                        " WHERE StudyGroupStudent.StudentUsername = ?", student.username);
-            }
-        }
-
-        public void DeleteAllStudents()
-        {
-            lock (DbContext.locker)
-            {
-                System.Diagnostics.Debug.WriteLine("StudentsController - DeleteAllStudents: Before delete.");
-                Db.Execute("delete from " + "Student");
-                System.Diagnostics.Debug.WriteLine("StudentsController - DeleteAllStudents: After delete.");
-            }
-        }
-
-        public void DeleteAllStudyGroupStudent()
-        {
-            lock (DbContext.locker)
-            {
-                System.Diagnostics.Debug.WriteLine("StudentsController - DeleteAllStudyGroupStudent: Before delete.");
-                Db.Execute("delete from " + "StudyGroupStudent");
-                System.Diagnostics.Debug.WriteLine("StudentsController - DeleteAllStudyGroupStudent: After delete.");
-            }
-        }
     }
 }

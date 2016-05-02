@@ -268,7 +268,7 @@ namespace KompetansetorgetXamarin.Views
         private async void TestGetStudyGroupStudent_OnClicked(object sender, EventArgs e)
         {
             StudentsController sc = new StudentsController();
-            await sc.UpdateStudyGroupStudent(this);
+            List<StudyGroup> list = await sc.GetStudentsStudyGroupFromServer(this);
             // checks if still Authorized 
             if (!Authorized)
             {
@@ -278,7 +278,6 @@ namespace KompetansetorgetXamarin.Views
             else
             {
                 System.Diagnostics.Debug.WriteLine("TestGetStudyGroupStudent inside Else: Authorized:  " + Authorized);
-                var list = sc.StudyGroupStudentId;
                 if (list == null)
                 {
                     System.Diagnostics.Debug.WriteLine("Server communication failed");
@@ -292,7 +291,6 @@ namespace KompetansetorgetXamarin.Views
                     System.Diagnostics.Debug.WriteLine("name: " + sg.name);
                 }
             }
-
         }
 
         /// <summary>
@@ -533,5 +531,22 @@ namespace KompetansetorgetXamarin.Views
             }
         }
 
+        private async void TestPostStudentsStudyGroupToServer(object sender, EventArgs e)
+        {
+            List<StudyGroup> studyGroups = new List<StudyGroup>();
+            StudyGroup idrettsfag = new StudyGroup();
+            idrettsfag.id = "idrettsfag";
+            StudyGroup datateknologi = new StudyGroup();
+            datateknologi.id = "datateknologi";
+            studyGroups.Add(idrettsfag);
+            studyGroups.Add(datateknologi);
+
+
+            StudentsController sc = new StudentsController();
+            bool success = await sc.PostStudentsStudyGroupToServer(this, studyGroups);
+
+            System.Diagnostics.Debug.WriteLine(
+                "TestPostStudentsStudyGroupToServer: PostStudentsStudyGroupToServer success: " + success);
+        }
     }
 }
