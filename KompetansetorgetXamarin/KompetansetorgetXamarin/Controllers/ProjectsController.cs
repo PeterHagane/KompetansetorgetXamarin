@@ -779,39 +779,24 @@ namespace KompetansetorgetXamarin.Controllers
                         p.companies.Add(company);
                         cc.UpdateCompany(company);
                         System.Diagnostics.Debug.WriteLine("Deserialize: After j.companies.Add(company)");
+                        string projectUuid = dict["uuid"].ToString();
+                        cc.InsertCompanyProject(company.id, projectUuid);
 
-                        CompanyProject cp = new CompanyProject();
-                        cp.CompanyId = company.id;
-                        cp.ProjectUuid = dict["uuid"].ToString();
-
-                        lock (DbContext.locker)
-                        {
-
-                            //System.Diagnostics.Debug.WriteLine("Deserialize: query: " + query);
-                            var rowsAffected = Db.Query<CompanyProject>("Select * FROM CompanyProject WHERE CompanyProject.CompanyId = ?" +
-                                           " AND CompanyProject.ProjectUuid = ?", cp.CompanyId, cp.ProjectUuid).Count;
-                            System.Diagnostics.Debug.WriteLine("Deserialize: CompanyProject rowsAffected: " +
-                                                               rowsAffected);
-                            if (rowsAffected == 0)
-                            {
-                                // The item does not exists in the database so safe to insert
-                                Db.Insert(cp);
-                            }
-                        }
                     }
                 }
-
-                
+     
                 if (key.Equals("courses"))
                 {
 
                     IEnumerable courses = (IEnumerable)dict[key];
                     //Newtonsoft.Json.Linq.JArray'
+                    CoursesController cc = new CoursesController();
                     System.Diagnostics.Debug.WriteLine("location created");
                     foreach (var course in courses)
                     {
                         System.Diagnostics.Debug.WriteLine("foreach initiated");
-                        Dictionary<string, object> courseDict = JsonConvert.DeserializeObject<Dictionary<string, object>>(course.ToString());
+                        Dictionary<string, object> courseDict =
+                            JsonConvert.DeserializeObject<Dictionary<string, object>>(course.ToString());
 
                         Course co = new Course();
                         if (courseDict.ContainsKey("id"))
@@ -826,40 +811,16 @@ namespace KompetansetorgetXamarin.Controllers
                             co.name = courseDict["name"].ToString();
                         }
 
-                        lock (DbContext.locker)
-                        {
-                            var rowsAffected = Db.Update(co);
-                            if (rowsAffected == 0)
-                            {
-                                // The item does not exists in the database so safe to insert
-                                Db.Insert(co);
-                            }
-                        }
+                        cc.InsertCourse(co);
                         p.courses.Add(co);
-
-                        CourseProject cp = new CourseProject();
-                        cp.CourseId = co.id;
-                        cp.ProjectUuid = dict["uuid"].ToString();
-
-                        lock (DbContext.locker)
-                        {
-                            var rowsAffected =
-                                Db.Query<CourseProject>("Select * FROM CourseProject WHERE CourseProject.CourseId = ?" +
-                                                      " AND CourseProject.ProjectUuid = ?", cp.CourseId, cp.ProjectUuid).Count;
-                            System.Diagnostics.Debug.WriteLine("Deserialize: CourseProject rowsAffected: " +
-                                                               rowsAffected);
-                            if (rowsAffected == 0)
-                            {
-                                // The item does not exists in the database so safe to insert
-                                Db.Insert(cp);
-                            }
-                        }
+                        string projectUuid = dict["uuid"].ToString();
+                        cc.InsertCourseProject(co.id, projectUuid);
                     }
-
                 }
                 
                if (key.Equals("studyGroups"))
                 {
+                    StudyGroupsController sgc = new StudyGroupsController();
                     IEnumerable studyGroups = (IEnumerable)dict[key];
                     //Newtonsoft.Json.Linq.JArray'
                     System.Diagnostics.Debug.WriteLine("studyGroups created");
@@ -882,27 +843,9 @@ namespace KompetansetorgetXamarin.Controllers
 
                         p.studyGroups.Add(sg);
 
-                        System.Diagnostics.Debug.WriteLine("StudyGroupProject created");
-                        StudyGroupProject sgp = new StudyGroupProject();
-                        sgp.StudyGroupId = sg.id;
-                        sgp.ProjectUuid = dict["uuid"].ToString();
-                        System.Diagnostics.Debug.WriteLine("StudyGroupProject before insert");
+                        string projectUuid = dict["uuid"].ToString();
+                        sgc.InsertStudyGroupProject(sg.id, projectUuid);
 
-                        lock (DbContext.locker)
-                        {
-                            var rowsAffected =
-                                Db.Query<StudyGroupProject>(
-                                    "Select * FROM StudyGroupProject WHERE StudyGroupProject.StudyGroupId = ?" +
-                                    " AND StudyGroupProject.ProjectUuid = ?", sgp.StudyGroupId, sgp.ProjectUuid).Count;
-                            System.Diagnostics.Debug.WriteLine("Deserialize: StudyGroupProject rowsAffected: " +
-                                                               rowsAffected);
-                            if (rowsAffected == 0)
-                            {
-                                // The item does not exists in the database so safe to insert
-                                Db.Insert(sgp);
-                            }
-                        }
-                        System.Diagnostics.Debug.WriteLine("StudyGroupProject after insert");
                     }
                 }
                 /*
@@ -922,7 +865,7 @@ namespace KompetansetorgetXamarin.Controllers
                 */
                 if (key.Equals("jobTypes"))
                 {
-
+                    JobTypesController jtc = new JobTypesController();
                     IEnumerable jobTypes = (IEnumerable)dict[key];
                     //Newtonsoft.Json.Linq.JArray'
                     System.Diagnostics.Debug.WriteLine("jobTypes created");
@@ -941,35 +884,13 @@ namespace KompetansetorgetXamarin.Controllers
                         {
                             jt.name = jtDict["name"].ToString();
                         }
-                        lock (DbContext.locker)
-                        {
-                            var rowsAffected = Db.Update(jt);
-                            if (rowsAffected == 0)
-                            {
-                                // The item does not exists in the database so safe to insert
-                                Db.Insert(jt);
-                            }
-                        }
+
+                        jtc.InsertJobType(jt);
                         System.Diagnostics.Debug.WriteLine("before p.jobTypes.Add(jt);");
                         p.jobTypes.Add(jt);
 
-                        JobTypeProject jtp = new JobTypeProject();
-                        jtp.JobTypeId = jt.id;
-                        jtp.ProjectUuid = dict["uuid"].ToString();
-
-                        lock (DbContext.locker)
-                        {
-                            var rowsAffected =
-                                Db.Query<JobTypeProject>("Select * FROM JobTypeProject WHERE JobTypeProject.JobTypeId = ?" +
-                                                      " AND JobTypeProject.ProjectUuid = ?", jtp.JobTypeId, jtp.ProjectUuid).Count;
-                            System.Diagnostics.Debug.WriteLine("DeserializeOneProjects: JobTypeProject rowsAffected: " +
-                                                               rowsAffected);
-                            if (rowsAffected == 0)
-                            {
-                                // The item does not exists in the database so safe to insert
-                                Db.Insert(jtp);
-                            }
-                        }
+                        string projectUuid = dict["uuid"].ToString();
+                        jtc.InsertJobTypeProject(jt.id, projectUuid);
                     }
                 }
             }

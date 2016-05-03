@@ -20,12 +20,11 @@ namespace KompetansetorgetXamarin.Controllers
         }
 
         /// <summary>
-        /// Inserts the project and its respective children (only Company and CompanyProject) 
-        /// into the database.
+        /// Inserts the studyGroup into the database.
         /// </summary>
         /// <param name="studyGroup"></param>
-        /// <returns>Returns true if the project was inserted, returns false if a project with the same 
-        ///  uuid (primary key) already exists in the table.</returns>
+        /// <returns>Returns true if the studyGroup was inserted, returns false if a studyGroup with the same 
+        ///  primary key already exists in the table.</returns>
         public bool InsertStudyGroup(StudyGroup studyGroup)
         {
             if (CheckIfStudyGroupExist(studyGroup.id))
@@ -161,6 +160,56 @@ namespace KompetansetorgetXamarin.Controllers
             {
                 return Db.Query<StudyGroup>("Select * from StudyGroup");
             }
+        }
+
+        public void InsertStudyGroupJob(string studygroupId, string jobUuid)
+        {
+            System.Diagnostics.Debug.WriteLine("StudyGroupJob created");
+            StudyGroupJob sgj = new StudyGroupJob();
+            sgj.StudyGroupId = studygroupId;
+            sgj.JobUuid = jobUuid;
+            System.Diagnostics.Debug.WriteLine("StudyGroupJob before insert");
+
+            lock (DbContext.locker)
+            {
+                var rowsAffected =
+                    Db.Query<StudyGroupJob>(
+                        "Select * FROM StudyGroupJob WHERE StudyGroupJob.StudyGroupId = ?" +
+                        " AND StudyGroupJob.JobUuid = ?", sgj.StudyGroupId, sgj.JobUuid).Count;
+                System.Diagnostics.Debug.WriteLine("DeserializeOneJobs: StudyGroupJob rowsAffected: " +
+                                                   rowsAffected);
+                if (rowsAffected == 0)
+                {
+                    // The item does not exists in the database so safe to insert
+                    Db.Insert(sgj);
+                }
+            }
+            System.Diagnostics.Debug.WriteLine("StudyGroupJob after insert");
+        }
+
+        public void InsertStudyGroupProject(string studygroupId, string projectUuid)
+        {
+            System.Diagnostics.Debug.WriteLine("StudyGroupProject created");
+            StudyGroupProject sgp = new StudyGroupProject();
+            sgp.StudyGroupId = studygroupId;
+            sgp.ProjectUuid = projectUuid;
+            System.Diagnostics.Debug.WriteLine("StudyGroupProject before insert");
+
+            lock (DbContext.locker)
+            {
+                var rowsAffected =
+                    Db.Query<StudyGroupProject>(
+                        "Select * FROM StudyGroupProject WHERE StudyGroupProject.StudyGroupId = ?" +
+                        " AND StudyGroupProject.ProjectUuid = ?", sgp.StudyGroupId, sgp.ProjectUuid).Count;
+                System.Diagnostics.Debug.WriteLine("Deserialize: StudyGroupProject rowsAffected: " +
+                                                   rowsAffected);
+                if (rowsAffected == 0)
+                {
+                    // The item does not exists in the database so safe to insert
+                    Db.Insert(sgp);
+                }
+            }
+            System.Diagnostics.Debug.WriteLine("StudyGroupProject after insert");
         }
     }
 }

@@ -700,7 +700,7 @@ namespace KompetansetorgetXamarin.Controllers
             //List<string> serializedProjects =
             //    JsonConvert.DeserializeObject<List<string>>(jsonString);
 
-            System.Diagnostics.Debug.WriteLine("JobsController - serializedProjects.Count(): " + serializedJobs.Count());
+            System.Diagnostics.Debug.WriteLine("JobsController - serializedJobs.Count(): " + serializedJobs.Count());
 
             List<Job> jobs = new List<Job>();
             foreach (var serializedJob in serializedJobs)
@@ -787,25 +787,8 @@ namespace KompetansetorgetXamarin.Controllers
                         j.companies.Add(company);
                         cc.UpdateCompany(company);
                         System.Diagnostics.Debug.WriteLine("DeserializeOneJobs: After j.companies.Add(company)");
-                       
-                        CompanyJob cj = new CompanyJob();
-                        cj.CompanyId = company.id;
-                        cj.JobUuid = dict["uuid"].ToString();
-
-                        lock (DbContext.locker)
-                        {
-
-                            //System.Diagnostics.Debug.WriteLine("DeserializeOneJobs: query: " + query);
-                            var rowsAffected = Db.Query<CompanyJob>("Select * FROM CompanyJob WHERE CompanyJob.CompanyId = ?" +
-                                           " AND CompanyJob.JobUuid = ?", cj.CompanyId, cj.JobUuid).Count;
-                            System.Diagnostics.Debug.WriteLine("DeserializeOneJobs: CompanyJobs rowsAffected: " +
-                                                               rowsAffected);
-                            if (rowsAffected == 0)
-                            {
-                                // The item does not exists in the database so safe to insert
-                                Db.Insert(cj);
-                            }
-                        }
+                        string jobUuid = dict["uuid"].ToString();
+                        cc.InsertCompanyJob(company.id, jobUuid);
                     }
                 }
 
@@ -814,11 +797,11 @@ namespace KompetansetorgetXamarin.Controllers
                     IEnumerable studyGroups = (IEnumerable)dict[key];
                     //Newtonsoft.Json.Linq.JArray'
                     System.Diagnostics.Debug.WriteLine("studyGroups created");
+                    StudyGroupsController sgc = new StudyGroupsController();
                     foreach (var studyGroup in studyGroups)
                     {
                         System.Diagnostics.Debug.WriteLine("foreach initiated");
                         Dictionary<string, object> studyGroupDict = JsonConvert.DeserializeObject<Dictionary<string, object>>(studyGroup.ToString());
-
                         
                         StudyGroup sg = new StudyGroup();
                         if (studyGroupDict.ContainsKey("id"))
@@ -833,27 +816,9 @@ namespace KompetansetorgetXamarin.Controllers
 
                         j.studyGroups.Add(sg);
 
-                        System.Diagnostics.Debug.WriteLine("StudyGroupJob created");
-                        StudyGroupJob sgj = new StudyGroupJob();
-                        sgj.StudyGroupId = sg.id;
-                        sgj.JobUuid = dict["uuid"].ToString();
-                        System.Diagnostics.Debug.WriteLine("StudyGroupJob before insert");
+                        string jobUuid = dict["uuid"].ToString();
+                        sgc.InsertStudyGroupJob(sg.id, jobUuid);
 
-                        lock (DbContext.locker)
-                        {
-                            var rowsAffected =
-                                Db.Query<StudyGroupJob>(
-                                    "Select * FROM StudyGroupJob WHERE StudyGroupJob.StudyGroupId = ?" +
-                                    " AND StudyGroupJob.JobUuid = ?", sgj.StudyGroupId, sgj.JobUuid).Count;
-                            System.Diagnostics.Debug.WriteLine("DeserializeOneJobs: StudyGroupJob rowsAffected: " +
-                                                               rowsAffected);
-                            if (rowsAffected == 0)
-                            {
-                                // The item does not exists in the database so safe to insert
-                                Db.Insert(sgj);
-                            }
-                        }
-                        System.Diagnostics.Debug.WriteLine("StudyGroupJob after insert");
                     }
                 }
 
@@ -861,12 +826,12 @@ namespace KompetansetorgetXamarin.Controllers
                 {
                     IEnumerable locations = (IEnumerable)dict[key];
                     //Newtonsoft.Json.Linq.JArray'
+                    LocationsController lc = new LocationsController();
                     System.Diagnostics.Debug.WriteLine("location created");
                     foreach (var location in locations)
                     {
                         System.Diagnostics.Debug.WriteLine("foreach initiated");
                         Dictionary<string, object> locationDict = JsonConvert.DeserializeObject<Dictionary<string, object>>(location.ToString());
-
                         Location loc = new Location();
                         if (locationDict.ContainsKey("id"))
                         {
@@ -880,43 +845,19 @@ namespace KompetansetorgetXamarin.Controllers
                             loc.name = locationDict["name"].ToString();
                         }
 
-                        lock (DbContext.locker)
-                        {
-                            var rowsAffected = Db.Update(loc);
-                            if (rowsAffected == 0)
-                            {
-                                // The item does not exists in the database so safe to insert
-                                Db.Insert(loc);
-                            }
-                        }
+                        lc.InsertLocation(loc);
                         j.locations.Add(loc);
-
-                        LocationJob lj = new LocationJob();
-                        lj.LocationId = loc.id;
-                        lj.JobUuid = dict["uuid"].ToString();
-
-                        lock (DbContext.locker)
-                        {
-                            var rowsAffected =
-                                Db.Query<LocationJob>("Select * FROM LocationJob WHERE LocationJob.LocationId = ?" +
-                                                      " AND LocationJob.JobUuid = ?", lj.LocationId, lj.JobUuid).Count;
-                            System.Diagnostics.Debug.WriteLine("DeserializeOneJobs: StudyGroupJob rowsAffected: " +
-                                                               rowsAffected);
-                            if (rowsAffected == 0)
-                            {
-                                // The item does not exists in the database so safe to insert
-                                Db.Insert(lj);
-                            }
-                        }
+                        string jobUuid = dict["uuid"].ToString();
+                        lc.InsertLocationJob(loc.id, jobUuid);
                     }
                 }
 
 
                 if (key.Equals("jobTypes"))
                 {
-
                     IEnumerable jobTypes = (IEnumerable)dict[key];
                     //Newtonsoft.Json.Linq.JArray'
+                    JobTypesController jtc = new JobTypesController();
                     System.Diagnostics.Debug.WriteLine("jobTypes created");
                     foreach (var jobType in jobTypes)
                     {
@@ -933,35 +874,14 @@ namespace KompetansetorgetXamarin.Controllers
                         {
                             jt.name = jtDict["name"].ToString();
                         }
-                        lock (DbContext.locker)
-                        {
-                            var rowsAffected = Db.Update(jt);
-                            if (rowsAffected == 0)
-                            {
-                                // The item does not exists in the database so safe to insert
-                                Db.Insert(jt);
-                            }
-                        }
+
+                        jtc.InsertJobType(jt);
+
                         System.Diagnostics.Debug.WriteLine("before j.jobTypes.Add(jt);");
                         j.jobTypes.Add(jt);
 
-                        JobTypeJob jtj = new JobTypeJob();
-                        jtj.JobTypeId = jt.id;
-                        jtj.JobUuid = dict["uuid"].ToString();
-
-                        lock (DbContext.locker)
-                        {
-                            var rowsAffected =
-                                Db.Query<JobTypeJob>("Select * FROM JobTypeJob WHERE JobTypeJob.JobTypeId = ?" +
-                                                      " AND JobTypeJob.JobUuid = ?", jtj.JobTypeId, jtj.JobUuid).Count;
-                            System.Diagnostics.Debug.WriteLine("DeserializeOneJobs: JobTypeJob rowsAffected: " +
-                                                               rowsAffected);
-                            if (rowsAffected == 0)
-                            {
-                                // The item does not exists in the database so safe to insert
-                                Db.Insert(jtj);
-                            }
-                        }
+                        string jobUuid = dict["uuid"].ToString();
+                        jtc.InsertJobTypeJob(jt.id, jobUuid);
                     }
                 }
             }

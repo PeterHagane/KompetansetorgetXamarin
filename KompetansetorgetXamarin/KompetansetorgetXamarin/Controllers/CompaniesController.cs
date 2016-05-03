@@ -110,5 +110,58 @@ namespace KompetansetorgetXamarin.Controllers
             return company;
         }
 
+        /// <summary>
+        /// Inserts the CompanyProject if it doesnt already exist
+        /// </summary>
+        /// <param name="companyId"></param>
+        /// <param name="projectUuid"></param>
+        public void InsertCompanyProject(string companyId, string projectUuid)
+        {
+            CompanyProject cp = new CompanyProject();
+            cp.CompanyId = companyId;
+            cp.ProjectUuid = projectUuid;
+            lock (DbContext.locker)
+            {
+
+                //System.Diagnostics.Debug.WriteLine("Deserialize: query: " + query);
+                var rowsAffected = Db.Query<CompanyProject>("Select * FROM CompanyProject WHERE CompanyProject.CompanyId = ?" +
+                               " AND CompanyProject.ProjectUuid = ?", companyId, projectUuid).Count;
+                System.Diagnostics.Debug.WriteLine("Deserialize: CompanyProject rowsAffected: " +
+                                                   rowsAffected);
+                if (rowsAffected == 0)
+                {
+                    // The item does not exists in the database so safe to insert
+                    Db.Insert(cp);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Inserts the CompanyJob if it doesnt already exist
+        /// </summary>
+        /// <param name="companyId"></param>
+        /// <param name="jobUuid"></param>
+        public void InsertCompanyJob(string companyId, string jobUuid)
+        {
+            CompanyJob cj = new CompanyJob();
+            cj.CompanyId = companyId;
+            cj.JobUuid = jobUuid;
+
+            lock (DbContext.locker)
+            {
+
+                //System.Diagnostics.Debug.WriteLine("DeserializeOneJobs: query: " + query);
+                var rowsAffected = Db.Query<CompanyJob>("Select * FROM CompanyJob WHERE CompanyJob.CompanyId = ?" +
+                               " AND CompanyJob.JobUuid = ?", cj.CompanyId, cj.JobUuid).Count;
+                System.Diagnostics.Debug.WriteLine("DeserializeOneJobs: CompanyJobs rowsAffected: " +
+                                                   rowsAffected);
+                if (rowsAffected == 0)
+                {
+                    // The item does not exists in the database so safe to insert
+                    Db.Insert(cj);
+                }
+            }
+        }
+
     }
 }

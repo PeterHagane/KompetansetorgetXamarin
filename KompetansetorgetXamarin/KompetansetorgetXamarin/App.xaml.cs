@@ -75,11 +75,15 @@ namespace KompetansetorgetXamarin
 
         /// <summary>
         /// Activate this method when a login is successful to navigate to a MainPage and remove the 
-        /// Former pages for the Navigation Stack
+        /// Former pages for the Navigation.
+        /// It will also update all the search filter for the app, and its crucial that they are in this 
+        /// method and not just the startup method.
         /// </summary>
         public static void SuccessfulLoginAction()
         {
             // NavPage.Navigation.PopModalAsync();
+            StudyGroupsController sgc = new StudyGroupsController();
+            sgc.GetStudyGroupsFromServer();
             NavPage.Navigation.InsertPageBefore(new MainPage(), NavPage.Navigation.NavigationStack.First());
             NavPage.Navigation.PopToRootAsync();
 
