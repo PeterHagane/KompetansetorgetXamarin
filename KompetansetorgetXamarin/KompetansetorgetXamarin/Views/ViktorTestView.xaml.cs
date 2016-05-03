@@ -540,6 +540,14 @@ namespace KompetansetorgetXamarin.Views
             datateknologi.id = "datateknologi";
             studyGroups.Add(idrettsfag);
             studyGroups.Add(datateknologi);
+            StudyGroup samfunnsfag = new StudyGroup();
+            samfunnsfag.id = "samfunnsfag";
+            StudyGroup realfag = new StudyGroup();
+            realfag.id = "realfag";
+            //studyGroups.Add(samfunnsfag);
+            //studyGroups.Add(realfag);
+
+
 
 
             StudentsController sc = new StudentsController();

@@ -391,22 +391,20 @@ namespace KompetansetorgetXamarin.Controllers
         /// <param name="page"></param>
         /// <returns></returns>
         public async Task<bool> PostStudentsStudyGroupToServer(BaseContentPage page, List<StudyGroup> studyGroups)
-        {
-            /*
+        {           
             Student student = GetStudent();
             string accessToken = GetStudentAccessToken();
             if (student == null || accessToken == null)
             {
                 page.Authorized = false;
                 return false;
-            }
-            */
+            }           
             string jsonString = "";
             foreach (var studyGroup in studyGroups)
             {
                 if (string.IsNullOrWhiteSpace(jsonString))
                 {
-                    jsonString = "{\"studygroups\":[{\"id\":\"" + studyGroup.id + "\"}";
+                    jsonString = "{\"StudyGroup\":[{\"id\":\"" + studyGroup.id + "\"}";
                 }
 
                 else
@@ -415,17 +413,16 @@ namespace KompetansetorgetXamarin.Controllers
                 }
             }
             jsonString += "]}";
-            // {"studygroups":[{"id":"idrettsfag"},{"id":"datateknologi"}]}
+            // {"StudyGroup":[{"id":"idrettsfag"},{"id":"datateknologi"}]}
             // {"studyGroups":[{"id":"helse"},{"id":"ingeniør"},{"id":"samfunnsfag"}]} 
             System.Diagnostics.Debug.WriteLine("StudentsController - PostStudentsStudyGroupToServer jsonString: " + jsonString);
 
-            string encodedUsername = Base64Encode("setervang@gmail.com");
-            //string encodedUsername = Base64Encode(student.username);
+            string encodedUsername = Base64Encode(student.username);
             Uri url = new Uri(Adress + "/" + encodedUsername);
             System.Diagnostics.Debug.WriteLine("StudentsController - PostStudentsStudyGroupToServer uri: " + url.ToString());
 
             var client = new HttpClient();
-            //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", accessToken);         
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", accessToken);         
 
             var content = new StringContent(jsonString, Encoding.UTF8, "application/json");
             try
@@ -433,7 +430,6 @@ namespace KompetansetorgetXamarin.Controllers
                 var response = await client.PostAsync(url, content);
                 System.Diagnostics.Debug.WriteLine("PostStudentsStudyGroupToServer response " + response.StatusCode.ToString());
 
-                //var response = await client.PostAsJsonAsync(); //.ConfigureAwait(false);
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
                     return true;
