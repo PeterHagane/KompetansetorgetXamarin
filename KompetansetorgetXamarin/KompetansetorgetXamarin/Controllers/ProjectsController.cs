@@ -208,6 +208,8 @@ namespace KompetansetorgetXamarin.Controllers
             try
             {
                 var response = await client.GetAsync(url).ConfigureAwait(false);
+                System.Diagnostics.Debug.WriteLine("GetProjectsBasedOnFilter response " + response.StatusCode.ToString());
+
                 if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
                     System.Diagnostics.Debug.WriteLine("StudentsController - UpdateStudyGroupStudent failed due to lack of Authorization");
@@ -216,25 +218,36 @@ namespace KompetansetorgetXamarin.Controllers
 
                 else if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    System.Diagnostics.Debug.WriteLine("GetProjectsBasedOnFilter response " + response.StatusCode.ToString());
                     jsonString = await response.Content.ReadAsStringAsync();
                     projects = DeserializeMany(jsonString);
                 }
 
                 else
                 {
+                    System.Diagnostics.Debug.WriteLine("GetProjectsBasedOnFilter - Using the local database");
                     projects = GetProjectsFromDbBasedOnFilter(studyGroups, filter);
+                    projects = GetAllCompaniesRelatedToProjects(projects.ToList());
                 }
                 return projects;
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine("ProjectsController - GetProjectsBasedOnFilter: await client.GetAsync(\"url\") Failed");
-                System.Diagnostics.Debug.WriteLine("ProjectsController - GetProjectsBasedOnFilter: Exception msg: " + e.Message);
-                System.Diagnostics.Debug.WriteLine("ProjectsController - GetProjectsBasedOnFilter: Stack Trace: \n" + e.StackTrace);
-                System.Diagnostics.Debug.WriteLine("ProjectsController - GetProjectsBasedOnFilter: End Of Stack Trace");
-                return null;
-                // TODO Implement local db query for cached data.
+                // Hack workaround if mobil data and wifi is turned off
+                try
+                {
+                    System.Diagnostics.Debug.WriteLine("GetProjectsBasedOnFilter - Using the local database");
+                    projects = GetProjectsFromDbBasedOnFilter(studyGroups, filter);
+                    projects = GetAllCompaniesRelatedToProjects(projects.ToList());
+                    return projects;
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine("ProjectsController - GetProjectsBasedOnFilter: await client.GetAsync(\"url\") Failed");
+                    System.Diagnostics.Debug.WriteLine("ProjectsController - GetProjectsBasedOnFilter: Exception msg: " + e.Message);
+                    System.Diagnostics.Debug.WriteLine("ProjectsController - GetProjectsBasedOnFilter: Stack Trace: \n" + e.StackTrace);
+                    System.Diagnostics.Debug.WriteLine("ProjectsController - GetProjectsBasedOnFilter: End Of Stack Trace");
+                    return null;
+                }
             }
         }
 
@@ -367,6 +380,20 @@ namespace KompetansetorgetXamarin.Controllers
                                           + " inner join Project on CompanyProject.ProjectUuid = Project.uuid"
                                           + " where Project.uuid = ?", project.uuid);
             }
+        }
+
+        /// <summary>
+        /// Gets a list of all companies that are related to each Project in the list.
+        /// </summary>
+        /// <param name="job"></param>
+        /// <returns></returns>
+        public List<Project> GetAllCompaniesRelatedToProjects(List<Project> projects)
+        {
+            foreach (var project in projects)
+            {
+                project.companies = GetAllCompaniesRelatedToProject(project);
+            }
+            return projects;
         }
 
         /// <summary>

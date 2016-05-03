@@ -256,6 +256,21 @@ namespace KompetansetorgetXamarin.Controllers
         }
 
         /// <summary>
+        /// Gets a list of all companies that are related to each Job in the list.
+        /// </summary>
+        /// <param name="job"></param>
+        /// <returns></returns>
+        public List<Job> GetAllCompaniesRelatedToJobs(List<Job> jobs)
+        {
+            foreach (var job in jobs)
+            {
+                job.companies = GetAllCompaniesRelatedToJob(job);
+            }
+            return jobs;
+        }
+
+
+        /// <summary>
         /// Checks if there already is an entry of that Jobs primary key
         /// In the database.
         /// </summary>
@@ -367,6 +382,7 @@ namespace KompetansetorgetXamarin.Controllers
             try
             {
                 var response = await client.GetAsync(url).ConfigureAwait(false);
+                System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter response " + response.StatusCode.ToString());
                 if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
                     System.Diagnostics.Debug.WriteLine("StudentsController - UpdateStudyGroupStudent failed due to lack of Authorization");
@@ -376,26 +392,36 @@ namespace KompetansetorgetXamarin.Controllers
 
                 else if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter response " + response.StatusCode.ToString());
                     jsonString = await response.Content.ReadAsStringAsync();
-                    jobs = DeserializeMany(jsonString);
-                    
+                    jobs = DeserializeMany(jsonString);                   
                 }
 
                 else
                 {
+                    System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter - Using the local database");
                     jobs = GetJobsFromDbBasedOnFilter(studyGroups, filter);
+                    jobs = GetAllCompaniesRelatedToJobs(jobs.ToList());
                 }
                 return jobs;
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine("JobsController - GetJobsBasedOnFilter: await client.GetAsync(\"url\") Failed");
-                System.Diagnostics.Debug.WriteLine("JobsController - GetJobsBasedOnFilter: Exception msg: " + e.Message);
-                System.Diagnostics.Debug.WriteLine("JobsController - GetJobsBasedOnFilter: Stack Trace: \n" + e.StackTrace);
-                System.Diagnostics.Debug.WriteLine("JobsController - GetJobsBasedOnFilter: End Of Stack Trace");
-                return null;
-                // TODO Implement local db query for cached data.
+                // Hack workaround if mobil data and wifi is turned off
+                try
+                {
+                    jobs = GetJobsFromDbBasedOnFilter(studyGroups, filter);
+                    jobs = GetAllCompaniesRelatedToJobs(jobs.ToList());
+                    return jobs;
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine("JobsController - GetJobsBasedOnFilter: await client.GetAsync(\"url\") Failed");
+                    System.Diagnostics.Debug.WriteLine("JobsController - GetJobsBasedOnFilter: Exception msg: " + ex.Message);
+                    System.Diagnostics.Debug.WriteLine("JobsController - GetJobsBasedOnFilter: Stack Trace: \n" + ex.StackTrace);
+                    System.Diagnostics.Debug.WriteLine("JobsController - GetJobsBasedOnFilter: End Of Stack Trace");
+                    System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter - Using the local database");
+                    return null;
+                }
             }
         }
 
@@ -510,7 +536,6 @@ namespace KompetansetorgetXamarin.Controllers
 
             if (filter != null && studyGroups != null)
             {
-
                 string joins = "";
                 string whereAnd = "";
                 string prepValue = "";

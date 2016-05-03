@@ -21,14 +21,10 @@ namespace KompetansetorgetXamarin.Controllers
 {
     class StudentsController : BaseController
     {
-
         public StudentsController()
         {
             Adress += "v1/students";
         }
-
-
-
         /// <summary>
         /// Inserts the project and its respective children (only Company and CompanyProject) 
         /// into the database.

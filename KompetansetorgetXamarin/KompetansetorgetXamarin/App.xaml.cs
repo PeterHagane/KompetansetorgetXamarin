@@ -42,7 +42,11 @@ namespace KompetansetorgetXamarin
                 Crud crudster = new Crud();
                 crudster.CreateNewFile(filename);
             }
+            UpdateAllFilters();
+        }
 
+        private void UpdateAllFilters()
+        {
             // This is to make sure that the app got the study groups that is used as search filters. 
             StudyGroupsController sgc = new StudyGroupsController();
             sgc.GetStudyGroupsFromServer();
@@ -63,7 +67,6 @@ namespace KompetansetorgetXamarin
         /// </summary>
         public static void GoToLogin()
         {
-            // THIS Method do not work
             System.Diagnostics.Debug.WriteLine("App - GoToLogin");
             NavPage = new NavigationPage(new LoginPage());
             NavPage.Navigation.InsertPageBefore(new LoginPage(), NavPage.Navigation.NavigationStack.First());

@@ -20,12 +20,12 @@ namespace KompetansetorgetXamarin.Controllers
         }
 
         /// <summary>
-        /// Inserts the project and its respective children (only Company and CompanyProject) 
+        /// Inserts the Device
         /// into the database.
         /// </summary>
         /// <param name="student"></param>
-        /// <returns>Returns true if the project was inserted, returns false if a project with the same 
-        ///  uuid (primary key) already exists in the table.</returns>
+        /// <returns>Returns true if the Device was inserted, returns false if a Device with the same 
+        ///  primary key already exists in the table.</returns>
         public bool InsertDevice(Device device)
         {
             if (CheckIfDeviceExist(device.id))

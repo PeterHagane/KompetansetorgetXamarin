@@ -240,7 +240,7 @@ namespace KompetansetorgetXamarin.Views
             }
         }
 
-        private async void TestJobsStudyGroup_OnClicked(object sender, EventArgs e)
+        private async void TestJobsFilterWeb_OnClicked(object sender, EventArgs e)
         {
             List<string> studyGroups = new List<string>();
             studyGroups.Add("helse");
@@ -262,6 +262,12 @@ namespace KompetansetorgetXamarin.Views
             if (jobs != null) { 
                 System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter: jobs.Count(): " +
                                    jobs.Count());
+                foreach (var job in jobs)
+                {
+                    System.Diagnostics.Debug.WriteLine("Companies is not null: " + job.companies[0].id);
+                    System.Diagnostics.Debug.WriteLine("Companies is not null: " + job.companies[0].name);
+                    System.Diagnostics.Debug.WriteLine("Companies is not null: " + job.companies[0].logo);
+                }
             }
         }
 
@@ -347,7 +353,8 @@ namespace KompetansetorgetXamarin.Views
                     if (job.companies != null)
                     {
                         System.Diagnostics.Debug.WriteLine("Companies is not null: " + job.companies[0].id);
-
+                        System.Diagnostics.Debug.WriteLine("Companies is not null: " + job.companies[0].name);
+                        System.Diagnostics.Debug.WriteLine("Companies is not null: " + job.companies[0].logo);
                     }
                 }
             }
@@ -421,6 +428,12 @@ namespace KompetansetorgetXamarin.Views
             if (projects != null) { 
                 System.Diagnostics.Debug.WriteLine("GetProjectsBasedOnFilter: projects.Count(): " +
                                     projects.Count());
+                foreach (var project in projects)
+                {
+                    System.Diagnostics.Debug.WriteLine("Companies is not null: " + project.companies[0].id);
+                    System.Diagnostics.Debug.WriteLine("Companies is not null: " + project.companies[0].name);
+                    System.Diagnostics.Debug.WriteLine("Companies is not null: " + project.companies[0].logo);
+                }
             }
         }
 
@@ -480,6 +493,8 @@ namespace KompetansetorgetXamarin.Views
                     if (project.companies != null)
                     {
                         System.Diagnostics.Debug.WriteLine("Companies is not null: " + project.companies[0].id);
+                        System.Diagnostics.Debug.WriteLine("Companies is not null: " + project.companies[0].name);
+                        System.Diagnostics.Debug.WriteLine("Companies is not null: " + project.companies[0].logo);
 
                     }
                 }
