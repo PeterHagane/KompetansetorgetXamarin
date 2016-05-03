@@ -125,7 +125,6 @@ namespace KompetansetorgetXamarin.Controllers
 
         /// <summary>
         /// Gets a project based on optional filters.
-        /// All parameters are optional except for the BaseContentPage: GetProjectsBasedOnFilter(this);
         /// </summary>
         /// <param name="studyGroups">studyGroups can be a list of numerous studygroups ex: helse, idrettsfag, datateknologi </param>
         /// <param name="sortBy">published - oldest to newest
@@ -137,7 +136,7 @@ namespace KompetansetorgetXamarin.Controllers
         ///                      courses (values: "IS-304" "DAT-304" osv). 
         ///                      Supports only 1 key at this current implementation!</param>
         /// <returns></returns>
-        public async Task<IEnumerable<Project>> GetProjectsBasedOnFilter(BaseContentPage page, List<string> studyGroups = null,
+        public async Task<IEnumerable<Project>> GetProjectsBasedOnFilter(List<string> studyGroups = null,
             string sortBy = "", Dictionary<string, string> filter = null)
         {
             //string adress = "http://kompetansetorgetserver1.azurewebsites.net/api/v1/projects";
@@ -195,7 +194,7 @@ namespace KompetansetorgetXamarin.Controllers
 
             if (string.IsNullOrWhiteSpace(accessToken))
             {
-                page.Authorized = false;
+                Authenticater.Authorized = false;
                 return null;
             }
 
@@ -213,7 +212,7 @@ namespace KompetansetorgetXamarin.Controllers
                 if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
                     System.Diagnostics.Debug.WriteLine("StudentsController - UpdateStudyGroupStudent failed due to lack of Authorization");
-                    page.Authorized = false;
+                    Authenticater.Authorized = false;
                 }
 
                 else if (response.StatusCode == HttpStatusCode.OK)
@@ -258,9 +257,10 @@ namespace KompetansetorgetXamarin.Controllers
         /// Companies to build a proper notification list.
         /// </summary>
         /// <param name="uuid"></param>
-        public async void UpdateProjectFromServer(string uuid)
+        public async Task UpdateProjectFromServer(string uuid)
         {
             System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProjectFromServer(string uuid): initiated");
+                            //as in minimumInformationForNotifications=true
             string adress = Adress + "/" + uuid + "?minnot=true";
             System.Diagnostics.Debug.WriteLine("UpdateProjectFromServer: var url = " + adress);
 

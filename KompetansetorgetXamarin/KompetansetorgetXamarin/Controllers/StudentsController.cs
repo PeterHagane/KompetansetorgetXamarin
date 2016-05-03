@@ -323,15 +323,14 @@ namespace KompetansetorgetXamarin.Controllers
         /// <summary>
         /// Gets the Students StudyGroups used for push notifications from the server.
         /// </summary>
-        /// <param name="page"></param>
         /// <returns></returns>
-        public async Task<List<StudyGroup>> GetStudentsStudyGroupFromServer(BaseContentPage page)
+        public async Task<List<StudyGroup>> GetStudentsStudyGroupFromServer()
         {
             Student student = GetStudent();
 
             if (student == null)
             {
-                page.Authorized = false;
+                Authenticater.Authorized = false;
                 return null;
             }
 
@@ -343,7 +342,7 @@ namespace KompetansetorgetXamarin.Controllers
 
             if (accessToken == null)
             {
-                page.Authorized = false;
+                Authenticater.Authorized = false;
                 return null;
             }
 
@@ -357,7 +356,7 @@ namespace KompetansetorgetXamarin.Controllers
                 if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
                     System.Diagnostics.Debug.WriteLine("StudentsController - UpdateStudyGroupStudent failed due to lack of Authorization");
-                    page.Authorized = false;
+                    Authenticater.Authorized = false;
                     return null;
                 }
                 System.Diagnostics.Debug.WriteLine("UpdateStudyGroupStudent response " + response.StatusCode.ToString());
@@ -384,15 +383,14 @@ namespace KompetansetorgetXamarin.Controllers
         /// <summary>
         /// Posts the Students StudyGroups used for push notifications to the server.
         /// </summary>
-        /// <param name="page"></param>
         /// <returns></returns>
-        public async Task<bool> PostStudentsStudyGroupToServer(BaseContentPage page, List<StudyGroup> studyGroups)
+        public async Task<bool> PostStudentsStudyGroupToServer(List<StudyGroup> studyGroups)
         {           
             Student student = GetStudent();
             string accessToken = GetStudentAccessToken();
             if (student == null || accessToken == null)
             {
-                page.Authorized = false;
+                Authenticater.Authorized = false;
                 return false;
             }           
             string jsonString = "";
@@ -434,7 +432,7 @@ namespace KompetansetorgetXamarin.Controllers
                 if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
                     System.Diagnostics.Debug.WriteLine("StudentsController - PostStudentsStudyGroupToServer failed due to lack of Authorization");
-                    page.Authorized = false;
+                    Authenticater.Authorized = false;
                 }
 
                 // response.StatusCode is either unauthorized or another failed status.

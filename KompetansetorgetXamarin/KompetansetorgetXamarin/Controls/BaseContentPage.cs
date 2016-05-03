@@ -10,7 +10,6 @@ namespace KompetansetorgetXamarin.Controls
 {
     public class BaseContentPage : ContentPage
     {
-        public bool Authorized = true;
         public BaseContentPage()
         {
             var style = (Style)Application.Current.Resources["basePageStyle"];

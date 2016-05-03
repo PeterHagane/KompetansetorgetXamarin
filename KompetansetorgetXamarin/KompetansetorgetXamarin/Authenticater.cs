@@ -14,6 +14,9 @@ namespace KompetansetorgetXamarin
 {
     public class Authenticater
     {
+
+        public static bool Authorized = true;
+
         public Authenticater()
         {
             IAuth auth = Auth.auth;
@@ -187,6 +190,7 @@ namespace KompetansetorgetXamarin
                 */
                 // TODO Implement relevant GET, PUT or POST Requests
                 // Notifies the app that the login was successful and that its safe to shift page.
+                Authorized = true;
                 App.SuccessfulLoginAction();
             }
             catch (Exception ex)

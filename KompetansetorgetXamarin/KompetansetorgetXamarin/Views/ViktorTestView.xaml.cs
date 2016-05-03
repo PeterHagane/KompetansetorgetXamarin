@@ -213,8 +213,8 @@ namespace KompetansetorgetXamarin.Views
         private async void GetAllJobsFromWebApi_OnClicked(object sender, EventArgs e)
         {
             JobsController jc = new JobsController();
-            IEnumerable<Job> jobs = await jc.GetJobsBasedOnFilter(this);
-            if (!Authorized)
+            IEnumerable<Job> jobs = await jc.GetJobsBasedOnFilter();
+            if (!Authenticater.Authorized)
             {
                 GoToLogin();
             }
@@ -228,8 +228,8 @@ namespace KompetansetorgetXamarin.Views
         private async void GetAllProjectsFromWebApi_OnClicked(object sender, EventArgs e)
         {
             ProjectsController jc = new ProjectsController();
-            IEnumerable<Project> projects = await jc.GetProjectsBasedOnFilter(this);
-            if (!Authorized)
+            IEnumerable<Project> projects = await jc.GetProjectsBasedOnFilter();
+            if (!Authenticater.Authorized)
             {
                 GoToLogin();
             }
@@ -253,9 +253,9 @@ namespace KompetansetorgetXamarin.Views
             filter.Add("types", "heltid");
 
             JobsController jc = new JobsController();
-            IEnumerable<Job> jobs = await jc.GetJobsBasedOnFilter(this, studyGroups, "-published", filter);
+            IEnumerable<Job> jobs = await jc.GetJobsBasedOnFilter(studyGroups, "-published", filter);
 
-            if (!Authorized)
+            if (!Authenticater.Authorized)
             {
                 GoToLogin();
             }
@@ -274,16 +274,16 @@ namespace KompetansetorgetXamarin.Views
         private async void TestGetStudyGroupStudent_OnClicked(object sender, EventArgs e)
         {
             StudentsController sc = new StudentsController();
-            List<StudyGroup> list = await sc.GetStudentsStudyGroupFromServer(this);
+            List<StudyGroup> list = await sc.GetStudentsStudyGroupFromServer();
             // checks if still Authorized 
-            if (!Authorized)
+            if (!Authenticater.Authorized)
             {
-                System.Diagnostics.Debug.WriteLine("TestGetStudyGroupStudent inside If: Authorized:  " + Authorized);
+                System.Diagnostics.Debug.WriteLine("TestGetStudyGroupStudent inside If: Authorized:  " + Authenticater.Authorized);
                 GoToLogin();
             }
             else
             {
-                System.Diagnostics.Debug.WriteLine("TestGetStudyGroupStudent inside Else: Authorized:  " + Authorized);
+                System.Diagnostics.Debug.WriteLine("TestGetStudyGroupStudent inside Else: Authorized:  " + Authenticater.Authorized);
                 if (list == null)
                 {
                     System.Diagnostics.Debug.WriteLine("Server communication failed");
@@ -419,9 +419,9 @@ namespace KompetansetorgetXamarin.Views
             filter.Add("types", "virksomhet");
 
             ProjectsController jc = new ProjectsController();
-            IEnumerable<Project> projects = await jc.GetProjectsBasedOnFilter(this, studyGroups, "-published", filter);
+            IEnumerable<Project> projects = await jc.GetProjectsBasedOnFilter(studyGroups, "-published", filter);
 
-            if (!Authorized)
+            if (!Authenticater.Authorized)
             {
                 GoToLogin();
             }
@@ -566,7 +566,7 @@ namespace KompetansetorgetXamarin.Views
 
 
             StudentsController sc = new StudentsController();
-            bool success = await sc.PostStudentsStudyGroupToServer(this, studyGroups);
+            bool success = await sc.PostStudentsStudyGroupToServer(studyGroups);
 
             System.Diagnostics.Debug.WriteLine(
                 "TestPostStudentsStudyGroupToServer: PostStudentsStudyGroupToServer success: " + success);

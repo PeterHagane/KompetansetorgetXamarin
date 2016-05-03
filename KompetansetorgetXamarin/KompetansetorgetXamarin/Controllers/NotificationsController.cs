@@ -52,7 +52,7 @@ namespace KompetansetorgetXamarin.Controllers
         /// </summary>
         /// <param name="type">This param can either be job or project, and will determine what kind of notification it is.</param>
         /// <param name="typeUuid">the foreign key of type</param>
-        public void InsertNotification(string type, string typeUuid)
+        public async Task InsertNotification(string type, string typeUuid)
         {
             System.Diagnostics.Debug.WriteLine("NotificationsController - InsertNotification: initiated");
 
@@ -106,7 +106,7 @@ namespace KompetansetorgetXamarin.Controllers
                     Db.Insert(notification);
                 }
                 //THIRD: async get extra minimum info for the notification list.
-                pc.UpdateProjectFromServer(typeUuid);
+               await pc.UpdateProjectFromServer(typeUuid);
             }
             System.Diagnostics.Debug.WriteLine("NotificationsController - InsertNotification: Test: End of method");
         }

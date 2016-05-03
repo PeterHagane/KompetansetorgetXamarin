@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using KompetansetorgetXamarin.DAL;
@@ -68,20 +70,37 @@ namespace KompetansetorgetXamarin.Controllers
         /// <summary>
         /// Gets all StudyGroups from the servers REST Api.
         /// </summary>
-        public async void GetStudyGroupsFromServer()
+        public async Task GetStudyGroupsFromServer()
         {
             System.Diagnostics.Debug.WriteLine("StudyGroupsController - GetStudyGroupsFromServer: initiated");
+            StudentsController sc = new StudentsController();
+
+            string accessToken = sc.GetStudentAccessToken();
+
+            if (accessToken == null)
+            {
+                Authenticater.Authorized = false;
+                return;
+            }
+
             Uri url = new Uri(Adress);
             System.Diagnostics.Debug.WriteLine("StudyGroupsController - url " + url.ToString());
             var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", accessToken);
             try
             {
                 var response = await client.GetAsync(url);
-                System.Diagnostics.Debug.WriteLine("GetStudyGroupsFromServer response " + response.StatusCode.ToString());
-                var results = await response.Content.ReadAsAsync<IEnumerable<StudyGroup>>();
-                foreach (var studygroup in results)
+                if (response.StatusCode == HttpStatusCode.OK) {
+                    System.Diagnostics.Debug.WriteLine("GetStudyGroupsFromServer response " + response.StatusCode.ToString());
+                    var results = await response.Content.ReadAsAsync<IEnumerable<StudyGroup>>();
+                    foreach (var studygroup in results)
+                    {
+                        UpdateStudyGroups(studygroup);
+                    }
+                }
+                if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
-                    UpdateStudyGroups(studygroup);
+                    Authenticater.Authorized = false;
                 }
             }
 

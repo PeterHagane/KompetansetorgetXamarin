@@ -132,6 +132,7 @@ namespace KompetansetorgetXamarin.Controllers
         public async void UpdateJobFromServer(string uuid)
         {
             System.Diagnostics.Debug.WriteLine("JobController - UpdateJobFromServer(string uuid): initiated");
+                       //as in minimumInformationForNotifications=true
             string adress = Adress + "/" + uuid + "?minnot=true";
             System.Diagnostics.Debug.WriteLine("UpdateJobFromServer: var url = " + adress);
 
@@ -299,7 +300,6 @@ namespace KompetansetorgetXamarin.Controllers
 
         /// <summary>
         /// Gets a job based on optional filters.
-        /// All parameters are optional except for the BaseContentPage: GetJobsBasedOnFilter(this);
         /// </summary>
         /// <param name="studyGroups">studyGroups can be a list of numerous studygroups ex: helse, idrettsfag, datateknologi </param>
         /// <param name="sortBy">published - oldest to newest
@@ -311,7 +311,7 @@ namespace KompetansetorgetXamarin.Controllers
         ///                      locations (values: vestagder, austagder), . 
         ///                      Supports only 1 key at this current implementation!</param>
         /// <returns></returns>
-        public async Task<IEnumerable<Job>> GetJobsBasedOnFilter(BaseContentPage page, List<string> studyGroups = null,
+        public async Task<IEnumerable<Job>> GetJobsBasedOnFilter(List<string> studyGroups = null,
             string sortBy = "", Dictionary<string, string> filter = null)
         {
             //string adress = "http://kompetansetorgetserver1.azurewebsites.net/api/v1/jobs";
@@ -369,7 +369,7 @@ namespace KompetansetorgetXamarin.Controllers
 
             if (string.IsNullOrWhiteSpace(accessToken))
             {
-                page.Authorized = false;
+                Authenticater.Authorized = false;
                 return null;
             }
             
@@ -386,7 +386,7 @@ namespace KompetansetorgetXamarin.Controllers
                 if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
                     System.Diagnostics.Debug.WriteLine("StudentsController - UpdateStudyGroupStudent failed due to lack of Authorization");
-                    page.Authorized = false;
+                    Authenticater.Authorized = false;
                     
                 }
 
