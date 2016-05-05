@@ -124,6 +124,95 @@ namespace KompetansetorgetXamarin.Controllers
         }
 
         /// <summary>
+        /// Returns true if there are any new or modified projects.
+        /// </summary>
+        /// <returns></returns>
+        private async Task<bool?> CheckServerForNewData(string queryParams = "")
+        {
+            //"api/v1/jobs/lastmodifed"
+            string adress = Adress + "/" + "lastmodified" + queryParams;
+            System.Diagnostics.Debug.WriteLine("ProjectController - CheckServerForNewData - adress: " + adress);
+            Uri url = new Uri(adress);
+            System.Diagnostics.Debug.WriteLine("ProjectController - CheckServerForNewData - url.ToString: " + url.ToString());
+
+            var client = new HttpClient();
+            StudentsController sc = new StudentsController();
+            string accessToken = sc.GetStudentAccessToken();
+            if (string.IsNullOrWhiteSpace(accessToken))
+            {
+                Authenticater.Authorized = false;
+                return null;
+            }
+            System.Diagnostics.Debug.WriteLine("ProjectController - CheckServerForNewData - bearer: " + accessToken);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", accessToken);
+            string jsonString = null;
+            try
+            {
+                var response = await client.GetAsync(url);
+                System.Diagnostics.Debug.WriteLine("CheckServerForNewData response " + response.StatusCode.ToString());
+                if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    System.Diagnostics.Debug.WriteLine("ProjectController - CheckServerForNewData failed due to lack of Authorization");
+                    Authenticater.Authorized = false;
+                }
+
+                else if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    //results = await response.Content.ReadAsAsync<IEnumerable<Job>>();
+                    jsonString = await response.Content.ReadAsStringAsync();
+                }
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine("ProjectController - CheckServerForNewData: await client.GetAsync(\"url\") Failed");
+                System.Diagnostics.Debug.WriteLine("ProjectController - CheckServerForNewData: Exception msg: " + e.Message);
+                System.Diagnostics.Debug.WriteLine("ProjectController - CheckServerForNewData: Stack Trace: \n" + e.StackTrace);
+                System.Diagnostics.Debug.WriteLine("ProjectController - CheckServerForNewData: End Of Stack Trace");
+                return null;
+            }
+            if (jsonString != null)
+            {
+                // using <string, object> instead of <string, string> makes the date be stored in the right format when using .ToString()
+                Dictionary<string, object> dict = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonString);
+                string uuid = "";
+                string modified = "";
+
+                if (dict.ContainsKey("uuid") && dict.ContainsKey("modified"))
+                {
+                    uuid = dict["uuid"].ToString();
+                    modified = dict["modified"].ToString();
+                    return ExistsInDb(uuid, modified);
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Returns true if there exist an entry in the database matching 
+        /// the jobs uuid and modified.
+        /// Returns false if not.
+        /// </summary>
+        /// <param name="uuid"></param>
+        /// <param name="modified"></param>
+        /// <returns></returns>
+        private bool ExistsInDb(string uuid, string modified)
+        {
+            lock (DbContext.locker)
+            {
+                int rowsAffected = Db.Query<Project>("Select * from Project"
+                                 + " where Project.uuid = ?"
+                                 + " and Project.modified = ?", uuid, modified).Count;
+                if (rowsAffected > 0)
+                {
+                    System.Diagnostics.Debug.WriteLine("ProjectController - ExistsInDb: " + "true");
+                    return true;
+                }
+                System.Diagnostics.Debug.WriteLine("ProjectController - ExistsInDb: " + "false");
+                return false;
+            }
+        }
+
+        /// <summary>
         /// Gets a project based on optional filters.
         /// </summary>
         /// <param name="studyGroups">studyGroups can be a list of numerous studygroups ex: helse, idrettsfag, datateknologi </param>
@@ -264,10 +353,18 @@ namespace KompetansetorgetXamarin.Controllers
             string adress = Adress + "/" + uuid + "?minnot=true";
             System.Diagnostics.Debug.WriteLine("UpdateProjectFromServer: var url = " + adress);
 
+            StudentsController sc = new StudentsController();
+            string accessToken = sc.GetStudentAccessToken();
+            if (string.IsNullOrWhiteSpace(accessToken))
+            {
+                Authenticater.Authorized = false;
+                return;
+            }
+
             Uri url = new Uri(adress);
             var client = new HttpClient();
             System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProjectFromServer: HttpClient created");
-
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", accessToken);
             string jsonString = null;
             try
             {
@@ -285,7 +382,6 @@ namespace KompetansetorgetXamarin.Controllers
                 System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProjectFromServer: End Of Stack Trace");
                 return;
             }
-
             Project project = Deserialize(jsonString);
             UpdateProject(project);
 
