@@ -177,7 +177,8 @@ namespace KompetansetorgetXamarin.Controllers
                 if (dict.ContainsKey("uuid") && dict.ContainsKey("modified") && dict.ContainsKey("amountOfJobs"))
                 {
                     string uuid = dict["uuid"].ToString();
-                    string modified = dict["modified"].ToString();
+                    DateTime dateTime = (DateTime)dict["modified"];
+                    DateTime modified = TrimMilliseconds(dateTime);
                     int amountOfJobs = 0;
                     try
                     {
@@ -218,7 +219,7 @@ namespace KompetansetorgetXamarin.Controllers
         /// <param name="uuid"></param>
         /// <param name="modified"></param>
         /// <returns></returns>
-        private bool ExistsInDb(string uuid, string modified)
+        private bool ExistsInDb(string uuid, DateTime modified)
         {
             lock (DbContext.locker)
             {
@@ -388,6 +389,10 @@ namespace KompetansetorgetXamarin.Controllers
             return jobs;
         }
 
+        public void DeleteOldJobsOnExpiryDate()
+        {
+            
+        }
 
         /// <summary>
         /// Checks if there already is an entry of that Jobs primary key
@@ -894,18 +899,23 @@ namespace KompetansetorgetXamarin.Controllers
 
                 if (key.Equals("expiryDate"))
                 {
-                    j.expiryDate = dict[key].ToString();
+                    DateTime dateTime = (DateTime)dict[key];
+                    j.expiryDate = TrimMilliseconds(dateTime);
                 }
 
                 if (key.Equals("modified"))
                 {
-                    j.modified = dict[key].ToString();
+                    DateTime dateTime = (DateTime)dict[key];
+                    j.modified = TrimMilliseconds(dateTime);
                 }
+            
                 
                 if (key.Equals("published"))
                 {
-                    j.published = dict[key].ToString();
+                    DateTime dateTime = (DateTime)dict[key];
+                    j.published = TrimMilliseconds(dateTime);
                 }
+        
 
                 if (key.Equals("companies"))
                 {

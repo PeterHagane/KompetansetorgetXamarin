@@ -179,7 +179,8 @@ namespace KompetansetorgetXamarin.Controllers
                 if (dict.ContainsKey("uuid") && dict.ContainsKey("modified") && dict.ContainsKey("amountOfProjects"))
                 {
                     string uuid = dict["uuid"].ToString();
-                    string modified = dict["modified"].ToString();
+                    DateTime dateTime = (DateTime)dict["modified"];
+                    DateTime modified = TrimMilliseconds(dateTime);
                     int amountOfProjects = 0;
                     try
                     {
@@ -220,7 +221,7 @@ namespace KompetansetorgetXamarin.Controllers
         /// <param name="uuid"></param>
         /// <param name="modified"></param>
         /// <returns></returns>
-        private bool ExistsInDb(string uuid, string modified)
+        private bool ExistsInDb(string uuid, DateTime modified)
         {
             lock (DbContext.locker)
             {
@@ -895,12 +896,14 @@ namespace KompetansetorgetXamarin.Controllers
                 }
                 if (key.Equals("published"))
                 {
-                    p.published = dict[key].ToString();
+                    DateTime dateTime = (DateTime)dict[key];
+                    p.published = TrimMilliseconds(dateTime);
                 }
 
                 if (key.Equals("modified"))
                 {
-                    p.modified = dict[key].ToString();
+                    DateTime dateTime = (DateTime)dict[key];
+                    p.modified = TrimMilliseconds(dateTime);
                 }
 
                 if (key.Equals("companies"))
@@ -927,7 +930,6 @@ namespace KompetansetorgetXamarin.Controllers
      
                 if (key.Equals("courses"))
                 {
-
                     IEnumerable courses = (IEnumerable)dict[key];
                     //Newtonsoft.Json.Linq.JArray'
                     CoursesController cc = new CoursesController();

@@ -22,8 +22,8 @@
       <local:BaseButton Clicked="TestProjectsFilterDb_OnClicked"  x:Name="TestProjectsFilterDbButton" Text="Querier Project i databasen utifra et bestemt filter" Style="{DynamicResource baseButtonStyle}" />
       <local:BaseButton Clicked="GetAllJobsFromWebApi_OnClicked"  x:Name="GetAllJobsFromWebApiButton" Text="Henter alle jobber fra web api" Style="{DynamicResource baseButtonStyle}" />
       <local:BaseButton Clicked="GetAllProjectsFromWebApi_OnClicked"  x:Name="GetAllProjectsFromWebApiButton" Text="Henter alle oppgaver fra web api" Style="{DynamicResource baseButtonStyle}" />
-      <local:BaseButton Clicked="GetAllFilters"  x:Name="GetAllFiltersButton" Text="Henter alle filtre" Style="{DynamicResource baseButtonStyle}" />
-     <!-- <local:BaseButton Clicked="TestPostStudentsStudyGroupToServer"  x:Name="TestPostStudentsStudyGroupToServerButton" Text="Endrer registrerte fagområder for studenten" Style="{DynamicResource baseButtonStyle}" />
+ <!-- <local:BaseButton Clicked="GetAllFilters"  x:Name="GetAllFiltersButton" Text="Henter alle filtre" Style="{DynamicResource baseButtonStyle}" />
+      <local:BaseButton Clicked="TestPostStudentsStudyGroupToServer"  x:Name="TestPostStudentsStudyGroupToServerButton" Text="Endrer registrerte fagområder for studenten" Style="{DynamicResource baseButtonStyle}" />
 -->
       
 
