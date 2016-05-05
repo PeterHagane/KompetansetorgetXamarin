@@ -180,7 +180,7 @@ namespace KompetansetorgetXamarin.Controllers
                 {
                     string uuid = dict["uuid"].ToString();
                     DateTime dateTime = (DateTime)dict["modified"];
-                    DateTime modified = TrimMilliseconds(dateTime);
+                    long modified = long.Parse(dateTime.ToString("yyyyMMddHHmmss"));
                     int amountOfProjects = 0;
                     try
                     {
@@ -221,7 +221,7 @@ namespace KompetansetorgetXamarin.Controllers
         /// <param name="uuid"></param>
         /// <param name="modified"></param>
         /// <returns></returns>
-        private bool ExistsInDb(string uuid, DateTime modified)
+        private bool ExistsInDb(string uuid, long modified)
         {
             lock (DbContext.locker)
             {
@@ -897,13 +897,13 @@ namespace KompetansetorgetXamarin.Controllers
                 if (key.Equals("published"))
                 {
                     DateTime dateTime = (DateTime)dict[key];
-                    p.published = TrimMilliseconds(dateTime);
+                    p.published = long.Parse(dateTime.ToString("yyyyMMddHHmmss"));
                 }
 
                 if (key.Equals("modified"))
                 {
                     DateTime dateTime = (DateTime)dict[key];
-                    p.modified = TrimMilliseconds(dateTime);
+                    p.modified = long.Parse(dateTime.ToString("yyyyMMddHHmmss"));
                 }
 
                 if (key.Equals("companies"))
