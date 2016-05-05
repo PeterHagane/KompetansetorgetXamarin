@@ -477,7 +477,6 @@ namespace KompetansetorgetXamarin.Controllers
                 Authenticater.Authorized = false;
                 return null;
             }
-            
 
             var client = new HttpClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", accessToken);

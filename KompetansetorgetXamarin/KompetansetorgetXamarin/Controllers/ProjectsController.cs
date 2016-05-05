@@ -274,6 +274,18 @@ namespace KompetansetorgetXamarin.Controllers
                 queryParams += "sortby=" + sortBy;
             }
 
+            bool? dataExist = await CheckServerForNewData(queryParams);
+            System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter - dataExist" + dataExist);
+            if (dataExist != null)
+            {
+                if ((bool)dataExist)
+                {
+                    IEnumerable<Project> filteredProjects = GetProjectsFromDbBasedOnFilter(studyGroups, filter);
+                    filteredProjects = GetAllCompaniesRelatedToProjects(filteredProjects.ToList());
+                    return filteredProjects;
+                }
+            }
+
             Uri url = new Uri(Adress + queryParams);
             System.Diagnostics.Debug.WriteLine("GetProjectsBasedOnFilter - url: " + url.ToString());
 
