@@ -126,9 +126,10 @@ namespace KompetansetorgetXamarin.Controllers
         /// Returns true if there are any new or modified jobs.
         /// </summary>
         /// <returns></returns>
-        private async Task<bool?> CheckServerForNewData(string queryParams = "")
+        private async Task<bool?> CheckServerForNewData(List<string> studyGroups = null, Dictionary<string, string> filter = null)
         {
             //"api/v1/jobs/lastmodifed"
+            string queryParams = CreateQueryParams(studyGroups, null, filter);
             string adress = Adress + "/" + "lastmodified" + queryParams;
             System.Diagnostics.Debug.WriteLine("JobController - CheckServerForNewData - adress: " + adress);
             Uri url = new Uri(adress);
@@ -172,14 +173,38 @@ namespace KompetansetorgetXamarin.Controllers
             {
                 // using <string, object> instead of <string, string> makes the date be stored in the right format when using .ToString()
                 Dictionary<string, object> dict = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonString);
-                string uuid = "";
-                string modified = "";
 
-                if (dict.ContainsKey("uuid") && dict.ContainsKey("modified"))
+                if (dict.ContainsKey("uuid") && dict.ContainsKey("modified") && dict.ContainsKey("amountOfJobs"))
                 {
-                    uuid = dict["uuid"].ToString();
-                    modified = dict["modified"].ToString();
-                    return ExistsInDb(uuid, modified);
+                    string uuid = dict["uuid"].ToString();
+                    string modified = dict["modified"].ToString();
+                    int amountOfJobs = 0;
+                    try
+                    {
+                        amountOfJobs = Int32.Parse(dict["amountOfJobs"].ToString());
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine("JobController - CheckServerForNewData: await client.GetAsync(\"url\") Failed");
+                        System.Diagnostics.Debug.WriteLine("JobController - CheckServerForNewData: Exception msg: " + ex.Message);
+                        System.Diagnostics.Debug.WriteLine("JobController - CheckServerForNewData: Stack Trace: \n" + ex.StackTrace);
+                        System.Diagnostics.Debug.WriteLine("JobController - CheckServerForNewData: End Of Stack Trace");
+                        return null;
+                    }
+                    bool existInDb = ExistsInDb(uuid, modified);
+                    if (!existInDb)
+                    {
+                        return existInDb;
+                    }
+                    int localDbCount = GetJobsFromDbBasedOnFilter(studyGroups, filter).Count();
+                    System.Diagnostics.Debug.WriteLine("CheckServerForNewData: localDbCount: " + localDbCount + " serverCount: " + amountOfJobs);
+                    // if there is a greater amount of jobs on that search filter then the job that exist 
+                    // in the database has been inserted throught another search filter
+                    if (amountOfJobs > localDbCount)
+                    {
+                        return !existInDb;
+                    }
+                    return existInDb;                    
                 }
             }
             return null;
@@ -391,23 +416,9 @@ namespace KompetansetorgetXamarin.Controllers
             }
         }
 
-        /// <summary>
-        /// Gets a job based on optional filters.
-        /// </summary>
-        /// <param name="studyGroups">studyGroups can be a list of numerous studygroups ex: helse, idrettsfag, datateknologi </param>
-        /// <param name="sortBy">published - oldest to newest
-        ///                      -published - newest to oldest
-        ///                      expirydate - descending order
-        ///                      -expirydate - ascending order
-        /// </param>
-        /// <param name="filter">A dictionary where key can be: titles (values:title of the job), types (values: deltid, heltid, etc...),
-        ///                      locations (values: vestagder, austagder), . 
-        ///                      Supports only 1 key at this current implementation!</param>
-        /// <returns></returns>
-        public async Task<IEnumerable<Job>> GetJobsBasedOnFilter(List<string> studyGroups = null,
+        private string CreateQueryParams(List<string> studyGroups = null,
             string sortBy = "", Dictionary<string, string> filter = null)
         {
-            //string adress = "http://kompetansetorgetserver1.azurewebsites.net/api/v1/jobs";
             string queryParams = "";
             if (studyGroups != null)
             {
@@ -452,8 +463,28 @@ namespace KompetansetorgetXamarin.Controllers
                 else queryParams += "&";
                 queryParams += "sortby=" + sortBy;
             }
+            return queryParams;
+        }
 
-            bool? dataExist = await CheckServerForNewData(queryParams);
+        /// <summary>
+        /// Gets a job based on optional filters.
+        /// </summary>
+        /// <param name="studyGroups">studyGroups can be a list of numerous studygroups ex: helse, idrettsfag, datateknologi </param>
+        /// <param name="sortBy">published - oldest to newest
+        ///                      -published - newest to oldest
+        ///                      expirydate - descending order
+        ///                      -expirydate - ascending order
+        /// </param>
+        /// <param name="filter">A dictionary where key can be: titles (values:title of the job), types (values: deltid, heltid, etc...),
+        ///                      locations (values: vestagder, austagder), . 
+        ///                      Supports only 1 key at this current implementation!</param>
+        /// <returns></returns>
+        public async Task<IEnumerable<Job>> GetJobsBasedOnFilter(List<string> studyGroups = null,
+            string sortBy = "", Dictionary<string, string> filter = null)
+        {
+            //string adress = "http://kompetansetorgetserver1.azurewebsites.net/api/v1/jobs";
+            string queryParams = CreateQueryParams(studyGroups, sortBy, filter);
+            bool ? dataExist = await CheckServerForNewData(studyGroups, filter);
             System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter - dataExist" + dataExist);
             if (dataExist != null)
             {
