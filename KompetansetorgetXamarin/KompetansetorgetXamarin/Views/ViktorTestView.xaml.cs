@@ -13,6 +13,7 @@ using KompetansetorgetXamarin.Models;
 using KompetansetorgetXamarin.Controls;
 using Newtonsoft.Json;
 using PCLStorage;
+using SQLite.Net;
 using SQLiteNetExtensions.Extensions;
 
 
@@ -606,6 +607,124 @@ namespace KompetansetorgetXamarin.Views
             System.Diagnostics.Debug.WriteLine("GetAllFilters: studyGroupsFilter.Count: " + studyGroupsFilter.Count);
             System.Diagnostics.Debug.WriteLine("GetAllFilters: jobTypesJobFilter.Count: " + jobTypesJobFilter.Count);
             System.Diagnostics.Debug.WriteLine("GetAllFilters: jobTypesProjectFilter.Count: " + jobTypesProjectFilter.Count);
+        }
+
+        /// <summary>
+        /// This test method require that you have not logged in and got no authorization
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void TestDeleteExpiredJobs(object sender, EventArgs e)
+        {
+            JobsController jc = new JobsController();
+
+            DbContext DbContext = DbContext.GetDbContext;
+            SQLiteConnection Db = DbContext.Db;
+
+            DateTime yesterday =  DateTime.Now.AddDays(-1);
+            long n = long.Parse(yesterday.ToString("yyyyMMddHHmmss"));
+            
+            string testUuid = "colemak";
+            Job job = new Job()
+            {
+                uuid = testUuid,
+                expiryDate = n
+            };
+
+            string companyId = "Ikea";
+            Company comp = new Company()
+            {
+                id = companyId
+            };
+
+            string locationId = "sverige";
+            Location loc = new Location()
+            {
+                id = locationId
+            };
+
+            string sgId = "dykking";
+            StudyGroup sg = new StudyGroup()
+            {
+                id = sgId
+            };
+
+            StudyGroupJob sgj = new StudyGroupJob()
+            {
+                StudyGroupId = sgId,
+                JobUuid = testUuid
+            };
+
+            LocationJob lj = new LocationJob()
+            {
+                LocationId = locationId,
+                JobUuid = testUuid
+            };
+
+            CompanyJob cj = new CompanyJob()
+            {
+                CompanyId = companyId,
+                JobUuid = testUuid
+            };
+
+            string jtId = "10aarErfaringEcma6";
+            JobType jt = new JobType()
+            {
+                id = jtId
+            };
+
+            JobTypeJob jtj = new JobTypeJob()
+            {
+                JobUuid = testUuid,
+                JobTypeId = jtId
+            };
+
+            Db.Insert(comp);
+            Db.Insert(job);
+            Db.Insert(loc);
+            Db.Insert(sg);
+            Db.Insert(sgj);
+            Db.Insert(lj);
+            Db.Insert(cj);
+            Db.Insert(jt);
+            Db.Insert(jtj);
+
+            Job j = Db.Get<Job>(testUuid);
+            System.Diagnostics.Debug.WriteLine("j.expiryDate: " + j.expiryDate);
+            System.Diagnostics.Debug.WriteLine("StudyGroup.Count: " +
+                                               Db.Query<StudyGroup>("Select * from StudyGroup").Count());
+            System.Diagnostics.Debug.WriteLine("Job.Count: " +
+                                   Db.Query<Job>("Select * from Job").Count());
+            System.Diagnostics.Debug.WriteLine("JobType.Count: " +
+                                   Db.Query<JobType>("Select * from JobType").Count());
+            System.Diagnostics.Debug.WriteLine("Location.Count: " +
+                                   Db.Query<Location>("Select * from Location").Count());
+            System.Diagnostics.Debug.WriteLine("Company.Count: " +
+                                   Db.Query<Company>("Select * from Company").Count());
+
+            System.Diagnostics.Debug.WriteLine("CompanyJob.Count: " +
+                       Db.Query<CompanyJob>("Select * from CompanyJob").Count());
+            System.Diagnostics.Debug.WriteLine("JobTypeJob.Count: " +
+                                   Db.Query<JobTypeJob>("Select * from JobTypeJob").Count());
+            System.Diagnostics.Debug.WriteLine("LocationJob.Count: " +
+                                   Db.Query<LocationJob>("Select * from LocationJob").Count());
+            System.Diagnostics.Debug.WriteLine("StudyGroupJob.Count: " +
+                                   Db.Query<StudyGroupJob>("Select * from StudyGroupJob").Count());
+
+            System.Diagnostics.Debug.WriteLine("Time for delete");
+            jc.DeleteAllExpiredJobs();
+            System.Diagnostics.Debug.WriteLine("Job.Count: " +
+                       Db.Query<Job>("Select * from Job").Count());
+            System.Diagnostics.Debug.WriteLine("CompanyJob.Count: " +
+                       Db.Query<CompanyJob>("Select * from CompanyJob").Count());
+            System.Diagnostics.Debug.WriteLine("JobTypeJob.Count: " +
+                       Db.Query<JobTypeJob>("Select * from JobTypeJob").Count());
+            System.Diagnostics.Debug.WriteLine("LocationJob.Count: " +
+                       Db.Query<LocationJob>("Select * from LocationJob").Count());
+            System.Diagnostics.Debug.WriteLine("StudyGroupJob.Count: " +
+                       Db.Query<StudyGroupJob>("Select * from StudyGroupJob").Count());
+            //CompanyJobs, StudyGroupJob, LocationJob og JobTypeJob.
+
         }
     }
 }

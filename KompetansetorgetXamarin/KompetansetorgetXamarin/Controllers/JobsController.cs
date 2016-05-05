@@ -178,7 +178,7 @@ namespace KompetansetorgetXamarin.Controllers
                 {
                     string uuid = dict["uuid"].ToString();
                     DateTime dateTime = (DateTime)dict["modified"];
-                    DateTime modified = TrimMilliseconds(dateTime);
+                    long modified = long.Parse(dateTime.ToString("yyyyMMddHHmmss"));
                     int amountOfJobs = 0;
                     try
                     {
@@ -219,7 +219,7 @@ namespace KompetansetorgetXamarin.Controllers
         /// <param name="uuid"></param>
         /// <param name="modified"></param>
         /// <returns></returns>
-        private bool ExistsInDb(string uuid, DateTime modified)
+        private bool ExistsInDb(string uuid, long modified)
         {
             lock (DbContext.locker)
             {
@@ -389,9 +389,49 @@ namespace KompetansetorgetXamarin.Controllers
             return jobs;
         }
 
-        public void DeleteOldJobsOnExpiryDate()
-        {
-            
+        public void DeleteAllExpiredJobs()
+        {  
+            DateTime today = TrimMilliseconds(DateTime.Today);
+            long todayNumber = long.Parse(today.ToString("yyyyMMddHHmmss"));
+            List<Job> jobs;
+            lock (DbContext.locker)
+            {
+                jobs = Db.Query<Job>("Select * from Job "
+                                         + "where Job.expiryDate < ?", todayNumber);
+            }
+            System.Diagnostics.Debug.WriteLine("JobController - DeleteAllExpiredJobs: jobs.Count: " + jobs.Count);
+
+            if (jobs != null && jobs.Count > 0)
+            {
+                foreach (var job in jobs)
+                {
+                    lock (DbContext.locker)
+                    {
+                        Db.Execute("delete from CompanyJob " +
+                        "where CompanyJob.JobUuid = ?", job.uuid);
+                        System.Diagnostics.Debug.WriteLine("JobController - DeleteAllExpiredJobs: after delete from CompanyJob");
+
+                        Db.Execute("delete from StudyGroupJob " +
+                        "where StudyGroupJob.JobUuid = ?", job.uuid);
+                        System.Diagnostics.Debug.WriteLine("JobController - DeleteAllExpiredJobs: after delete from StudyGroupJob");
+
+                        Db.Execute("delete from LocationJob " +
+                        "where LocationJob.JobUuid = ?", job.uuid);
+                        System.Diagnostics.Debug.WriteLine("JobController - DeleteAllExpiredJobs: after delete from LocationJob");
+
+                        Db.Execute("delete from JobTypeJob " +
+                        "where JobTypeJob.JobUuid = ?", job.uuid);
+                        System.Diagnostics.Debug.WriteLine("JobController - DeleteAllExpiredJobs: after delete from JobTypeJob");
+
+                    }
+                }
+                lock (DbContext.locker)
+                {
+                    Db.Execute("delete from Job " +
+                               "where Job.expiryDate < ?", today);
+                }
+                System.Diagnostics.Debug.WriteLine("JobController - DeleteAllExpiredJobs: after delete from Job");
+            }
         }
 
         /// <summary>
@@ -900,20 +940,20 @@ namespace KompetansetorgetXamarin.Controllers
                 if (key.Equals("expiryDate"))
                 {
                     DateTime dateTime = (DateTime)dict[key];
-                    j.expiryDate = TrimMilliseconds(dateTime);
+                    j.expiryDate = long.Parse(dateTime.ToString("yyyyMMddHHmmss"));
                 }
 
                 if (key.Equals("modified"))
                 {
                     DateTime dateTime = (DateTime)dict[key];
-                    j.modified = TrimMilliseconds(dateTime);
+                    j.modified = long.Parse(dateTime.ToString("yyyyMMddHHmmss"));
                 }
             
                 
                 if (key.Equals("published"))
                 {
                     DateTime dateTime = (DateTime)dict[key];
-                    j.published = TrimMilliseconds(dateTime);
+                    j.published = long.Parse(dateTime.ToString("yyyyMMddHHmmss"));
                 }
         
 
@@ -1033,6 +1073,7 @@ namespace KompetansetorgetXamarin.Controllers
             UpdateJob(j);
             return j;
         }
+
 
     }
 }

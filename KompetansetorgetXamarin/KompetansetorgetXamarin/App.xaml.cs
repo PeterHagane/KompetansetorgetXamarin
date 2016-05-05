@@ -42,7 +42,14 @@ namespace KompetansetorgetXamarin
                 Crud crudster = new Crud();
                 crudster.CreateNewFile(filename);
             }
+            DeleteOutdatedData();
             UpdateAllFilters();
+        }
+
+        private void DeleteOutdatedData()
+        {
+            JobsController jc = new JobsController();
+            jc.DeleteAllExpiredJobs();
         }
 
         private void UpdateAllFilters()

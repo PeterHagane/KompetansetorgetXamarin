@@ -39,9 +39,6 @@ namespace KompetansetorgetXamarin.Models
 
         public DateTime modified { get; set; }
 
-        // When the object got Cached, to prevent old data
-        public DateTime cached { get; set; }
-
         [ManyToMany(typeof(ContactProject))]
         public List<Contact> contacts { get; set; }
 
