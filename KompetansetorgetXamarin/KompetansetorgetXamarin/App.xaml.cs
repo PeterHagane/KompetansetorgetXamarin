@@ -49,7 +49,14 @@ namespace KompetansetorgetXamarin
         {
             // This is to make sure that the app got the study groups that is used as search filters. 
             StudyGroupsController sgc = new StudyGroupsController();
-            sgc.GetStudyGroupsFromServer();
+            LocationsController lc = new LocationsController();
+            JobTypesController jtc = new JobTypesController();
+            CoursesController cc = new CoursesController();
+            cc.UpdateCoursesFromServer();
+            jtc.UpdateJobTypesFromServer();
+            sgc.UpdateStudyGroupsFromServer();
+            lc.UpdateLocationsFromServer();
+
         }
 
         protected override void OnSleep()
@@ -83,11 +90,15 @@ namespace KompetansetorgetXamarin
         {
             // NavPage.Navigation.PopModalAsync();
             StudyGroupsController sgc = new StudyGroupsController();
-            sgc.GetStudyGroupsFromServer();
+            LocationsController lc = new LocationsController();
+            JobTypesController jtc = new JobTypesController();
+            CoursesController cc = new CoursesController();
+            jtc.UpdateJobTypesFromServer();
+            sgc.UpdateStudyGroupsFromServer();
+            lc.UpdateLocationsFromServer();
+            cc.UpdateCoursesFromServer();
             NavPage.Navigation.InsertPageBefore(new MainPage(), NavPage.Navigation.NavigationStack.First());
             NavPage.Navigation.PopToRootAsync();
-
-
         }
     }
 }

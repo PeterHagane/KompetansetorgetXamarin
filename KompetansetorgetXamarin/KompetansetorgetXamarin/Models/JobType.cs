@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Dynamic;
 using System.Linq;
 using System.Web;
 using SQLite.Net.Attributes;
@@ -18,6 +18,7 @@ namespace KompetansetorgetXamarin.Models
         [PrimaryKey]
         public string id { get; set; }
         public string name { get; set; }
+        public string type { get; set; }
 
         [ManyToMany(typeof(JobTypeJob))]
         public List<Job> Jobs { get; set; }
