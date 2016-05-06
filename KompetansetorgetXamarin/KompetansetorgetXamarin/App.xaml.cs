@@ -42,8 +42,16 @@ namespace KompetansetorgetXamarin
                 Crud crudster = new Crud();
                 crudster.CreateNewFile(filename);
             }
-            DeleteOutdatedData();
-            UpdateAllFilters();
+            StudentsController sc = new StudentsController();
+            if (sc.GetStudent() != null) { 
+                DeleteOutdatedData();
+                UpdateAllFilters();
+                DevicesController dc = new DevicesController();
+                if (!dc.GetDevice().tokenSent)
+                {
+                    dc.UpdateServersDb();
+                }
+            }
         }
 
         private void DeleteOutdatedData()
@@ -100,12 +108,13 @@ namespace KompetansetorgetXamarin
             LocationsController lc = new LocationsController();
             JobTypesController jtc = new JobTypesController();
             CoursesController cc = new CoursesController();
+            NavPage.Navigation.InsertPageBefore(new MainPage(), NavPage.Navigation.NavigationStack.First());
+            NavPage.Navigation.PopToRootAsync();
             jtc.UpdateJobTypesFromServer();
             sgc.UpdateStudyGroupsFromServer();
             lc.UpdateLocationsFromServer();
             cc.UpdateCoursesFromServer();
-            NavPage.Navigation.InsertPageBefore(new MainPage(), NavPage.Navigation.NavigationStack.First());
-            NavPage.Navigation.PopToRootAsync();
+
         }
     }
 }

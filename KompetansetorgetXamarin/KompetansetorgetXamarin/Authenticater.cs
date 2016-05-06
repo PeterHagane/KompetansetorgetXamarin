@@ -146,6 +146,8 @@ namespace KompetansetorgetXamarin
                         Student student = sc.GetStudent(username);
                         student.accessToken = localToken;
                         sc.UpdateStudent(student);
+                        DevicesController dc = new DevicesController();
+                        dc.UpdateServersDb();
                     }
                     else
                     {
@@ -156,6 +158,7 @@ namespace KompetansetorgetXamarin
                         sc.InsertStudent(student);
                         DevicesController dc = new DevicesController();
                         dc.FixStudentForeignKey(username);
+                        dc.UpdateServersDb();
                     }
                 }
                 /*

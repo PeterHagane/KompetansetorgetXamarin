@@ -726,5 +726,11 @@ namespace KompetansetorgetXamarin.Views
             //CompanyJobs, StudyGroupJob, LocationJob og JobTypeJob.
 
         }
+
+        private async void TestNotificationRegister(object sender, EventArgs e)
+        {
+            DevicesController dc = new DevicesController();
+            dc.UpdateServersDb();
+        }
     }
 }

@@ -11,16 +11,8 @@ using SQLiteNetExtensions.Extensions;
 
 namespace KompetansetorgetXamarin.Controllers
 {
-    public class NotificationsController
+    public class NotificationsController : BaseController
     {
-        private DbContext dbContext = DbContext.GetDbContext;
-        private SQLiteConnection Db;
-
-        public NotificationsController()
-        {
-            Db = dbContext.Db;
-        }
-
 
         /// <summary>
         /// Get all stored notifications
