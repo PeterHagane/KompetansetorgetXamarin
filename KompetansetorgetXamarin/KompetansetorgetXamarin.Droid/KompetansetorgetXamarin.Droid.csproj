@@ -138,12 +138,6 @@
     <None Include="Assets\AboutAssets.txt" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable\icon.png" />
-    <AndroidResource Include="Resources\drawable-hdpi\icon.png" />
-    <AndroidResource Include="Resources\drawable-xhdpi\icon.png" />
-    <AndroidResource Include="Resources\drawable-xxhdpi\icon.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Properties\AndroidManifest.xml">
       <SubType>Designer</SubType>
     </Content>
@@ -156,14 +150,38 @@
     <AndroidResource Include="Resources\drawable-hdpi\kompetansetorget_logo_dark.9.png" />
     <AndroidResource Include="Resources\drawable-xhdpi\kompetansetorget_logo_dark.9.png" />
     <AndroidResource Include="Resources\drawable-xxhdpi\kompetansetorget_logo_dark.9.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\ArrowBlackLeft.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\ArrowBlackRight.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\ArrowWhiteLeft.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\ArrowWhiteRight.png" />
     <Content Include="Resources\drawable-hdpi\KTbanner.jpg" />
-    <AndroidResource Include="Resources\drawable-hdpi\uia_logo.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\icon.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\ArrowBlackLeft.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\ArrowBlackRight.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\ArrowWhiteLeft.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\ArrowWhiteRight.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\User.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\UserBlack.png" />
     <Content Include="Resources\drawable-xhdpi\KTbanner.jpg" />
-    <AndroidResource Include="Resources\drawable-xhdpi\uia_logo.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\icon.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\ArrowBlackLeft.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\ArrowBlackRight.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\ArrowWhiteLeft.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\ArrowWhiteRight.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\User.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\UserBlack.png" />
     <Content Include="Resources\drawable-xxhdpi\KTbanner.jpg" />
-    <AndroidResource Include="Resources\drawable-xxhdpi\uia_logo.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\icon.png" />
+    <AndroidResource Include="Resources\drawable\ArrowBlackLeft.png" />
+    <AndroidResource Include="Resources\drawable\ArrowBlackRight.png" />
+    <AndroidResource Include="Resources\drawable\ArrowWhiteLeft.png" />
+    <AndroidResource Include="Resources\drawable\ArrowWhiteRight.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\User.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\UserBlack.png" />
     <Content Include="Resources\drawable\KTbanner.jpg" />
-    <AndroidResource Include="Resources\drawable\uia_logo.png" />
+    <AndroidResource Include="Resources\drawable\icon.png" />
+    <AndroidResource Include="Resources\drawable\User.png" />
+    <AndroidResource Include="Resources\drawable\UserBlack.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\KompetansetorgetXamarin\KompetansetorgetXamarin.csproj">

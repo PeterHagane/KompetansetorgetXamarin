@@ -5,19 +5,30 @@
              xmlns:local="clr-namespace:KompetansetorgetXamarin.Controls;assembly=KompetansetorgetXamarin">
 
   <local:BaseContentPage Padding="0,0,0,0">
-    
-    
-    <ContentPage.ToolbarItems>
-      <ToolbarItem Name="Log Out" Command="{Binding LogOut}" Order="Primary" Priority="0">
+
+
+    <local:BaseContentPage.ToolbarItems>
+      <ToolbarItem Name="User" Activated="OnClick"  Order="Primary" Priority="1">
         <ToolbarItem.Icon>
           <OnPlatform x:TypeArguments="FileImageSource"
-                      Android="uia_logo.png" />
+                      Android="User.png" />
         </ToolbarItem.Icon>
       </ToolbarItem>
-    </ContentPage.ToolbarItems>
 
-    <ContentPage.Padding> 
-      <OnPlatform x:TypeArguments="Thickness" iOS="0,0,0,0" Android="0,0,0,0" />
+      <ToolbarItem Name="Innstillinger" Activated="SwipeRight"  Order="Primary" Priority="2">
+        <ToolbarItem.Icon>
+          <OnPlatform x:TypeArguments="FileImageSource"
+                      Android="ArrowWhiteRight.png" />
+        </ToolbarItem.Icon>
+      </ToolbarItem>
+
+      <ToolbarItem Name="Finn oppgaveforslag" Order="Primary" Priority="0">
+      </ToolbarItem>
+
+    </local:BaseContentPage.ToolbarItems>
+
+    <ContentPage.Padding>
+      <OnPlatform x:TypeArguments="Thickness" iOS="15,0,15,0" Android="15,0,15,0" />
     </ContentPage.Padding>
 
     <StackLayout VerticalOptions="FillAndExpand">
@@ -41,11 +52,9 @@
 
   </local:BaseContentPage>
 
-
-
   <local:BaseContentPage Padding="0,0,0,0">
     <ContentPage.Padding>
-      <OnPlatform x:TypeArguments="Thickness" iOS="0,30,0,0" Android="0,30,0,0" />
+      <OnPlatform x:TypeArguments="Thickness" iOS="0,5,0,0" Android="15,5,15,0" />
     </ContentPage.Padding>
 
 

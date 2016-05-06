@@ -18,7 +18,7 @@ namespace KompetansetorgetXamarin.Views
         VMOppgaverSettings listInit = new VMOppgaverSettings();
         ObservableCollection<Oppgave> oppgaver = new ObservableCollection<Oppgave>();
         ObservableCollection<fagområdeSetting> fagområder; 
-
+        int currentPage = 0;
 
         public CarouselOppgaver()
         {
@@ -51,9 +51,28 @@ namespace KompetansetorgetXamarin.Views
             ObservableCollection<fagområdeSetting> fagområder = listInit.oppgaveSettings;
         }
 
+        void OnClick(object sender, EventArgs e)
+        {
+            ToolbarItem tbi = (ToolbarItem)sender;
+            this.DisplayAlert("Selected!", tbi.Text, "OK");
+        }
+
+        void SwipeRight(object sender, EventArgs e)
+        {
+            ToolbarItem tbi = (ToolbarItem)sender;
+            Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
+            {
+                if (currentPage != 1)
+                {
+                    currentPage = 1;
+                }
+
+                this.CurrentPage = this.Children[currentPage];
+
+            });
 
 
-
+        }
 
     }
 }

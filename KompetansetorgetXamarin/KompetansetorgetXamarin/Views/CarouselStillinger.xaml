@@ -5,6 +5,22 @@
              xmlns:local="clr-namespace:KompetansetorgetXamarin.Controls;assembly=KompetansetorgetXamarin">
 
   <local:BaseContentPage >
+    <local:BaseContentPage.ToolbarItems>
+      <ToolbarItem Name="User" Activated="OnClick"  Order="Primary" Priority="0">
+        <ToolbarItem.Icon>
+          <OnPlatform x:TypeArguments="FileImageSource"
+                      Android="User.png" />
+        </ToolbarItem.Icon>
+      </ToolbarItem>
+
+      <ToolbarItem Name="Innstillinger" Activated="OnClick"  Order="Primary" Priority="1">
+        <ToolbarItem.Icon>
+          <OnPlatform x:TypeArguments="FileImageSource"
+                      Android="ArrowWhiteRight.png" />
+        </ToolbarItem.Icon>
+      </ToolbarItem>
+    </local:BaseContentPage.ToolbarItems>
+
     <ContentPage.Padding>
       <OnPlatform x:TypeArguments="Thickness" iOS="0,0,0,0" Android="0,0,0,0" />
     </ContentPage.Padding>
