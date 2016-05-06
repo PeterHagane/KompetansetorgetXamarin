@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -23,20 +24,20 @@ namespace KompetansetorgetXamarin.Controllers
         /// Inserts the studyGroup into the database.
         /// </summary>
         /// <param name="studyGroup"></param>
-        /// <returns>Returns true if the studyGroup was inserted, returns false if a studyGroup with the same 
-        ///  primary key already exists in the table.</returns>
+        /// <returns>Returns true if the studyGroup was inserted, 
+        /// </returns>
         public bool InsertStudyGroup(StudyGroup studyGroup)
         {
-            if (CheckIfStudyGroupExist(studyGroup.id))
-            {
-                return false;
-            }
 
-            lock (DbContext.locker)
-            {
-                Db.Insert(studyGroup);
-            }
-            return true;
+                lock (DbContext.locker)
+                {
+                    var rowsAffected = Db.Update(studyGroup);
+                    if (rowsAffected == 0)
+                    {
+                        Db.Insert(studyGroup);
+                    }
+                }
+                return true;         
         }
 
         /// <summary>
@@ -69,7 +70,7 @@ namespace KompetansetorgetXamarin.Controllers
         /// <summary>
         /// Gets all StudyGroups from the servers REST Api.
         /// </summary>
-        public async Task GetStudyGroupsFromServer()
+        public async Task UpdateStudyGroupsFromServer()
         {
             System.Diagnostics.Debug.WriteLine("StudyGroupsController - GetStudyGroupsFromServer: initiated");
             StudentsController sc = new StudentsController();
@@ -92,9 +93,11 @@ namespace KompetansetorgetXamarin.Controllers
                 if (response.StatusCode == HttpStatusCode.OK) {
                     System.Diagnostics.Debug.WriteLine("GetStudyGroupsFromServer response " + response.StatusCode.ToString());
                     var results = await response.Content.ReadAsAsync<IEnumerable<StudyGroup>>();
+                    DeleteAllStudyGroups();
+
                     foreach (var studygroup in results)
                     {
-                        UpdateStudyGroups(studygroup);
+                        InsertStudyGroup(studygroup);
                     }
                 }
                 if (response.StatusCode == HttpStatusCode.Unauthorized)
@@ -109,6 +112,20 @@ namespace KompetansetorgetXamarin.Controllers
                 System.Diagnostics.Debug.WriteLine("StudyGroupsController - GetStudyGroupsFromServer: Exception msg: " + e.Message);
                 System.Diagnostics.Debug.WriteLine("StudyGroupsController - GetStudyGroupsFromServer: Stack Trace: \n" + e.StackTrace);
                 System.Diagnostics.Debug.WriteLine("StudyGroupsController - GetStudyGroupsFromServer: End Of Stack Trace");
+            }
+        }
+
+
+        /// <summary>
+        /// Deletes all StudyGroup from the local database.
+        /// </summary>
+        public void DeleteAllStudyGroups()
+        {
+            lock (DbContext.locker)
+            {
+                System.Diagnostics.Debug.WriteLine("StudyGroupsController - DeleteAllStudyGroups: Before delete.");
+                Db.Execute("delete from " + "StudyGroup");
+                System.Diagnostics.Debug.WriteLine("StudyGroupsController - DeleteAllStudyGroups: After delete.");
             }
         }
 

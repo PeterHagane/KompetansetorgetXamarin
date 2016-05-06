@@ -13,6 +13,7 @@ using KompetansetorgetXamarin.Models;
 using KompetansetorgetXamarin.Controls;
 using Newtonsoft.Json;
 using PCLStorage;
+using SQLite.Net;
 using SQLiteNetExtensions.Extensions;
 
 
@@ -22,18 +23,19 @@ namespace KompetansetorgetXamarin.Views
     {
         public ViktorTestView()
         {
-            InitializeComponent();            
+            InitializeComponent();
         }
 
-        
+
         private async void StudentButton_OnClicked(object sender, EventArgs e)
         {
             var client = new HttpClient();
             var response = await client.GetAsync("http://kompetansetorgetserver1.azurewebsites.net/api/v1/students");
-            if (response.IsSuccessStatusCode) { 
+            if (response.IsSuccessStatusCode)
+            {
                 var results = await response.Content.ReadAsAsync<IEnumerable<Student>>();
 
-            
+
                 var sb = new StringBuilder();
                 foreach (var student in results)
                 {
@@ -44,7 +46,7 @@ namespace KompetansetorgetXamarin.Views
                 TextBox.Text = sb.ToString();
             }
         }
-        
+
 
 
         /*
@@ -76,7 +78,7 @@ namespace KompetansetorgetXamarin.Views
              TextBox.Text = deviceId;
          }
          */
-         /*
+        /*
         private async void GetJobsFromServer_OnClicked(object sender, EventArgs e)
         {
             //JobsController jc = new JobsController();
@@ -109,6 +111,7 @@ namespace KompetansetorgetXamarin.Views
 
         }
         */
+
         private async void NotificationsFromDb_OnClicked(object sender, EventArgs e)
         {
             System.Diagnostics.Debug.WriteLine("ViktorTestView - NotificationsFromDb_OnClicked: Initiated");
@@ -221,7 +224,7 @@ namespace KompetansetorgetXamarin.Views
             if (jobs != null)
             {
                 System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter: jobs.Count(): " +
-                                   jobs.Count());
+                                                   jobs.Count());
             }
         }
 
@@ -236,7 +239,7 @@ namespace KompetansetorgetXamarin.Views
             if (projects != null)
             {
                 System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter: jobs.Count(): " +
-                                   projects.Count());
+                                                   projects.Count());
             }
         }
 
@@ -259,9 +262,10 @@ namespace KompetansetorgetXamarin.Views
             {
                 GoToLogin();
             }
-            if (jobs != null) { 
+            if (jobs != null)
+            {
                 System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter: jobs.Count(): " +
-                                   jobs.Count());
+                                                   jobs.Count());
                 foreach (var job in jobs)
                 {
                     System.Diagnostics.Debug.WriteLine("Companies is not null: " + job.companies[0].id);
@@ -278,16 +282,18 @@ namespace KompetansetorgetXamarin.Views
             // checks if still Authorized 
             if (!Authenticater.Authorized)
             {
-                System.Diagnostics.Debug.WriteLine("TestGetStudyGroupStudent inside If: Authorized:  " + Authenticater.Authorized);
+                System.Diagnostics.Debug.WriteLine("TestGetStudyGroupStudent inside If: Authorized:  " +
+                                                   Authenticater.Authorized);
                 GoToLogin();
             }
             else
             {
-                System.Diagnostics.Debug.WriteLine("TestGetStudyGroupStudent inside Else: Authorized:  " + Authenticater.Authorized);
+                System.Diagnostics.Debug.WriteLine("TestGetStudyGroupStudent inside Else: Authorized:  " +
+                                                   Authenticater.Authorized);
                 if (list == null)
                 {
                     System.Diagnostics.Debug.WriteLine("Server communication failed");
-                } 
+                }
 
                 System.Diagnostics.Debug.WriteLine("Studygroups.Count: " + list.Count);
 
@@ -322,9 +328,10 @@ namespace KompetansetorgetXamarin.Views
             {
                 System.Diagnostics.Debug.WriteLine("TestJobsFilterDb:  was null aka failed!");
             }
-            else { 
+            else
+            {
                 System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter: jobs.Count(): " +
-                                       jobs.Count());
+                                                   jobs.Count());
 
                 foreach (var job in jobs)
                 {
@@ -334,18 +341,19 @@ namespace KompetansetorgetXamarin.Views
                         System.Diagnostics.Debug.WriteLine("Companies is not null: " + job.companies[0].id);
 
                     }
-            }
+                }
             }
 
             var jobs2 = jc.GetJobsFromDbBasedOnFilter(studyGroups);
-            
+
             if (jobs2 == null)
             {
                 System.Diagnostics.Debug.WriteLine("TestJobsFilterDb:  was null aka failed!");
             }
-            else { 
+            else
+            {
                 System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter: jobs2.Count(): " +
-                                       jobs2.Count());
+                                                   jobs2.Count());
 
                 foreach (var job in jobs2)
                 {
@@ -365,9 +373,10 @@ namespace KompetansetorgetXamarin.Views
             {
                 System.Diagnostics.Debug.WriteLine("TestJobsFilterDb:  was null aka failed!");
             }
-            else { 
+            else
+            {
                 System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter: jobs3.Count(): " +
-                                       jobs3.Count());
+                                                   jobs3.Count());
 
                 foreach (var job in jobs3)
                 {
@@ -389,9 +398,10 @@ namespace KompetansetorgetXamarin.Views
             {
                 System.Diagnostics.Debug.WriteLine("TestJobsFilterDb:  was null aka failed!");
             }
-            else { 
+            else
+            {
                 System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter: jobs4.Count(): " +
-                                       jobs4.Count());
+                                                   jobs4.Count());
 
                 foreach (var job in jobs4)
                 {
@@ -403,6 +413,9 @@ namespace KompetansetorgetXamarin.Views
                     }
                 }
             }
+            /*
+            StudyGroupsController sgc = new StudyGroupsController();
+            sgc.UpdateStudyGroupsFromServer(); */
         }
 
 
@@ -425,9 +438,10 @@ namespace KompetansetorgetXamarin.Views
             {
                 GoToLogin();
             }
-            if (projects != null) { 
+            if (projects != null)
+            {
                 System.Diagnostics.Debug.WriteLine("GetProjectsBasedOnFilter: projects.Count(): " +
-                                    projects.Count());
+                                                   projects.Count());
                 foreach (var project in projects)
                 {
                     System.Diagnostics.Debug.WriteLine("Companies is not null: " + project.companies[0].id);
@@ -462,9 +476,10 @@ namespace KompetansetorgetXamarin.Views
                 System.Diagnostics.Debug.WriteLine("TestProjectsFilterDb:  was null aka failed!");
             }
 
-            else { 
+            else
+            {
                 System.Diagnostics.Debug.WriteLine("TestProjectsFilterDb: projects.Count(): " +
-                                       projects.Count());
+                                                   projects.Count());
 
                 foreach (var project in projects)
                 {
@@ -483,9 +498,10 @@ namespace KompetansetorgetXamarin.Views
             {
                 System.Diagnostics.Debug.WriteLine("TestProjectsFilterDb:  was null aka failed!");
             }
-            else { 
+            else
+            {
                 System.Diagnostics.Debug.WriteLine("GetProjectsFromDbBasedOnFilter: projects2.Count(): " +
-                                       projects2.Count());
+                                                   projects2.Count());
 
                 foreach (var project in projects2)
                 {
@@ -506,9 +522,10 @@ namespace KompetansetorgetXamarin.Views
             {
                 System.Diagnostics.Debug.WriteLine("TestProjectsFilterDb:  was null aka failed!");
             }
-            else { 
+            else
+            {
                 System.Diagnostics.Debug.WriteLine("GetProjectsFromDbBasedOnFilter: projects3.Count(): " +
-                                       projects3.Count());
+                                                   projects3.Count());
 
                 foreach (var project in projects3)
                 {
@@ -520,7 +537,7 @@ namespace KompetansetorgetXamarin.Views
                     }
                 }
             }
-            
+
             Dictionary<string, string> filter2 = new Dictionary<string, string>();
             filter2.Add("titles", "Strømavleser vha gammel mobil");
 
@@ -530,9 +547,10 @@ namespace KompetansetorgetXamarin.Views
             {
                 System.Diagnostics.Debug.WriteLine("TestProjectsFilterDb:  was null aka failed!");
             }
-            else { 
+            else
+            {
                 System.Diagnostics.Debug.WriteLine("GetProjectsFromDbBasedOnFilter: projects4.Count(): " +
-                                       projects4.Count());
+                                                   projects4.Count());
 
                 foreach (var project in projects4)
                 {
@@ -570,6 +588,143 @@ namespace KompetansetorgetXamarin.Views
 
             System.Diagnostics.Debug.WriteLine(
                 "TestPostStudentsStudyGroupToServer: PostStudentsStudyGroupToServer success: " + success);
+        }
+
+        private async void GetAllFilters(object sender, EventArgs e)
+        {
+            LocationsController lc = new LocationsController();
+            CoursesController cc = new CoursesController();
+            StudyGroupsController sgc = new StudyGroupsController();
+            JobTypesController jtc = new JobTypesController();
+            List<Location> locationsFilter = lc.GetAllLocations();
+            List<Course> coursesFilter = cc.GetAllCourses();
+            List<StudyGroup> studyGroupsFilter = sgc.GetAllStudyGroups();
+            List<JobType> jobTypesJobFilter = jtc.GetJobTypeFilterJob();
+            List<JobType> jobTypesProjectFilter = jtc.GetJobTypeFilterProject();
+
+            System.Diagnostics.Debug.WriteLine("GetAllFilters: locationsFilter.Count: " + locationsFilter.Count);
+            System.Diagnostics.Debug.WriteLine("GetAllFilters: coursesFilter.Count: " + coursesFilter.Count);
+            System.Diagnostics.Debug.WriteLine("GetAllFilters: studyGroupsFilter.Count: " + studyGroupsFilter.Count);
+            System.Diagnostics.Debug.WriteLine("GetAllFilters: jobTypesJobFilter.Count: " + jobTypesJobFilter.Count);
+            System.Diagnostics.Debug.WriteLine("GetAllFilters: jobTypesProjectFilter.Count: " + jobTypesProjectFilter.Count);
+        }
+
+        /// <summary>
+        /// This test method require that you have not logged in and got no authorization
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void TestDeleteExpiredJobs(object sender, EventArgs e)
+        {
+            JobsController jc = new JobsController();
+
+            DbContext DbContext = DbContext.GetDbContext;
+            SQLiteConnection Db = DbContext.Db;
+
+            DateTime yesterday =  DateTime.Now.AddDays(-1);
+            long n = long.Parse(yesterday.ToString("yyyyMMddHHmmss"));
+            
+            string testUuid = "colemak";
+            Job job = new Job()
+            {
+                uuid = testUuid,
+                expiryDate = n
+            };
+
+            string companyId = "Ikea";
+            Company comp = new Company()
+            {
+                id = companyId
+            };
+
+            string locationId = "sverige";
+            Location loc = new Location()
+            {
+                id = locationId
+            };
+
+            string sgId = "dykking";
+            StudyGroup sg = new StudyGroup()
+            {
+                id = sgId
+            };
+
+            StudyGroupJob sgj = new StudyGroupJob()
+            {
+                StudyGroupId = sgId,
+                JobUuid = testUuid
+            };
+
+            LocationJob lj = new LocationJob()
+            {
+                LocationId = locationId,
+                JobUuid = testUuid
+            };
+
+            CompanyJob cj = new CompanyJob()
+            {
+                CompanyId = companyId,
+                JobUuid = testUuid
+            };
+
+            string jtId = "10aarErfaringEcma6";
+            JobType jt = new JobType()
+            {
+                id = jtId
+            };
+
+            JobTypeJob jtj = new JobTypeJob()
+            {
+                JobUuid = testUuid,
+                JobTypeId = jtId
+            };
+
+            Db.Insert(comp);
+            Db.Insert(job);
+            Db.Insert(loc);
+            Db.Insert(sg);
+            Db.Insert(sgj);
+            Db.Insert(lj);
+            Db.Insert(cj);
+            Db.Insert(jt);
+            Db.Insert(jtj);
+
+            Job j = Db.Get<Job>(testUuid);
+            System.Diagnostics.Debug.WriteLine("j.expiryDate: " + j.expiryDate);
+            System.Diagnostics.Debug.WriteLine("StudyGroup.Count: " +
+                                               Db.Query<StudyGroup>("Select * from StudyGroup").Count());
+            System.Diagnostics.Debug.WriteLine("Job.Count: " +
+                                   Db.Query<Job>("Select * from Job").Count());
+            System.Diagnostics.Debug.WriteLine("JobType.Count: " +
+                                   Db.Query<JobType>("Select * from JobType").Count());
+            System.Diagnostics.Debug.WriteLine("Location.Count: " +
+                                   Db.Query<Location>("Select * from Location").Count());
+            System.Diagnostics.Debug.WriteLine("Company.Count: " +
+                                   Db.Query<Company>("Select * from Company").Count());
+
+            System.Diagnostics.Debug.WriteLine("CompanyJob.Count: " +
+                       Db.Query<CompanyJob>("Select * from CompanyJob").Count());
+            System.Diagnostics.Debug.WriteLine("JobTypeJob.Count: " +
+                                   Db.Query<JobTypeJob>("Select * from JobTypeJob").Count());
+            System.Diagnostics.Debug.WriteLine("LocationJob.Count: " +
+                                   Db.Query<LocationJob>("Select * from LocationJob").Count());
+            System.Diagnostics.Debug.WriteLine("StudyGroupJob.Count: " +
+                                   Db.Query<StudyGroupJob>("Select * from StudyGroupJob").Count());
+
+            System.Diagnostics.Debug.WriteLine("Time for delete");
+            jc.DeleteAllExpiredJobs();
+            System.Diagnostics.Debug.WriteLine("Job.Count: " +
+                       Db.Query<Job>("Select * from Job").Count());
+            System.Diagnostics.Debug.WriteLine("CompanyJob.Count: " +
+                       Db.Query<CompanyJob>("Select * from CompanyJob").Count());
+            System.Diagnostics.Debug.WriteLine("JobTypeJob.Count: " +
+                       Db.Query<JobTypeJob>("Select * from JobTypeJob").Count());
+            System.Diagnostics.Debug.WriteLine("LocationJob.Count: " +
+                       Db.Query<LocationJob>("Select * from LocationJob").Count());
+            System.Diagnostics.Debug.WriteLine("StudyGroupJob.Count: " +
+                       Db.Query<StudyGroupJob>("Select * from StudyGroupJob").Count());
+            //CompanyJobs, StudyGroupJob, LocationJob og JobTypeJob.
+
         }
     }
 }

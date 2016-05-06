@@ -123,13 +123,127 @@ namespace KompetansetorgetXamarin.Controllers
         }
 
         /// <summary>
+        /// Returns true if there are any new or modified jobs.
+        /// </summary>
+        /// <returns></returns>
+        private async Task<bool?> CheckServerForNewData(List<string> studyGroups = null, Dictionary<string, string> filter = null)
+        {
+            //"api/v1/jobs/lastmodifed"
+            string queryParams = CreateQueryParams(studyGroups, null, filter);
+            string adress = Adress + "/" + "lastmodified" + queryParams;
+            System.Diagnostics.Debug.WriteLine("JobController - CheckServerForNewData - adress: " + adress);
+            Uri url = new Uri(adress);
+            System.Diagnostics.Debug.WriteLine("JobController - CheckServerForNewData - url.ToString: " + url.ToString());
+
+            var client = new HttpClient();
+            StudentsController sc = new StudentsController();
+            string accessToken = sc.GetStudentAccessToken();
+            if (string.IsNullOrWhiteSpace(accessToken))
+            {
+                Authenticater.Authorized = false;
+                return null;
+            }
+            System.Diagnostics.Debug.WriteLine("JobController - CheckServerForNewData - bearer: " + accessToken);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", accessToken);
+            string jsonString = null;
+            try
+            {
+                var response = await client.GetAsync(url);
+                System.Diagnostics.Debug.WriteLine("CheckServerForNewData response " + response.StatusCode.ToString());
+                if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    System.Diagnostics.Debug.WriteLine("JobsController - CheckServerForNewData failed due to lack of Authorization");
+                    Authenticater.Authorized = false;
+                }
+
+                else if (response.StatusCode == HttpStatusCode.OK) { 
+                    //results = await response.Content.ReadAsAsync<IEnumerable<Job>>();
+                    jsonString = await response.Content.ReadAsStringAsync();
+                }
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine("JobController - CheckServerForNewData: await client.GetAsync(\"url\") Failed");
+                System.Diagnostics.Debug.WriteLine("JobController - CheckServerForNewData: Exception msg: " + e.Message);
+                System.Diagnostics.Debug.WriteLine("JobController - CheckServerForNewData: Stack Trace: \n" + e.StackTrace);
+                System.Diagnostics.Debug.WriteLine("JobController - CheckServerForNewData: End Of Stack Trace");
+                return null;
+            }
+            if (jsonString != null)
+            {
+                // using <string, object> instead of <string, string> makes the date be stored in the right format when using .ToString()
+                Dictionary<string, object> dict = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonString);
+
+                if (dict.ContainsKey("uuid") && dict.ContainsKey("modified") && dict.ContainsKey("amountOfJobs"))
+                {
+                    string uuid = dict["uuid"].ToString();
+                    DateTime dateTime = (DateTime)dict["modified"];
+                    long modified = long.Parse(dateTime.ToString("yyyyMMddHHmmss"));
+                    int amountOfJobs = 0;
+                    try
+                    {
+                        amountOfJobs = Int32.Parse(dict["amountOfJobs"].ToString());
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine("JobController - CheckServerForNewData: await client.GetAsync(\"url\") Failed");
+                        System.Diagnostics.Debug.WriteLine("JobController - CheckServerForNewData: Exception msg: " + ex.Message);
+                        System.Diagnostics.Debug.WriteLine("JobController - CheckServerForNewData: Stack Trace: \n" + ex.StackTrace);
+                        System.Diagnostics.Debug.WriteLine("JobController - CheckServerForNewData: End Of Stack Trace");
+                        return null;
+                    }
+                    bool existInDb = ExistsInDb(uuid, modified);
+                    if (!existInDb)
+                    {
+                        return existInDb;
+                    }
+                    int localDbCount = GetJobsFromDbBasedOnFilter(studyGroups, filter).Count();
+                    System.Diagnostics.Debug.WriteLine("CheckServerForNewData: localDbCount: " + localDbCount + " serverCount: " + amountOfJobs);
+                    // if there is a greater amount of jobs on that search filter then the job that exist 
+                    // in the database has been inserted throught another search filter
+                    if (amountOfJobs > localDbCount)
+                    {
+                        return !existInDb;
+                    }
+                    return existInDb;                    
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Returns true if there exist an entry in the database matching 
+        /// the jobs uuid and modified.
+        /// Returns false if not.
+        /// </summary>
+        /// <param name="uuid"></param>
+        /// <param name="modified"></param>
+        /// <returns></returns>
+        private bool ExistsInDb(string uuid, long modified)
+        {
+            lock (DbContext.locker)
+            {
+                int rowsAffected = Db.Query<Job>("Select * from Job"
+                                 + " where Job.uuid = ?"
+                                 + " and Job.modified = ?", uuid, modified).Count;
+                if (rowsAffected > 0)
+                {
+                    System.Diagnostics.Debug.WriteLine("JobController - ExistsInDb: " + "true");
+                    return true;
+                }
+                System.Diagnostics.Debug.WriteLine("JobController - ExistsInDb: " + "false");
+                return false;
+            }
+        }
+
+        /// <summary>
         /// Updates the Job from the servers REST Api.
         /// 
         /// This implementation also get the minimum data from the related
         /// Companies to build a proper notification list.
         /// </summary>
         /// <param name="uuid"></param>
-        public async void UpdateJobFromServer(string uuid)
+        public async Task UpdateJobFromServer(string uuid)
         {
             System.Diagnostics.Debug.WriteLine("JobController - UpdateJobFromServer(string uuid): initiated");
                        //as in minimumInformationForNotifications=true
@@ -139,7 +253,16 @@ namespace KompetansetorgetXamarin.Controllers
             Uri url = new Uri(adress);
             var client = new HttpClient();
             System.Diagnostics.Debug.WriteLine("JobController - UpdateJobFromServer: HttpClient created");
+            StudentsController sc = new StudentsController();
 
+            string accessToken = sc.GetStudentAccessToken();
+
+            if (string.IsNullOrWhiteSpace(accessToken))
+            {
+                Authenticater.Authorized = false;
+                return;
+            }
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", accessToken);
             string jsonString = null;
             try
             {
@@ -162,8 +285,6 @@ namespace KompetansetorgetXamarin.Controllers
             UpdateJob(job);
 
         }
-
-
 
         /// <summary>
         /// Updates an entry in the Job table. 
@@ -236,8 +357,6 @@ namespace KompetansetorgetXamarin.Controllers
                     System.Diagnostics.Debug.WriteLine("JobController - UpdateJob: End Of Stack Trace");
                 }
             }
-
-
         }
 
         /// <summary>
@@ -270,6 +389,50 @@ namespace KompetansetorgetXamarin.Controllers
             return jobs;
         }
 
+        public void DeleteAllExpiredJobs()
+        {  
+            DateTime today = TrimMilliseconds(DateTime.Today);
+            long todayNumber = long.Parse(today.ToString("yyyyMMddHHmmss"));
+            List<Job> jobs;
+            lock (DbContext.locker)
+            {
+                jobs = Db.Query<Job>("Select * from Job "
+                                         + "where Job.expiryDate < ?", todayNumber);
+            }
+            System.Diagnostics.Debug.WriteLine("JobController - DeleteAllExpiredJobs: jobs.Count: " + jobs.Count);
+
+            if (jobs != null && jobs.Count > 0)
+            {
+                foreach (var job in jobs)
+                {
+                    lock (DbContext.locker)
+                    {
+                        Db.Execute("delete from CompanyJob " +
+                        "where CompanyJob.JobUuid = ?", job.uuid);
+                        System.Diagnostics.Debug.WriteLine("JobController - DeleteAllExpiredJobs: after delete from CompanyJob");
+
+                        Db.Execute("delete from StudyGroupJob " +
+                        "where StudyGroupJob.JobUuid = ?", job.uuid);
+                        System.Diagnostics.Debug.WriteLine("JobController - DeleteAllExpiredJobs: after delete from StudyGroupJob");
+
+                        Db.Execute("delete from LocationJob " +
+                        "where LocationJob.JobUuid = ?", job.uuid);
+                        System.Diagnostics.Debug.WriteLine("JobController - DeleteAllExpiredJobs: after delete from LocationJob");
+
+                        Db.Execute("delete from JobTypeJob " +
+                        "where JobTypeJob.JobUuid = ?", job.uuid);
+                        System.Diagnostics.Debug.WriteLine("JobController - DeleteAllExpiredJobs: after delete from JobTypeJob");
+
+                    }
+                }
+                lock (DbContext.locker)
+                {
+                    Db.Execute("delete from Job " +
+                               "where Job.expiryDate < ?", today);
+                }
+                System.Diagnostics.Debug.WriteLine("JobController - DeleteAllExpiredJobs: after delete from Job");
+            }
+        }
 
         /// <summary>
         /// Checks if there already is an entry of that Jobs primary key
@@ -298,23 +461,9 @@ namespace KompetansetorgetXamarin.Controllers
             }
         }
 
-        /// <summary>
-        /// Gets a job based on optional filters.
-        /// </summary>
-        /// <param name="studyGroups">studyGroups can be a list of numerous studygroups ex: helse, idrettsfag, datateknologi </param>
-        /// <param name="sortBy">published - oldest to newest
-        ///                      -published - newest to oldest
-        ///                      expirydate - descending order
-        ///                      -expirydate - ascending order
-        /// </param>
-        /// <param name="filter">A dictionary where key can be: titles (values:title of the job), types (values: deltid, heltid, etc...),
-        ///                      locations (values: vestagder, austagder), . 
-        ///                      Supports only 1 key at this current implementation!</param>
-        /// <returns></returns>
-        public async Task<IEnumerable<Job>> GetJobsBasedOnFilter(List<string> studyGroups = null,
+        private string CreateQueryParams(List<string> studyGroups = null,
             string sortBy = "", Dictionary<string, string> filter = null)
         {
-            //string adress = "http://kompetansetorgetserver1.azurewebsites.net/api/v1/jobs";
             string queryParams = "";
             if (studyGroups != null)
             {
@@ -359,6 +508,38 @@ namespace KompetansetorgetXamarin.Controllers
                 else queryParams += "&";
                 queryParams += "sortby=" + sortBy;
             }
+            return queryParams;
+        }
+
+        /// <summary>
+        /// Gets a job based on optional filters.
+        /// </summary>
+        /// <param name="studyGroups">studyGroups can be a list of numerous studygroups ex: helse, idrettsfag, datateknologi </param>
+        /// <param name="sortBy">published - oldest to newest
+        ///                      -published - newest to oldest
+        ///                      expirydate - descending order
+        ///                      -expirydate - ascending order
+        /// </param>
+        /// <param name="filter">A dictionary where key can be: titles (values:title of the job), types (values: deltid, heltid, etc...),
+        ///                      locations (values: vestagder, austagder), . 
+        ///                      Supports only 1 key at this current implementation!</param>
+        /// <returns></returns>
+        public async Task<IEnumerable<Job>> GetJobsBasedOnFilter(List<string> studyGroups = null,
+            string sortBy = "", Dictionary<string, string> filter = null)
+        {
+            //string adress = "http://kompetansetorgetserver1.azurewebsites.net/api/v1/jobs";
+            string queryParams = CreateQueryParams(studyGroups, sortBy, filter);
+            bool ? dataExist = await CheckServerForNewData(studyGroups, filter);
+            System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter - dataExist" + dataExist);
+            if (dataExist != null)
+            {
+                if ((bool)dataExist)
+                {
+                    IEnumerable<Job> filteredJobs = GetJobsFromDbBasedOnFilter(studyGroups, filter);
+                    filteredJobs = GetAllCompaniesRelatedToJobs(filteredJobs.ToList());
+                    return filteredJobs;
+                }
+            }
 
             Uri url = new Uri(Adress + queryParams);
             System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter - url: " + url.ToString());
@@ -372,7 +553,6 @@ namespace KompetansetorgetXamarin.Controllers
                 Authenticater.Authorized = false;
                 return null;
             }
-            
 
             var client = new HttpClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", accessToken);
@@ -759,18 +939,23 @@ namespace KompetansetorgetXamarin.Controllers
 
                 if (key.Equals("expiryDate"))
                 {
-                    j.expiryDate = dict[key].ToString();
+                    DateTime dateTime = (DateTime)dict[key];
+                    j.expiryDate = long.Parse(dateTime.ToString("yyyyMMddHHmmss"));
                 }
 
                 if (key.Equals("modified"))
                 {
-                    j.modified = dict[key].ToString();
+                    DateTime dateTime = (DateTime)dict[key];
+                    j.modified = long.Parse(dateTime.ToString("yyyyMMddHHmmss"));
                 }
+            
                 
                 if (key.Equals("published"))
                 {
-                    j.published = dict[key].ToString();
+                    DateTime dateTime = (DateTime)dict[key];
+                    j.published = long.Parse(dateTime.ToString("yyyyMMddHHmmss"));
                 }
+        
 
                 if (key.Equals("companies"))
                 {
@@ -888,6 +1073,7 @@ namespace KompetansetorgetXamarin.Controllers
             UpdateJob(j);
             return j;
         }
+
 
     }
 }

@@ -31,16 +31,13 @@ namespace KompetansetorgetXamarin.Models
 
         // The Date/Time stored is too big numbers to be supported by SQLite
         // String comparison should be enought
-        public string expiryDate { get; set; }
+        public long expiryDate { get; set; }
 
-        public string created { get; set; }
+        public long created { get; set; }
 
-        public string published { get; set; }
+        public long published { get; set; }
 
-        public string modified { get; set; }
-
-        // When the object got Cached, to prevent storing old data
-        public DateTime cached { get; set; }
+        public long modified { get; set; }
 
         [ManyToMany(typeof(CompanyJob))]
         public List<Company> companies { get; set; }

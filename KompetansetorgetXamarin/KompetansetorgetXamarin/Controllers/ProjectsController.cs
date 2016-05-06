@@ -124,22 +124,123 @@ namespace KompetansetorgetXamarin.Controllers
         }
 
         /// <summary>
-        /// Gets a project based on optional filters.
+        /// Returns true if there are any new or modified projects.
         /// </summary>
-        /// <param name="studyGroups">studyGroups can be a list of numerous studygroups ex: helse, idrettsfag, datateknologi </param>
-        /// <param name="sortBy">published - oldest to newest
-        ///                      -published - newest to oldest
-        ///                      expirydate - descending order
-        ///                      -expirydate - ascending order
-        /// </param>
-        /// <param name="filter">A dictionary where key can be: titles (values:title of the project), types (values: virksomhet, faglærer, etc...),
-        ///                      courses (values: "IS-304" "DAT-304" osv). 
-        ///                      Supports only 1 key at this current implementation!</param>
         /// <returns></returns>
-        public async Task<IEnumerable<Project>> GetProjectsBasedOnFilter(List<string> studyGroups = null,
+        private async Task<bool?> CheckServerForNewData(List<string> studyGroups = null, Dictionary<string, string> filter = null)
+        {
+            string queryParams = CreateQueryParams(studyGroups, null, filter);
+            //"api/v1/jobs/lastmodifed"
+            string adress = Adress + "/" + "lastmodified" + queryParams;
+            System.Diagnostics.Debug.WriteLine("ProjectController - CheckServerForNewData - adress: " + adress);
+            Uri url = new Uri(adress);
+            System.Diagnostics.Debug.WriteLine("ProjectController - CheckServerForNewData - url.ToString: " + url.ToString());
+
+            var client = new HttpClient();
+            StudentsController sc = new StudentsController();
+            string accessToken = sc.GetStudentAccessToken();
+            if (string.IsNullOrWhiteSpace(accessToken))
+            {
+                Authenticater.Authorized = false;
+                return null;
+            }
+            System.Diagnostics.Debug.WriteLine("ProjectController - CheckServerForNewData - bearer: " + accessToken);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", accessToken);
+            string jsonString = null;
+            try
+            {
+                var response = await client.GetAsync(url);
+                System.Diagnostics.Debug.WriteLine("CheckServerForNewData response " + response.StatusCode.ToString());
+                if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    System.Diagnostics.Debug.WriteLine("ProjectController - CheckServerForNewData failed due to lack of Authorization");
+                    Authenticater.Authorized = false;
+                }
+
+                else if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    //results = await response.Content.ReadAsAsync<IEnumerable<Job>>();
+                    jsonString = await response.Content.ReadAsStringAsync();
+                }
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine("ProjectController - CheckServerForNewData: await client.GetAsync(\"url\") Failed");
+                System.Diagnostics.Debug.WriteLine("ProjectController - CheckServerForNewData: Exception msg: " + e.Message);
+                System.Diagnostics.Debug.WriteLine("ProjectController - CheckServerForNewData: Stack Trace: \n" + e.StackTrace);
+                System.Diagnostics.Debug.WriteLine("ProjectController - CheckServerForNewData: End Of Stack Trace");
+                return null;
+            }
+            if (jsonString != null)
+            {
+                // using <string, object> instead of <string, string> makes the date be stored in the right format when using .ToString()
+                Dictionary<string, object> dict = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonString);
+
+                if (dict.ContainsKey("uuid") && dict.ContainsKey("modified") && dict.ContainsKey("amountOfProjects"))
+                {
+                    string uuid = dict["uuid"].ToString();
+                    DateTime dateTime = (DateTime)dict["modified"];
+                    long modified = long.Parse(dateTime.ToString("yyyyMMddHHmmss"));
+                    int amountOfProjects = 0;
+                    try
+                    {
+                        amountOfProjects = Int32.Parse(dict["amountOfProjects"].ToString());
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine("ProjectController - CheckServerForNewData: await client.GetAsync(\"url\") Failed");
+                        System.Diagnostics.Debug.WriteLine("ProjectController - CheckServerForNewData: Exception msg: " + ex.Message);
+                        System.Diagnostics.Debug.WriteLine("ProjectController - CheckServerForNewData: Stack Trace: \n" + ex.StackTrace);
+                        System.Diagnostics.Debug.WriteLine("ProjectController - CheckServerForNewData: End Of Stack Trace");
+                        return null;
+                    }
+                    bool existInDb = ExistsInDb(uuid, modified);
+                    if (!existInDb)
+                    {
+                        return existInDb;
+                    }
+                    int localDbCount = GetProjectsFromDbBasedOnFilter(studyGroups, filter).Count();
+                    System.Diagnostics.Debug.WriteLine("CheckServerForNewData: localDbCount: " + localDbCount + " serverCount: " + amountOfProjects);
+                    // if there is a greater amount of jobs on that search filter then the job that exist 
+                    // in the database has been inserted throught another search filter
+                    if (amountOfProjects > localDbCount)
+                    {
+                        return !existInDb;
+                    }
+                    return existInDb;
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Returns true if there exist an entry in the database matching 
+        /// the jobs uuid and modified.
+        /// Returns false if not.
+        /// </summary>
+        /// <param name="uuid"></param>
+        /// <param name="modified"></param>
+        /// <returns></returns>
+        private bool ExistsInDb(string uuid, long modified)
+        {
+            lock (DbContext.locker)
+            {
+                int rowsAffected = Db.Query<Project>("Select * from Project"
+                                 + " where Project.uuid = ?"
+                                 + " and Project.modified = ?", uuid, modified).Count;
+                if (rowsAffected > 0)
+                {
+                    System.Diagnostics.Debug.WriteLine("ProjectController - ExistsInDb: " + "true");
+                    return true;
+                }
+                System.Diagnostics.Debug.WriteLine("ProjectController - ExistsInDb: " + "false");
+                return false;
+            }
+        }
+
+        private string CreateQueryParams(List<string> studyGroups = null,
             string sortBy = "", Dictionary<string, string> filter = null)
         {
-            //string adress = "http://kompetansetorgetserver1.azurewebsites.net/api/v1/projects";
             string queryParams = "";
             if (studyGroups != null)
             {
@@ -183,6 +284,39 @@ namespace KompetansetorgetXamarin.Controllers
                 }
                 else queryParams += "&";
                 queryParams += "sortby=" + sortBy;
+            }
+            return queryParams;
+        }
+
+        /// <summary>
+        /// Gets a project based on optional filters.
+        /// </summary>
+        /// <param name="studyGroups">studyGroups can be a list of numerous studygroups ex: helse, idrettsfag, datateknologi </param>
+        /// <param name="sortBy">published - oldest to newest
+        ///                      -published - newest to oldest
+        ///                      expirydate - descending order
+        ///                      -expirydate - ascending order
+        /// </param>
+        /// <param name="filter">A dictionary where key can be: titles (values:title of the project), types (values: virksomhet, faglærer, etc...),
+        ///                      courses (values: "IS-304" "DAT-304" osv). 
+        ///                      Supports only 1 key at this current implementation!</param>
+        /// <returns></returns>
+        public async Task<IEnumerable<Project>> GetProjectsBasedOnFilter(List<string> studyGroups = null,
+            string sortBy = "", Dictionary<string, string> filter = null)
+        {
+            //string adress = "http://kompetansetorgetserver1.azurewebsites.net/api/v1/projects";
+            string queryParams = CreateQueryParams(studyGroups, sortBy, filter);
+
+            bool? dataExist = await CheckServerForNewData(studyGroups, filter);
+            System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter - dataExist" + dataExist);
+            if (dataExist != null)
+            {
+                if ((bool)dataExist)
+                {
+                    IEnumerable<Project> filteredProjects = GetProjectsFromDbBasedOnFilter(studyGroups, filter);
+                    filteredProjects = GetAllCompaniesRelatedToProjects(filteredProjects.ToList());
+                    return filteredProjects;
+                }
             }
 
             Uri url = new Uri(Adress + queryParams);
@@ -264,10 +398,18 @@ namespace KompetansetorgetXamarin.Controllers
             string adress = Adress + "/" + uuid + "?minnot=true";
             System.Diagnostics.Debug.WriteLine("UpdateProjectFromServer: var url = " + adress);
 
+            StudentsController sc = new StudentsController();
+            string accessToken = sc.GetStudentAccessToken();
+            if (string.IsNullOrWhiteSpace(accessToken))
+            {
+                Authenticater.Authorized = false;
+                return;
+            }
+
             Uri url = new Uri(adress);
             var client = new HttpClient();
             System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProjectFromServer: HttpClient created");
-
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", accessToken);
             string jsonString = null;
             try
             {
@@ -285,7 +427,6 @@ namespace KompetansetorgetXamarin.Controllers
                 System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProjectFromServer: End Of Stack Trace");
                 return;
             }
-
             Project project = Deserialize(jsonString);
             UpdateProject(project);
 
@@ -755,12 +896,14 @@ namespace KompetansetorgetXamarin.Controllers
                 }
                 if (key.Equals("published"))
                 {
-                    p.published = dict[key].ToString();
+                    DateTime dateTime = (DateTime)dict[key];
+                    p.published = long.Parse(dateTime.ToString("yyyyMMddHHmmss"));
                 }
 
                 if (key.Equals("modified"))
                 {
-                    p.modified = dict[key].ToString();
+                    DateTime dateTime = (DateTime)dict[key];
+                    p.modified = long.Parse(dateTime.ToString("yyyyMMddHHmmss"));
                 }
 
                 if (key.Equals("companies"))
@@ -787,7 +930,6 @@ namespace KompetansetorgetXamarin.Controllers
      
                 if (key.Equals("courses"))
                 {
-
                     IEnumerable courses = (IEnumerable)dict[key];
                     //Newtonsoft.Json.Linq.JArray'
                     CoursesController cc = new CoursesController();
