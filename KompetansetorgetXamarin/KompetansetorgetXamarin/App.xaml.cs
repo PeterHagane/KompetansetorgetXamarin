@@ -28,20 +28,6 @@ namespace KompetansetorgetXamarin
         
         protected override void OnStart()
         {
-            IFolder path = FileSystem.Current.LocalStorage;
-            string filename = "token.json";
-            try
-            {
-                IFile file = path.GetFileAsync(filename).Result;
-                System.Diagnostics.Debug.WriteLine("File containing token exists");
-            }
-            catch (Exception exception)
-            {
-                System.Diagnostics.Debug.WriteLine(exception.Message);
-                System.Diagnostics.Debug.WriteLine("File containing token doesn't exist");
-                Crud crudster = new Crud();
-                crudster.CreateNewFile(filename);
-            }
             StudentsController sc = new StudentsController();
             if (sc.GetStudent() != null) { 
                 DeleteOutdatedData();

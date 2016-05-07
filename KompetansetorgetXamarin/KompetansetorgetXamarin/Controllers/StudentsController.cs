@@ -19,7 +19,7 @@ using Device = KompetansetorgetXamarin.Models.Device;
 
 namespace KompetansetorgetXamarin.Controllers
 {
-    class StudentsController : BaseController
+    public class StudentsController : BaseController
     {
         public StudentsController()
         {
@@ -89,6 +89,27 @@ namespace KompetansetorgetXamarin.Controllers
                 System.Diagnostics.Debug.WriteLine("StudentsController - CheckIfStudentExist: Exception msg: " + e.Message);
                 return false;
             }
+        }
+
+        public void UpdateStudentsNotificationsPref(bool? receiveNotifications,
+            bool? receiveProjectNotifications, bool? receiveJobNotifications)
+        {
+            Student student = GetStudent();
+            if (receiveNotifications != null)
+            {
+                student.receiveNotifications = (bool)receiveNotifications;
+            }
+
+            if (receiveProjectNotifications != null)
+            {
+                student.receiveProjectNotifications = (bool)receiveProjectNotifications;
+            }
+
+            if (receiveJobNotifications != null)
+            {
+                student.receiveJobNotifications = (bool)receiveJobNotifications;
+            }
+            UpdateStudent(student);
         }
 
         /// <summary>

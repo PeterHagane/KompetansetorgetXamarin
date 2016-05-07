@@ -5,7 +5,6 @@ using Android.Util;
 using Android.Gms.Gcm;
 using Android.Gms.Gcm.Iid;
 using KompetansetorgetXamarin.Controllers;
-using KompetansetorgetXamarin.CRUD;
 
 namespace KompetansetorgetXamarin.Droid
 {

@@ -155,6 +155,9 @@ namespace KompetansetorgetXamarin
                         Student student = new Student();
                         student.username = username;
                         student.accessToken = localToken;
+                        student.receiveNotifications = true;
+                        student.receiveJobNotifications = true;
+                        student.receiveProjectNotifications = true;
                         sc.InsertStudent(student);
                         DevicesController dc = new DevicesController();
                         dc.FixStudentForeignKey(username);

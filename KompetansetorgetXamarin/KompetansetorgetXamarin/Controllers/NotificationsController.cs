@@ -152,7 +152,7 @@ namespace KompetansetorgetXamarin.Controllers
         /// }
         /// </summary>
         /// <returns>A list of objects suitable for to be dislayed to the user as notifications</returns>
-        public IEnumerable<object> GetNotificationList()
+        public List<object> GetNotificationList()
         {
             JobsController jc = new JobsController();
             ProjectsController pc = new ProjectsController();

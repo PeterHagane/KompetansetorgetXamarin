@@ -28,6 +28,15 @@ namespace KompetansetorgetXamarin.Models
 
         public string email { get; set; }
 
+        public bool receiveJobNotifications { get; set; }
+
+        public bool receiveProjectNotifications { get; set; }
+
+        public bool receiveNotifications { get; set; }
+        /*
+        receiveJobNotifications, receiveProjectNotifications, receiveNotifications.
+        */
+
         [ManyToMany(typeof(StudyGroupStudent))]
         public List<StudyGroup> studyGroup { get; set; }
 
