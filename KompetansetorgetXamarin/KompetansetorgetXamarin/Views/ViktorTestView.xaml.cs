@@ -116,7 +116,42 @@ namespace KompetansetorgetXamarin.Views
         {
             System.Diagnostics.Debug.WriteLine("ViktorTestView - NotificationsFromDb_OnClicked: Initiated");
             NotificationsController nc = new NotificationsController();
-            nc.GetNotificationList();
+            List<object> notifications = nc.GetNotificationList();
+            System.Diagnostics.Debug.WriteLine("ViktorTestView - NotificationsFromDb_OnClicked: notifications.Count = " + notifications.Count);
+
+            foreach (var n in notifications) {
+                if (n is Job) {
+                     // DO spesific Job code 
+                    Job job = (Job)n;    
+                    //long date = job.expiryDate; // Will work
+                    System.Diagnostics.Debug.WriteLine("job.title = " + job.title);
+                    if (job.companies != null && job.companies[0].logo != null)
+                    {
+                        System.Diagnostics.Debug.WriteLine("job.companies.logo = " + job.companies[0].logo);
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine("job.companies = null");
+                    }
+                    System.Diagnostics.Debug.WriteLine("job.expiryDate = " + job.expiryDate);
+
+                }
+                else if (n is Project) {
+                     // Do spesific Project  code.
+                    Project project = (Project)n;
+                    System.Diagnostics.Debug.WriteLine("project.title = " + project.title);
+                    if (project.companies != null && project.companies[0].logo != null)
+                    {
+                        System.Diagnostics.Debug.WriteLine("project.companies.logo = " + project.companies[0].logo);
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine("project.companies = null");
+                    }
+                    System.Diagnostics.Debug.WriteLine("project.companies.logo = " + project.companies[0].logo);
+                    System.Diagnostics.Debug.WriteLine("project.published = " + project.published);
+                }  
+            }
         }
 
         /*
@@ -725,6 +760,30 @@ namespace KompetansetorgetXamarin.Views
                        Db.Query<StudyGroupJob>("Select * from StudyGroupJob").Count());
             //CompanyJobs, StudyGroupJob, LocationJob og JobTypeJob.
 
+        }
+
+        private async void TestNotificationRegister(object sender, EventArgs e)
+        {
+            DevicesController dc = new DevicesController();
+            dc.UpdateServersDb();
+        }
+
+        private async void TestTurnOffNotifications(object sender, EventArgs e)
+        {
+            StudentsController sc = new StudentsController();
+            sc.UpdateStudentsNotificationsPref(false, true, true);
+        }
+
+        private async void TestTurnOffProjectNotification(object sender, EventArgs e)
+        {
+            StudentsController sc = new StudentsController();
+            sc.UpdateStudentsNotificationsPref(true, false, true);
+        }
+
+        private async void TestTurnOffJobNotification(object sender, EventArgs e)
+        {
+            StudentsController sc = new StudentsController();
+            sc.UpdateStudentsNotificationsPref(true, true, false);
         }
     }
 }

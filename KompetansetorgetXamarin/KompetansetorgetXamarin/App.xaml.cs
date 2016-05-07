@@ -28,22 +28,16 @@ namespace KompetansetorgetXamarin
         
         protected override void OnStart()
         {
-            IFolder path = FileSystem.Current.LocalStorage;
-            string filename = "token.json";
-            try
-            {
-                IFile file = path.GetFileAsync(filename).Result;
-                System.Diagnostics.Debug.WriteLine("File containing token exists");
+            StudentsController sc = new StudentsController();
+            if (sc.GetStudent() != null) { 
+                DeleteOutdatedData();
+                UpdateAllFilters();
+                DevicesController dc = new DevicesController();
+                if (!dc.GetDevice().tokenSent)
+                {
+                    dc.UpdateServersDb();
+                }
             }
-            catch (Exception exception)
-            {
-                System.Diagnostics.Debug.WriteLine(exception.Message);
-                System.Diagnostics.Debug.WriteLine("File containing token doesn't exist");
-                Crud crudster = new Crud();
-                crudster.CreateNewFile(filename);
-            }
-            DeleteOutdatedData();
-            UpdateAllFilters();
         }
 
         private void DeleteOutdatedData()
@@ -100,12 +94,13 @@ namespace KompetansetorgetXamarin
             LocationsController lc = new LocationsController();
             JobTypesController jtc = new JobTypesController();
             CoursesController cc = new CoursesController();
+            NavPage.Navigation.InsertPageBefore(new MainPage(), NavPage.Navigation.NavigationStack.First());
+            NavPage.Navigation.PopToRootAsync();
             jtc.UpdateJobTypesFromServer();
             sgc.UpdateStudyGroupsFromServer();
             lc.UpdateLocationsFromServer();
             cc.UpdateCoursesFromServer();
-            NavPage.Navigation.InsertPageBefore(new MainPage(), NavPage.Navigation.NavigationStack.First());
-            NavPage.Navigation.PopToRootAsync();
+
         }
     }
 }

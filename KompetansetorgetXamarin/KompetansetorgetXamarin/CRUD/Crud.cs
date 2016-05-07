@@ -14,7 +14,8 @@ using Newtonsoft.Json.Linq;
 namespace KompetansetorgetXamarin.CRUD
 {
     /// <summary>
-    /// Handles CRUD operations on local files
+    /// Handles CRUD operations on local files.
+    /// Its no longer used, //slett i slutten av prosjektet om det ikke blir funnet behov for å bruke det.
     /// </summary>
     public class Crud
     {

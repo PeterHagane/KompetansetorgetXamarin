@@ -11,16 +11,8 @@ using SQLiteNetExtensions.Extensions;
 
 namespace KompetansetorgetXamarin.Controllers
 {
-    public class NotificationsController
+    public class NotificationsController : BaseController
     {
-        private DbContext dbContext = DbContext.GetDbContext;
-        private SQLiteConnection Db;
-
-        public NotificationsController()
-        {
-            Db = dbContext.Db;
-        }
-
 
         /// <summary>
         /// Get all stored notifications
@@ -160,7 +152,7 @@ namespace KompetansetorgetXamarin.Controllers
         /// }
         /// </summary>
         /// <returns>A list of objects suitable for to be dislayed to the user as notifications</returns>
-        public IEnumerable<object> GetNotificationList()
+        public List<object> GetNotificationList()
         {
             JobsController jc = new JobsController();
             ProjectsController pc = new ProjectsController();

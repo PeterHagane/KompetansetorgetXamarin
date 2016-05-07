@@ -4,7 +4,7 @@ using Android.Content;
 using Android.Util;
 using Android.Gms.Gcm;
 using Android.Gms.Gcm.Iid;
-using KompetansetorgetXamarin.CRUD;
+using KompetansetorgetXamarin.Controllers;
 
 namespace KompetansetorgetXamarin.Droid
 {
@@ -14,7 +14,6 @@ namespace KompetansetorgetXamarin.Droid
         static object locker = new object();
 
         public RegistrationIntentService() : base("RegistrationIntentService") { }
-
         
         /// <summary>
         /// Requests a unique token/registration Id for the specific projectId registered
@@ -54,10 +53,12 @@ namespace KompetansetorgetXamarin.Droid
         /// <param name="token">The registration id of the app device provided by GCM</param>
         void SendRegistrationToAppServer(string token)
         {
+            DevicesController dc = new DevicesController();
             Log.Debug("SendRegistrationToAppServer", "token");
-            TokenHandler th = new TokenHandler();
+            //TokenHandler th = new TokenHandler();
             string aSerial = Android.OS.Build.Serial;
-            th.CheckToken(token, aSerial);
+            //th.CheckToken(token, aSerial);
+            dc.InsertOrUpdateDevice(token, aSerial, "android");
         }
 
 
