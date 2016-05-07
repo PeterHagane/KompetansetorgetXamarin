@@ -17,6 +17,7 @@ namespace KompetansetorgetXamarin.Views
         string randomDate = GetRandomDate();
         string defaultLogo = "http://kompetansetorget.uia.no/extension/kompetansetorget/design/kompetansetorget/images/logo-virksomhet.jpg";
         ObservableCollection<Varsel> varsler = new ObservableCollection<Varsel>();
+        int currentPage = 0;
 
 
 
@@ -48,6 +49,47 @@ namespace KompetansetorgetXamarin.Views
             var date = Convert.ToString(randomDate); 
             return date;
         }
+
+        void OnClick(object sender, EventArgs e)
+        {
+            ToolbarItem tbi = (ToolbarItem)sender;
+            this.DisplayAlert("Selected!", tbi.Text, "OK");
+        }
+
+        void SwipeRight(object sender, EventArgs e)
+        {
+            ToolbarItem tbi = (ToolbarItem)sender;
+            Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
+            {
+                if (currentPage != 1)
+                {
+                    currentPage = 1;
+                }
+
+                this.CurrentPage = this.Children[currentPage];
+
+            });
+        }
+
+
+        protected override bool OnBackButtonPressed()
+        {
+            var p0 = this.Children[0];
+            var p1 = this.Children[1];
+
+            if (CurrentPage.SendBackButtonPressed()) return true;
+
+            if (CurrentPage == p1)
+            {
+                this.CurrentPage = p0;
+            }
+            else if (CurrentPage == p0)
+            {
+                return false;
+            }
+            return true;
+        }
+
 
     }
 }

@@ -52,9 +52,27 @@
 
   </local:BaseContentPage>
 
+  
+    
+      
+        
+          
   <local:BaseContentPage Padding="0,0,0,0">
+    <local:BaseContentPage.ToolbarItems>
+      <ToolbarItem Name="User" Activated="OnClick"  Order="Primary" Priority="1">
+        <ToolbarItem.Icon>
+          <OnPlatform x:TypeArguments="FileImageSource"
+                      Android="User.png" />
+        </ToolbarItem.Icon>
+      </ToolbarItem>
+
+      <ToolbarItem Name="Innstillinger" Order="Primary" Priority="0">
+      </ToolbarItem>
+
+    </local:BaseContentPage.ToolbarItems>
+
     <ContentPage.Padding>
-      <OnPlatform x:TypeArguments="Thickness" iOS="0,5,0,0" Android="15,5,15,0" />
+      <OnPlatform x:TypeArguments="Thickness" iOS="15,15,15,0" Android="15,15,15,0" />
     </ContentPage.Padding>
 
 

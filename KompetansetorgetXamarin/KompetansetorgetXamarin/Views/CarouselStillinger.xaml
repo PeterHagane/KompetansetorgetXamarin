@@ -4,25 +4,29 @@
              x:Class="KompetansetorgetXamarin.Views.CarouselStillinger"
              xmlns:local="clr-namespace:KompetansetorgetXamarin.Controls;assembly=KompetansetorgetXamarin">
 
-  <local:BaseContentPage >
+  <local:BaseContentPage Title="Finn stillinger">
     <local:BaseContentPage.ToolbarItems>
-      <ToolbarItem Name="User" Activated="OnClick"  Order="Primary" Priority="0">
+      <ToolbarItem Name="User" Activated="OnClick"  Order="Primary" Priority="1">
         <ToolbarItem.Icon>
           <OnPlatform x:TypeArguments="FileImageSource"
                       Android="User.png" />
         </ToolbarItem.Icon>
       </ToolbarItem>
 
-      <ToolbarItem Name="Innstillinger" Activated="OnClick"  Order="Primary" Priority="1">
+      <ToolbarItem Name="Innstillinger" Activated="SwipeRight"  Order="Primary" Priority="2">
         <ToolbarItem.Icon>
           <OnPlatform x:TypeArguments="FileImageSource"
                       Android="ArrowWhiteRight.png" />
         </ToolbarItem.Icon>
       </ToolbarItem>
+
+      <ToolbarItem Name="Finn oppgaveforslag" Order="Primary" Priority="0">
+      </ToolbarItem>
+
     </local:BaseContentPage.ToolbarItems>
 
     <ContentPage.Padding>
-      <OnPlatform x:TypeArguments="Thickness" iOS="0,0,0,0" Android="0,0,0,0" />
+      <OnPlatform x:TypeArguments="Thickness" iOS="15,0,15,0" Android="15,0,15,0" />
     </ContentPage.Padding>
 
 
@@ -51,8 +55,21 @@
 
 
   <local:BaseContentPage Padding="0,0,0,0">
+    <local:BaseContentPage.ToolbarItems>
+      <ToolbarItem Name="User" Activated="OnClick"  Order="Primary" Priority="1">
+        <ToolbarItem.Icon>
+          <OnPlatform x:TypeArguments="FileImageSource"
+                      Android="User.png" />
+        </ToolbarItem.Icon>
+      </ToolbarItem>
+
+      <ToolbarItem Name="Innstillinger" Order="Primary" Priority="0">
+      </ToolbarItem>
+
+    </local:BaseContentPage.ToolbarItems>
+
     <ContentPage.Padding>
-      <OnPlatform x:TypeArguments="Thickness" iOS="0,30,0,0" Android="0,30,0,0" />
+      <OnPlatform x:TypeArguments="Thickness" iOS="15,15,15,0" Android="15,15,15,0" />
     </ContentPage.Padding>
     <StackLayout>
 

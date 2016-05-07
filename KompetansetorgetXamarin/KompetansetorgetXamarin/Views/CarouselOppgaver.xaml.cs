@@ -26,6 +26,9 @@ namespace KompetansetorgetXamarin.Views
             addData();
             OppgaveList.ItemsSource = oppgaver;
             oppgaverSettings.ItemsSource = listInit.oppgaveSettings;
+            //OnBackButtonPressed();
+
+ 
             //oppgaverSettings.ItemsSource = fagområder;
         }
 
@@ -70,9 +73,45 @@ namespace KompetansetorgetXamarin.Views
                 this.CurrentPage = this.Children[currentPage];
 
             });
-
-
         }
+
+
+        protected override bool OnBackButtonPressed()
+        {
+            var p0 = this.Children[0];
+            var p1 = this.Children[1];
+
+            if (CurrentPage.SendBackButtonPressed()) return true;
+
+            if (CurrentPage == p1)
+            {
+                this.CurrentPage = p0;
+            }
+            else if (CurrentPage == p0)
+            {
+                return false;
+            }
+            return true;
+        }
+
+
+        //Xamarin.Forms.Device.BeginInvokeOnMainThread(async() =>
+        //    {
+
+
+        //        if (CurrentPage == p1)
+        //        {
+        //            this.CurrentPage = p0;
+        //        }
+        //        else {
+
+        //        }
+        //        return base.OnBackButtonPressed();
+        //    });
+
+        //if (result) await this.Navigation.PopAsync();
+        //CurrentPage.Navigation.InsertPageBefore(this.Children[0], CurrentPage.Navigation.NavigationStack.First());
+        //var result = await this.DisplayAlert("Alert!", "Do you really want to exit?", "Yes", "No");
 
     }
 }
