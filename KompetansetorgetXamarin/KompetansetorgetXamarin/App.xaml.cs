@@ -33,7 +33,7 @@ namespace KompetansetorgetXamarin
                 DeleteOutdatedData();
                 UpdateAllFilters();
                 DevicesController dc = new DevicesController();
-                if (!dc.GetDevice().tokenSent)
+                if (dc.GetDevice() != null && !dc.GetDevice().tokenSent)
                 {
                     dc.UpdateServersDb();
                 }

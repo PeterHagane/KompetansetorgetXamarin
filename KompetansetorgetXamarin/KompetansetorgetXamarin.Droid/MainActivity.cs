@@ -37,14 +37,15 @@ namespace KompetansetorgetXamarin.Droid
                 StartService(intent);
             }
 
-            SetActionBar();
+           // SetActionBar();
 
         }
 
         public void SetActionBar() {
             var upArrow = Resources.GetDrawable(Resource.Drawable.ArrowWhiteLeft);
 
-            ActionBar.SetHomeAsUpIndicator(upArrow);
+           // ActionBar.SetHomeAsUpIndicator(upArrow);
+           
             //var toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
             //SetActionBar(toolbar);
             //ActionBar.SetIcon(Android.Resource.Color.Transparent);

@@ -14,6 +14,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SQLite.Net;
 using SQLiteNetExtensions.Extensions;
+using PCLCrypto;
 
 namespace KompetansetorgetXamarin.Controllers
 {
@@ -127,7 +128,7 @@ namespace KompetansetorgetXamarin.Controllers
         /// Returns true if there are any new or modified projects.
         /// </summary>
         /// <returns></returns>
-        private async Task<bool?> CheckServerForNewData(List<string> studyGroups = null, Dictionary<string, string> filter = null)
+        private async Task<String> CheckServerForNewData(List<string> studyGroups = null, Dictionary<string, string> filter = null)
         {
             string queryParams = CreateQueryParams(studyGroups, null, filter);
             //"api/v1/jobs/lastmodifed"
@@ -176,11 +177,12 @@ namespace KompetansetorgetXamarin.Controllers
                 // using <string, object> instead of <string, string> makes the date be stored in the right format when using .ToString()
                 Dictionary<string, object> dict = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonString);
 
-                if (dict.ContainsKey("uuid") && dict.ContainsKey("modified") && dict.ContainsKey("amountOfProjects"))
+                if (dict.ContainsKey("uuid") && dict.ContainsKey("modified") && dict.ContainsKey("uuids") && dict.ContainsKey("amountOfProjects"))
                 {
                     string uuid = dict["uuid"].ToString();
                     DateTime dateTime = (DateTime)dict["modified"];
                     long modified = long.Parse(dateTime.ToString("yyyyMMddHHmmss"));
+                    string uuids = dict["uuids"].ToString();
                     int amountOfProjects = 0;
                     try
                     {
@@ -188,26 +190,42 @@ namespace KompetansetorgetXamarin.Controllers
                     }
                     catch (Exception ex)
                     {
-                        System.Diagnostics.Debug.WriteLine("ProjectController - CheckServerForNewData: await client.GetAsync(\"url\") Failed");
-                        System.Diagnostics.Debug.WriteLine("ProjectController - CheckServerForNewData: Exception msg: " + ex.Message);
-                        System.Diagnostics.Debug.WriteLine("ProjectController - CheckServerForNewData: Stack Trace: \n" + ex.StackTrace);
-                        System.Diagnostics.Debug.WriteLine("ProjectController - CheckServerForNewData: End Of Stack Trace");
+                        System.Diagnostics.Debug.WriteLine("JobController - CheckServerForNewData: await client.GetAsync(\"url\") Failed");
+                        System.Diagnostics.Debug.WriteLine("JobController - CheckServerForNewData: Exception msg: " + ex.Message);
+                        System.Diagnostics.Debug.WriteLine("JobController - CheckServerForNewData: Stack Trace: \n" + ex.StackTrace);
+                        System.Diagnostics.Debug.WriteLine("JobController - CheckServerForNewData: End Of Stack Trace");
                         return null;
                     }
                     bool existInDb = ExistsInDb(uuid, modified);
                     if (!existInDb)
                     {
-                        return existInDb;
+                        return "newData";
+                        //return existInDb;
                     }
-                    int localDbCount = GetProjectsFromDbBasedOnFilter(studyGroups, filter).Count();
-                    System.Diagnostics.Debug.WriteLine("CheckServerForNewData: localDbCount: " + localDbCount + " serverCount: " + amountOfProjects);
+                    var localProjects = GetProjectsFromDbBasedOnFilter(studyGroups, filter, true);
+                    int localDbCount = localProjects.Count();
+
+                    StringBuilder sb = new StringBuilder();
+                    foreach (var project in localProjects)
+                    {
+                        sb.Append(project.uuid);
+                    }
+                    string localUuids = CalculateMd5Hash(sb.ToString());
+
                     // if there is a greater amount of jobs on that search filter then the job that exist 
                     // in the database has been inserted throught another search filter
-                    if (amountOfProjects > localDbCount)
+                    if (uuids != localUuids)
                     {
-                        return !existInDb;
+                        if (amountOfProjects > localDbCount)
+                        {
+                            return "newData";
+                            //return !existInDb;
+                        }
+
+                        return "incorrectCache";
                     }
-                    return existInDb;
+                    return "exists";
+                    //return existInDb;
                 }
             }
             return null;
@@ -307,11 +325,15 @@ namespace KompetansetorgetXamarin.Controllers
             //string adress = "http://kompetansetorgetserver1.azurewebsites.net/api/v1/projects";
             string queryParams = CreateQueryParams(studyGroups, sortBy, filter);
 
-            bool? dataExist = await CheckServerForNewData(studyGroups, filter);
-            System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter - dataExist" + dataExist);
-            if (dataExist != null)
+            string instructions = await CheckServerForNewData(studyGroups, filter);
+            if (!Authenticater.Authorized)
             {
-                if ((bool)dataExist)
+                return null;
+            }
+            if (instructions != null)
+            {
+                System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter - instructions" + instructions);
+                if (instructions == "exists")
                 {
                     IEnumerable<Project> filteredProjects = GetProjectsFromDbBasedOnFilter(studyGroups, filter);
                     filteredProjects = GetAllCompaniesRelatedToProjects(filteredProjects.ToList());
@@ -352,7 +374,20 @@ namespace KompetansetorgetXamarin.Controllers
                 else if (response.StatusCode == HttpStatusCode.OK)
                 {
                     jsonString = await response.Content.ReadAsStringAsync();
-                    projects = DeserializeMany(jsonString);
+                    if (instructions != null && instructions == "incorrectCache")
+                    {
+                        var cachedProjects = GetProjectsFromDbBasedOnFilter(studyGroups, filter);
+                        projects = DeserializeMany(jsonString);
+                        // Get all jobs from that local dataset that was not in the data set provided by the server
+                        // These are manually deleted projects and have to be cleared from cache.
+                        // linear search is ok because of small data set
+                        var manuallyDeletedProjects = cachedProjects.Where(p => !projects.Any(cp2 => cp2.uuid == p.uuid));
+                        DeleteObsoleteProjects(manuallyDeletedProjects.ToList());
+                    }
+                    else
+                    {
+                        projects = DeserializeMany(jsonString);
+                    }
                 }
 
                 else
@@ -564,6 +599,43 @@ namespace KompetansetorgetXamarin.Controllers
             }
         }
 
+        public void DeleteObsoleteProjects(List<Project> obsoleteProjects)
+        {
+            if (obsoleteProjects != null && obsoleteProjects.Count > 0)
+            {
+                foreach (var project in obsoleteProjects)
+                {
+                    lock (DbContext.locker)
+                    {
+                        Db.Execute("delete from CompanyProject " +
+                                   "where CompanyProject.ProjectUuid = ?", project.uuid);
+                        System.Diagnostics.Debug.WriteLine(
+                            "ProjectController - DeleteObsoleteProjects: after delete from CompanyProject");
+
+                        Db.Execute("delete from StudyGroupProject " +
+                                   "where StudyGroupProject.ProjectUuid = ?", project.uuid);
+                        System.Diagnostics.Debug.WriteLine(
+                            "ProjectController - DeleteObsoleteProjects: after delete from StudyGroupProject");
+
+                        Db.Execute("delete from CourseProject " +
+                                   "where CourseProject.ProjectUuid = ?", project.uuid);
+                        System.Diagnostics.Debug.WriteLine(
+                            "ProjectController - DeleteObsoleteProjects: after delete from CourseProject");
+
+                        Db.Execute("delete from JobTypeProject " +
+                                   "where JobTypeProject.ProjectUuid = ?", project.uuid);
+                        System.Diagnostics.Debug.WriteLine(
+                            "ProjectController - DeleteObsoleteProjects: after delete from JobTypeProject");
+
+                        Db.Execute("delete from Project " +
+                                   "where Project.uuid = ?", project.uuid);
+
+                        System.Diagnostics.Debug.WriteLine("ProjectController - DeleteObsoleteProjects: after delete from Project");
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// Deserializes a json formated string containing multiple Project objects
         /// </summary>
@@ -598,9 +670,18 @@ namespace KompetansetorgetXamarin.Controllers
         ///                      courses (values: IS-304, IS-201).
         ///                      </param>
         /// <returns></returns>
-        public IEnumerable<Project> GetProjectsFromDbBasedOnFilter(List<string> studyGroups = null, Dictionary<string, string> filter = null)
+        public IEnumerable<Project> GetProjectsFromDbBasedOnFilter(List<string> studyGroups = null, Dictionary<string, string> filter = null, bool checkUiids = false)
         {
-            string query = "SELECT * FROM Project";
+            string query = "";
+            if (checkUiids)
+            {
+                query = "SELECT Project.uuid FROM Project";
+            }
+            else
+            {
+                query = "SELECT * FROM Project";
+            }
+            
 
             if (studyGroups != null && filter == null)
             {
@@ -622,7 +703,7 @@ namespace KompetansetorgetXamarin.Controllers
                 System.Diagnostics.Debug.WriteLine("query: " + query);
                 lock (DbContext.locker)
                 {
-                    return Db.Query<Project>(query);
+                    return Db.Query<Project>(query + " ORDER BY Project.published ASC");
                 }
             }
 
@@ -689,13 +770,13 @@ namespace KompetansetorgetXamarin.Controllers
                 {
                     lock (DbContext.locker)
                     {
-                        return Db.Query<Project>(query);
+                        return Db.Query<Project>(query + " ORDER BY Project.published ASC");
                     }
                 }
 
                 lock (DbContext.locker)
                 {
-                    return Db.Query<Project>(query, prepValue);
+                    return Db.Query<Project>(query + " ORDER BY Project.published ASC", prepValue);
                 }
             }
 
@@ -833,11 +914,11 @@ namespace KompetansetorgetXamarin.Controllers
                 {
                     lock (DbContext.locker)
                     {
-                        return Db.Query<Project>(query);
+                        return Db.Query<Project>(query + " ORDER BY Project.published ASC");
                     }
                 }
 
-                return Db.Query<Project>(query, prepValue);
+                return Db.Query<Project>(query + " ORDER BY Project.published ASC", prepValue);
 
             }
 
@@ -846,7 +927,7 @@ namespace KompetansetorgetXamarin.Controllers
             // if both studyGroups and filter is null
             lock (DbContext.locker)
             {
-                return Db.Query<Project>(query);
+                return Db.Query<Project>(query + " ORDER BY Project.published ASC");
             }
         }
 
@@ -1040,6 +1121,27 @@ namespace KompetansetorgetXamarin.Controllers
             return p;
         }
 
+        /// <summary>
+        /// Used to create a 32 bit hash of all the projects uuid,
+        /// used as part of the cache strategy.
+        /// This is not to create a safe encryption, but to create a hash that im
+        /// certain that the php backend can replicate.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        private string CalculateMd5Hash(string input)
+        {
+            var hasher = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Md5);
+            byte[] inputBytes = Encoding.UTF8.GetBytes(input);
+            byte[] hash = hasher.HashData(inputBytes);
+
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < hash.Length; i++)
+            {
+                sb.Append(hash[i].ToString("X2"));
+            }
+            return sb.ToString();
+        }
 
         /*
         public async void GetProjectsFromServer()

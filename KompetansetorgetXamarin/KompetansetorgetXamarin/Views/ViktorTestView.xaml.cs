@@ -785,5 +785,195 @@ namespace KompetansetorgetXamarin.Views
             StudentsController sc = new StudentsController();
             sc.UpdateStudentsNotificationsPref(true, true, false);
         }
+
+        private async void TestInsertJob(object sender, EventArgs e)
+        {
+            DbContext DbContext = DbContext.GetDbContext;
+            SQLiteConnection Db = DbContext.Db;
+
+            System.Diagnostics.Debug.WriteLine("Before insert Job.Count: " +
+                       Db.Query<Job>("Select * from Job").Count());
+
+            JobsController jc = new JobsController();
+            DateTime yesterday = DateTime.Now.AddDays(-1);
+            long n = long.Parse(yesterday.ToString("yyyyMMddHHmmss"));
+
+            string testUuid = "colemak";
+            Job job = new Job()
+            {
+                uuid = testUuid,
+                expiryDate = n
+            };
+
+            string companyId = "Ikea";
+            Company comp = new Company()
+            {
+                id = companyId
+            };
+
+            string locationId = "sverige";
+            Location loc = new Location()
+            {
+                id = locationId
+            };
+
+            string sgId = "dykking";
+            StudyGroup sg = new StudyGroup()
+            {
+                id = sgId
+            };
+
+            StudyGroupJob sgj = new StudyGroupJob()
+            {
+                StudyGroupId = sgId,
+                JobUuid = testUuid
+            };
+
+            LocationJob lj = new LocationJob()
+            {
+                LocationId = locationId,
+                JobUuid = testUuid
+            };
+
+            CompanyJob cj = new CompanyJob()
+            {
+                CompanyId = companyId,
+                JobUuid = testUuid
+            };
+
+            string jtId = "10aarErfaringEcma6";
+            JobType jt = new JobType()
+            {
+                id = jtId
+            };
+
+            JobTypeJob jtj = new JobTypeJob()
+            {
+                JobUuid = testUuid,
+                JobTypeId = jtId
+            };
+
+            // try catch on tables that will not be affected by a job delete
+            try { 
+                Db.Insert(comp);
+            } catch { }
+            Db.Insert(job);
+            try { 
+                Db.Insert(loc);
+            } catch { }
+            try
+            {
+                Db.Insert(sg);
+            } catch { }
+            Db.Insert(sgj);
+            Db.Insert(lj);
+            Db.Insert(cj);
+            try
+            {
+                Db.Insert(jt);
+            } catch { }
+            Db.Insert(jtj);
+
+            System.Diagnostics.Debug.WriteLine("After insert: Job.Count: " +
+           Db.Query<Job>("Select * from Job").Count());
+           
+        }
+
+        private async void TestInsertProject(object sender, EventArgs e)
+        {
+            DbContext DbContext = DbContext.GetDbContext;
+            SQLiteConnection Db = DbContext.Db;
+
+            System.Diagnostics.Debug.WriteLine("Before insert Project.Count: " +
+                       Db.Query<Project>("Select * from Project").Count());
+
+            ProjectsController jc = new ProjectsController();
+
+
+            string testUuid = "colemak";
+            Project project = new Project()
+            {
+                uuid = testUuid,
+            };
+
+            string companyId = "Ikea";
+            Company comp = new Company()
+            {
+                id = companyId
+            };
+
+            string courseId = "sverige";
+            Course course = new Course()
+            {
+                id = courseId
+            };
+
+            string sgId = "dykking";
+            StudyGroup sg = new StudyGroup()
+            {
+                id = sgId
+            };
+
+            StudyGroupProject sgj = new StudyGroupProject()
+            {
+                StudyGroupId = sgId,
+                ProjectUuid = testUuid
+            };
+
+            CourseProject lj = new CourseProject()
+            {
+                CourseId = courseId,
+                ProjectUuid = testUuid
+            };
+
+            CompanyProject cp = new CompanyProject()
+            {
+                CompanyId = companyId,
+                ProjectUuid = testUuid
+            };
+
+            string jtId = "10aarErfaringEcma6";
+            JobType jt = new JobType()
+            {
+                id = jtId
+            };
+
+            JobTypeProject jtp = new JobTypeProject()
+            {
+                ProjectUuid = testUuid,
+                JobTypeId = jtId
+            };
+
+            // try catch on tables that will not be affected by a job delete
+            try
+            {
+                Db.Insert(comp);
+            }
+            catch { }
+            Db.Insert(project);
+            try
+            {
+                Db.Insert(course);
+            }
+            catch { }
+            try
+            {
+                Db.Insert(sg);
+            }
+            catch { }
+            Db.Insert(sgj);
+            Db.Insert(lj);
+            Db.Insert(cp);
+            try
+            {
+                Db.Insert(jt);
+            }
+            catch { }
+            Db.Insert(jtp);
+
+            System.Diagnostics.Debug.WriteLine("After insert: Project.Count: " +
+           Db.Query<Project>("Select * from Project").Count());
+
+        }
     }
 }
