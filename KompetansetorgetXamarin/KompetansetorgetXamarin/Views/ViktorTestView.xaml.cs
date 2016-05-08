@@ -117,12 +117,15 @@ namespace KompetansetorgetXamarin.Views
             System.Diagnostics.Debug.WriteLine("ViktorTestView - NotificationsFromDb_OnClicked: Initiated");
             NotificationsController nc = new NotificationsController();
             List<object> notifications = nc.GetNotificationList();
-            System.Diagnostics.Debug.WriteLine("ViktorTestView - NotificationsFromDb_OnClicked: notifications.Count = " + notifications.Count);
+            System.Diagnostics.Debug.WriteLine(
+                "ViktorTestView - NotificationsFromDb_OnClicked: notifications.Count = " + notifications.Count);
 
-            foreach (var n in notifications) {
-                if (n is Job) {
-                     // DO spesific Job code 
-                    Job job = (Job)n;    
+            foreach (var n in notifications)
+            {
+                if (n is Job)
+                {
+                    // DO spesific Job code 
+                    Job job = (Job) n;
                     //long date = job.expiryDate; // Will work
                     System.Diagnostics.Debug.WriteLine("job.title = " + job.title);
                     if (job.companies != null && job.companies[0].logo != null)
@@ -136,9 +139,10 @@ namespace KompetansetorgetXamarin.Views
                     System.Diagnostics.Debug.WriteLine("job.expiryDate = " + job.expiryDate);
 
                 }
-                else if (n is Project) {
-                     // Do spesific Project  code.
-                    Project project = (Project)n;
+                else if (n is Project)
+                {
+                    // Do spesific Project  code.
+                    Project project = (Project) n;
                     System.Diagnostics.Debug.WriteLine("project.title = " + project.title);
                     if (project.companies != null && project.companies[0].logo != null)
                     {
@@ -150,7 +154,7 @@ namespace KompetansetorgetXamarin.Views
                     }
                     System.Diagnostics.Debug.WriteLine("project.companies.logo = " + project.companies[0].logo);
                     System.Diagnostics.Debug.WriteLine("project.published = " + project.published);
-                }  
+                }
             }
         }
 
@@ -641,7 +645,8 @@ namespace KompetansetorgetXamarin.Views
             System.Diagnostics.Debug.WriteLine("GetAllFilters: coursesFilter.Count: " + coursesFilter.Count);
             System.Diagnostics.Debug.WriteLine("GetAllFilters: studyGroupsFilter.Count: " + studyGroupsFilter.Count);
             System.Diagnostics.Debug.WriteLine("GetAllFilters: jobTypesJobFilter.Count: " + jobTypesJobFilter.Count);
-            System.Diagnostics.Debug.WriteLine("GetAllFilters: jobTypesProjectFilter.Count: " + jobTypesProjectFilter.Count);
+            System.Diagnostics.Debug.WriteLine("GetAllFilters: jobTypesProjectFilter.Count: " +
+                                               jobTypesProjectFilter.Count);
         }
 
         /// <summary>
@@ -656,9 +661,9 @@ namespace KompetansetorgetXamarin.Views
             DbContext DbContext = DbContext.GetDbContext;
             SQLiteConnection Db = DbContext.Db;
 
-            DateTime yesterday =  DateTime.Now.AddDays(-1);
+            DateTime yesterday = DateTime.Now.AddDays(-1);
             long n = long.Parse(yesterday.ToString("yyyyMMddHHmmss"));
-            
+
             string testUuid = "colemak";
             Job job = new Job()
             {
@@ -729,35 +734,35 @@ namespace KompetansetorgetXamarin.Views
             System.Diagnostics.Debug.WriteLine("StudyGroup.Count: " +
                                                Db.Query<StudyGroup>("Select * from StudyGroup").Count());
             System.Diagnostics.Debug.WriteLine("Job.Count: " +
-                                   Db.Query<Job>("Select * from Job").Count());
+                                               Db.Query<Job>("Select * from Job").Count());
             System.Diagnostics.Debug.WriteLine("JobType.Count: " +
-                                   Db.Query<JobType>("Select * from JobType").Count());
+                                               Db.Query<JobType>("Select * from JobType").Count());
             System.Diagnostics.Debug.WriteLine("Location.Count: " +
-                                   Db.Query<Location>("Select * from Location").Count());
+                                               Db.Query<Location>("Select * from Location").Count());
             System.Diagnostics.Debug.WriteLine("Company.Count: " +
-                                   Db.Query<Company>("Select * from Company").Count());
+                                               Db.Query<Company>("Select * from Company").Count());
 
             System.Diagnostics.Debug.WriteLine("CompanyJob.Count: " +
-                       Db.Query<CompanyJob>("Select * from CompanyJob").Count());
+                                               Db.Query<CompanyJob>("Select * from CompanyJob").Count());
             System.Diagnostics.Debug.WriteLine("JobTypeJob.Count: " +
-                                   Db.Query<JobTypeJob>("Select * from JobTypeJob").Count());
+                                               Db.Query<JobTypeJob>("Select * from JobTypeJob").Count());
             System.Diagnostics.Debug.WriteLine("LocationJob.Count: " +
-                                   Db.Query<LocationJob>("Select * from LocationJob").Count());
+                                               Db.Query<LocationJob>("Select * from LocationJob").Count());
             System.Diagnostics.Debug.WriteLine("StudyGroupJob.Count: " +
-                                   Db.Query<StudyGroupJob>("Select * from StudyGroupJob").Count());
+                                               Db.Query<StudyGroupJob>("Select * from StudyGroupJob").Count());
 
             System.Diagnostics.Debug.WriteLine("Time for delete");
             jc.DeleteAllExpiredJobs();
             System.Diagnostics.Debug.WriteLine("Job.Count: " +
-                       Db.Query<Job>("Select * from Job").Count());
+                                               Db.Query<Job>("Select * from Job").Count());
             System.Diagnostics.Debug.WriteLine("CompanyJob.Count: " +
-                       Db.Query<CompanyJob>("Select * from CompanyJob").Count());
+                                               Db.Query<CompanyJob>("Select * from CompanyJob").Count());
             System.Diagnostics.Debug.WriteLine("JobTypeJob.Count: " +
-                       Db.Query<JobTypeJob>("Select * from JobTypeJob").Count());
+                                               Db.Query<JobTypeJob>("Select * from JobTypeJob").Count());
             System.Diagnostics.Debug.WriteLine("LocationJob.Count: " +
-                       Db.Query<LocationJob>("Select * from LocationJob").Count());
+                                               Db.Query<LocationJob>("Select * from LocationJob").Count());
             System.Diagnostics.Debug.WriteLine("StudyGroupJob.Count: " +
-                       Db.Query<StudyGroupJob>("Select * from StudyGroupJob").Count());
+                                               Db.Query<StudyGroupJob>("Select * from StudyGroupJob").Count());
             //CompanyJobs, StudyGroupJob, LocationJob og JobTypeJob.
 
         }
@@ -792,7 +797,7 @@ namespace KompetansetorgetXamarin.Views
             SQLiteConnection Db = DbContext.Db;
 
             System.Diagnostics.Debug.WriteLine("Before insert Job.Count: " +
-                       Db.Query<Job>("Select * from Job").Count());
+                                               Db.Query<Job>("Select * from Job").Count());
 
             JobsController jc = new JobsController();
             DateTime yesterday = DateTime.Now.AddDays(-1);
@@ -854,29 +859,43 @@ namespace KompetansetorgetXamarin.Views
             };
 
             // try catch on tables that will not be affected by a job delete
-            try { 
+            try
+            {
                 Db.Insert(comp);
-            } catch { }
+            }
+            catch
+            {
+            }
             Db.Insert(job);
-            try { 
+            try
+            {
                 Db.Insert(loc);
-            } catch { }
+            }
+            catch
+            {
+            }
             try
             {
                 Db.Insert(sg);
-            } catch { }
+            }
+            catch
+            {
+            }
             Db.Insert(sgj);
             Db.Insert(lj);
             Db.Insert(cj);
             try
             {
                 Db.Insert(jt);
-            } catch { }
+            }
+            catch
+            {
+            }
             Db.Insert(jtj);
 
             System.Diagnostics.Debug.WriteLine("After insert: Job.Count: " +
-           Db.Query<Job>("Select * from Job").Count());
-           
+                                               Db.Query<Job>("Select * from Job").Count());
+
         }
 
         private async void TestInsertProject(object sender, EventArgs e)
@@ -885,7 +904,7 @@ namespace KompetansetorgetXamarin.Views
             SQLiteConnection Db = DbContext.Db;
 
             System.Diagnostics.Debug.WriteLine("Before insert Project.Count: " +
-                       Db.Query<Project>("Select * from Project").Count());
+                                               Db.Query<Project>("Select * from Project").Count());
 
             ProjectsController jc = new ProjectsController();
 
@@ -949,18 +968,24 @@ namespace KompetansetorgetXamarin.Views
             {
                 Db.Insert(comp);
             }
-            catch { }
+            catch
+            {
+            }
             Db.Insert(project);
             try
             {
                 Db.Insert(course);
             }
-            catch { }
+            catch
+            {
+            }
             try
             {
                 Db.Insert(sg);
             }
-            catch { }
+            catch
+            {
+            }
             Db.Insert(sgj);
             Db.Insert(lj);
             Db.Insert(cp);
@@ -968,12 +993,24 @@ namespace KompetansetorgetXamarin.Views
             {
                 Db.Insert(jt);
             }
-            catch { }
+            catch
+            {
+            }
             Db.Insert(jtp);
 
             System.Diagnostics.Debug.WriteLine("After insert: Project.Count: " +
-           Db.Query<Project>("Select * from Project").Count());
+                                               Db.Query<Project>("Select * from Project").Count());
+        }
 
+        private async void TestPresentableDateTime(object sender, EventArgs e)
+        {
+            DateTime today = DateTime.Now.AddDays(-1);
+            long n = long.Parse(today.ToString("yyyyMMddHHmmss"));
+            string date = DateTimeHandler.MakeDateString(n);
+            string dateTime = DateTimeHandler.MakeDateTimeString(n);
+            System.Diagnostics.Debug.WriteLine(n);
+            System.Diagnostics.Debug.WriteLine("date: " + date);
+            System.Diagnostics.Debug.WriteLine("dateTime: " + dateTime);
         }
     }
 }

@@ -30,6 +30,7 @@
       <local:BaseButton Clicked="GetAllProjectsFromWebApi_OnClicked"  x:Name="GetAllProjectsFromWebApiButton" Text="Henter alle oppgaver fra web api" Style="{DynamicResource baseButtonStyle}" />
       <local:BaseButton Clicked="TestInsertJob"  x:Name="TestInsertJobButton" Text="TestInsertJob" Style="{DynamicResource baseButtonStyle}" />
       <local:BaseButton Clicked="TestInsertProject"  x:Name="TestInsertProjectButton" Text="TestInsertProject" Style="{DynamicResource baseButtonStyle}" />
+      <local:BaseButton Clicked="TestPresentableDateTime" x:Name="TestPresentableDateTimeButton" Text="TestPresentableDateTime" Style="{DynamicResource baseButtonStyle}" />
 
       <!--
       <local:BaseButton Clicked="TestDeleteExpiredJobs" x:Name="TestDeleteExpiredJobsButton" Text="TestDeleteExpiredJobs" Style="{DynamicResource baseButtonStyle}" />

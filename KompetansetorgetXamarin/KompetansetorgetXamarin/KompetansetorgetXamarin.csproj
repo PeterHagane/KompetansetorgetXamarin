@@ -64,6 +64,7 @@
     <Compile Include="DataPassed.cs" />
     <Compile Include="CRUD\Crud.cs" />
     <Compile Include="DAL\DbContext.cs" />
+    <Compile Include="DateTimeHandler.cs" />
     <Compile Include="Models\ApprovedCourse.cs" />
     <Compile Include="Models\Company.cs" />
     <Compile Include="Models\Contact.cs" />
