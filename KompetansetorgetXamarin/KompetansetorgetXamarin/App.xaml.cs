@@ -17,19 +17,29 @@ namespace KompetansetorgetXamarin
 
         public App()
         {
-            InitializeComponent();   //must be included in order to initialise global xaml styles
-
-            // The root page of your application
-            NavPage = new NavigationPage(new LoginPage());
-            //NavPage.BarBackgroundColor = Color.FromHex("ec7a08");
-            //NavPage.BarTextColor = Color.White;
-            MainPage = NavPage;
+            InitializeComponent();   //must be included in order to initialise global xaml styles   
         }
         
         protected override void OnStart()
         {
             StudentsController sc = new StudentsController();
-            if (sc.GetStudent() != null) { 
+            Student student = sc.GetStudent();
+
+            // Comment out the 4 lines under to deactive the GoToLogin at 
+            if (student == null || student.accessToken == null)
+            {
+                Authenticater.Authorized = false;
+            }
+
+            NavPage = new NavigationPage(new MainPage());
+            //NavPage = new NavigationPage(new LoginPage());
+            MainPage = NavPage;
+            
+            //NavPage.BarBackgroundColor = Color.FromHex("ec7a08");
+            //NavPage.BarTextColor = Color.White;
+
+            if (student != null)
+            {
                 DeleteOutdatedData();
                 UpdateAllFilters();
                 DevicesController dc = new DevicesController();
@@ -71,17 +81,6 @@ namespace KompetansetorgetXamarin
         }
 
         /// <summary>
-        /// Activate this method if Authorization fails and a new login is required.
-        /// </summary>
-        public static void GoToLogin()
-        {
-            System.Diagnostics.Debug.WriteLine("App - GoToLogin");
-            NavPage = new NavigationPage(new LoginPage());
-            NavPage.Navigation.InsertPageBefore(new LoginPage(), NavPage.Navigation.NavigationStack.First());
-            NavPage.Navigation.PopToRootAsync();
-        }
-
-        /// <summary>
         /// Activate this method when a login is successful to navigate to a MainPage and remove the 
         /// Former pages for the Navigation.
         /// It will also update all the search filter for the app, and its crucial that they are in this 
@@ -105,38 +104,3 @@ namespace KompetansetorgetXamarin
     }
 }
 
-//public static Student Student { get; set; }
-
-/*
-public static bool IsLoggedIn
-{
-    get
-    {
-        if (Student != null)
-        {
-            return !string.IsNullOrWhiteSpace(Student.Mail);
-        }
-        else
-        {
-            return false;
-        }
-    }
-}
-/
-public static Action SuccessfulLoginAction
-{
-    get
-    {
-        return new Action(() => {
-            NavPage.Navigation.PopModalAsync();
-
-            if (IsLoggedIn)
-            {
-                NavPage.Navigation.InsertPageBefore(new MainPage(), NavPage.Navigation.NavigationStack.First());
-                NavPage.Navigation.PopToRootAsync();
-            }
-        });
-    }
-}
-}
-*/

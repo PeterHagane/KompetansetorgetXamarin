@@ -17,12 +17,11 @@ namespace KompetansetorgetXamarin.Controls
         }
 
         /// <summary>
-        /// If an authorization fails (401) activate this method to go back to login.
+        /// Activate this method if Authorization fails and a new login is required.
         /// </summary>
         public void GoToLogin()
         {
-            Navigation.InsertPageBefore(new LoginPage(), Navigation.NavigationStack.First());
-            Navigation.PopToRootAsync();
+            new Authenticater();
         }
     }
 }
