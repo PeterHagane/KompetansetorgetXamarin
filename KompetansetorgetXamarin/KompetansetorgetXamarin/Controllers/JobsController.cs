@@ -316,65 +316,25 @@ namespace KompetansetorgetXamarin.Controllers
                 InsertJob(job);
             }
 
-            System.Diagnostics.Debug.WriteLine("JobController - UpdateJob: There was a record of job in the database.");
-            /*
-            //Job do exist.
-            CompaniesController cc = new CompaniesController();
-            foreach (Company c in job.companies)
+            else
             {
-                if (!cc.InsertCompany(c))
-                {
-                    System.Diagnostics.Debug.WriteLine("JobController - UpdateJob: company already exists: Calling UpdateCompany.");
-
-                    cc.UpdateCompany(c);
-                }
-            }
-            try
-            {
-                lock (DbContext.locker)
-                {
-                    System.Diagnostics.Debug.WriteLine("JobController - UpdateJob: Before Updating job.");
-
-                    Db.Update(job);
-                    System.Diagnostics.Debug.WriteLine("JobController - UpdateJob: After Updating job.");
-
-                    // Db.InsertOrReplaceWithChildren(job, recursive: true);
-                    //Db.UpdateWithChildren(job);
-                }
-            }
-            catch (Exception e)
-            {
-                System.Diagnostics.Debug.WriteLine("JobController - UpdateJob: Job update failed");
-                System.Diagnostics.Debug.WriteLine("JobController - UpdateJob: Exception msg: " + e.Message);
-                System.Diagnostics.Debug.WriteLine("JobController - UpdateJob: Stack Trace: \n" + e.StackTrace);
-                System.Diagnostics.Debug.WriteLine("JobController - UpdateJob: End Of Stack Trace");
-            }
-
-
-            // This should perhaps be done above in the other loop, but because of lack of concurrency its in its own loop.
-            foreach (Company c in job.companies)
-            {
-                CompanyJob cp = new CompanyJob();
-                cp.JobUuid = job.uuid;
-                cp.CompanyId = c.id;
                 try
                 {
                     lock (DbContext.locker)
                     {
-                        System.Diagnostics.Debug.WriteLine("JobController - UpdateJob: Inserting CompanyJob.");
-                        Db.Insert(cp);
-                        // Db.InsertOrReplaceWithChildren(job, recursive: true);
+                        System.Diagnostics.Debug.WriteLine("JobController - UpdateJob: Before Updating job.");
+                        Db.Update(job);
+                        System.Diagnostics.Debug.WriteLine("JobController - UpdateJob: After Updating job.");
                     }
                 }
                 catch (Exception e)
                 {
-                    System.Diagnostics.Debug.WriteLine("JobController - UpdateJob: CompanyJob Insertion failed");
+                    System.Diagnostics.Debug.WriteLine("JobController - UpdateJob: Job update failed");
                     System.Diagnostics.Debug.WriteLine("JobController - UpdateJob: Exception msg: " + e.Message);
                     System.Diagnostics.Debug.WriteLine("JobController - UpdateJob: Stack Trace: \n" + e.StackTrace);
                     System.Diagnostics.Debug.WriteLine("JobController - UpdateJob: End Of Stack Trace");
                 }
             }
-            */
         }
 
         /// <summary>

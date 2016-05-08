@@ -475,70 +475,30 @@ namespace KompetansetorgetXamarin.Controllers
         {
             if (!CheckIfProjectExist(project.uuid))
             {
-                System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProject: There was no stored record of Project.");
+                System.Diagnostics.Debug.WriteLine(
+                    "ProjectController - UpdateProject: There was no stored record of Project.");
                 InsertProject(project);
             }
-     /*  Already done is deserialize
-            System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProject: There was a record of project in the database.");
 
-            //Project do exist.
-            CompaniesController cc = new CompaniesController();
-            foreach (Company c in project.companies)
+            else
             {
-                if (!cc.InsertCompany(c))
-                {
-                    System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProject: company already exists: Calling UpdateCompany.");
-
-                    cc.UpdateCompany(c);
-                }
-            }
-
-            try
-            {
-                lock (DbContext.locker)
-                {
-                    System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProject: Before Updating project.");
-
-                    Db.Update(project);
-                    System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProject: After Updating project.");
-
-                    // Db.InsertOrReplaceWithChildren(project, recursive: true);
-                    //Db.UpdateWithChildren(project);
-                }
-            }
-            catch (Exception e)
-            {
-                System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProject: Project update failed");
-                System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProject: Exception msg: " + e.Message);
-                System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProject: Stack Trace: \n" + e.StackTrace);
-                System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProject: End Of Stack Trace");
-            }
-
-
-            // This should perhaps be done above in the other loop, but because of lack of concurrency its in its own loop.
-            foreach (Company c in project.companies)
-            {
-                CompanyProject cp = new CompanyProject();
-                cp.ProjectUuid = project.uuid;
-                cp.CompanyId = c.id;
                 try
                 {
                     lock (DbContext.locker)
                     {
-                        System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProject: Inserting CompanyProject.");
-                        Db.Insert(cp);
-                        // Db.InsertOrReplaceWithChildren(project, recursive: true);
+                        System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProject: Before Updating project.");
+                        Db.Update(project);
+                        System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProject: After Updating project.");
                     }
                 }
                 catch (Exception e)
                 {
-                    System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProject: CompanyProject Insertion failed");
+                    System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProject: project update failed");
                     System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProject: Exception msg: " + e.Message);
                     System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProject: Stack Trace: \n" + e.StackTrace);
                     System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProject: End Of Stack Trace");
                 }
-            }  
-            */
+            }
         }
 
         /// <summary>
