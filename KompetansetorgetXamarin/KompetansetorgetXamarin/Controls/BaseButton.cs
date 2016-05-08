@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
+using XLabs.Forms.Controls;
 
 namespace KompetansetorgetXamarin.Controls
 {
-    //establishes BaseButton as a child of Button
-    public class BaseButton : Button
+    //establishes BaseButton as a child of XlabsImageButton
+    public class BaseButton : XLabsExtendedButton
     {
         #region Padding
 
@@ -25,7 +26,7 @@ namespace KompetansetorgetXamarin.Controls
 
         #region Margin
 
-        //Adds the padding property to basebutton
+        //Adds the margin property to basebutton
         public static BindableProperty MarginProperty = BindableProperty.Create<BaseButton, Thickness>(d => d.Margin, default(Thickness));
 
         public Thickness Margin
@@ -37,3 +38,8 @@ namespace KompetansetorgetXamarin.Controls
         #endregion Margin
     }
 }
+
+//Note XlabsImageButton inherits from XLabs' ExtendedButton, you can also apply the following attributes to a BaseButton:
+//HorizontalContentAlignment="Start" OR "Center" OR "End"
+//VerticalContentAlignment="Start" OR "Center" OR "End"
+//This way you can arbitrarily align text within the button

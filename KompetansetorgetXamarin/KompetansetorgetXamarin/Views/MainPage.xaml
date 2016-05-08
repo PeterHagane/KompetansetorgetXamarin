@@ -15,19 +15,19 @@
       
 
       <local:ButtonShadow BorderRadius="13" Padding ="2,2,2,7" Style="{DynamicResource buttonShadowStyle}">
-        <local:BaseButton Clicked="VarselButton_OnClicked" x:Name="VarselButton" Text="Vis varsler" Style="{DynamicResource baseButtonStyle}" />
+        <local:BaseButton Clicked="VarselButton_OnClicked" x:Name="VarselButton" Text="Vis varsler" Style="{DynamicResource baseButtonStyle}"  Padding="35,0,0,0" HorizontalContentAlignment="Start"/>
       </local:ButtonShadow>
 
       <local:ButtonShadow BorderRadius="13" Padding ="2,2,2,7" Style="{DynamicResource buttonShadowStyle}">
-      <local:BaseButton Clicked="StillingButton_OnClicked" x:Name="StillingButton" Text="Finn stillinger" Style="{DynamicResource baseButtonStyle}"  />
+      <local:BaseButton Clicked="StillingButton_OnClicked" x:Name="StillingButton" Text="Finn stillinger" Style="{DynamicResource baseButtonStyle}"  Padding="35,0,0,0" HorizontalContentAlignment="Start" />
       </local:ButtonShadow>
         
       <local:ButtonShadow BorderRadius="13" Padding ="2,2,2,7" Style="{DynamicResource buttonShadowStyle}">  
-      <local:BaseButton Clicked="OppgaveButton_OnClicked" x:Name="CarouselButton" Text="Finn oppgaveforslag" Style="{DynamicResource baseButtonStyle}" />
+      <local:BaseButton Clicked="OppgaveButton_OnClicked" x:Name="CarouselButton" Text="Finn oppgaveforslag" Style="{DynamicResource baseButtonStyle}"  Padding="35,0,0,0" HorizontalContentAlignment="Start"/>
       </local:ButtonShadow>
 
       <local:ButtonShadow BorderRadius="13" Padding ="2,2,2,7" Style="{DynamicResource buttonShadowStyle}">
-        <local:BaseButton Clicked="ViktorButton_OnClicked" x:Name="ViktorButton" Text="Viktors test vindu" Style="{DynamicResource baseButtonStyle}" />
+        <local:BaseButton Clicked="ViktorButton_OnClicked" x:Name="ViktorButton" Text="Viktors test vindu" Style="{DynamicResource baseButtonStyle}"  Padding="35,0,0,0" HorizontalContentAlignment="Start"/>
       </local:ButtonShadow>
       
     </StackLayout>

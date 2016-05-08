@@ -11,12 +11,15 @@ using Android.Gms.Common;
 using Android.Util;
 //using KompetansetorgetXamarin.Views;
 using Xamarin.Forms;
+using XLabs.Forms;
 
 namespace KompetansetorgetXamarin.Droid
 {                                                                           //MainLauncher = true
     [Activity(Label = "KompetansetorgetXamarin", Icon = "@drawable/icon", Theme = "@style/CustomActionBarTheme",
         ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
-    public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsApplicationActivity
+    public class MainActivity : XFormsApplicationDroid
+    //upgraded to XForms, old inheritance is global::Xamarin.Forms.Platform.Android.FormsApplicationActivity
+
     {
         protected override void OnCreate(Bundle bundle)
         {
