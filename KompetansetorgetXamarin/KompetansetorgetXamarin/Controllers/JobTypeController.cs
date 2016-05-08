@@ -142,14 +142,20 @@ namespace KompetansetorgetXamarin.Controllers
 
         public List<JobType> GetJobTypeFilterJob()
         {
-            return Db.Query<JobType>("Select * from JobType"
-                                   + " where JobType.type = ?", "job");
+            lock (DbContext.locker)
+            {
+                return Db.Query<JobType>("Select * from JobType"
+                                         + " where JobType.type = ?", "job");
+            }
         }
 
         public List<JobType> GetJobTypeFilterProject()
         {
-            return Db.Query<JobType>("Select * from JobType"
-                                   + " where JobType.type = ?", "project");
+            lock (DbContext.locker)
+            {
+                return Db.Query<JobType>("Select * from JobType"
+                                         + " where JobType.type = ?", "project");
+            }
         }
     }
 }

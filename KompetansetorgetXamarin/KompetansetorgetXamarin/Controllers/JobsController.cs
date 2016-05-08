@@ -293,16 +293,14 @@ namespace KompetansetorgetXamarin.Controllers
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine("JobController - UpdateJobFromServer: await client.GetAsync(\"url\") Failed");
+                System.Diagnostics.Debug.WriteLine(
+                    "JobController - UpdateJobFromServer: await client.GetAsync(\"url\") Failed");
                 System.Diagnostics.Debug.WriteLine("JobController - UpdateJobFromServer: Exception msg: " + e.Message);
                 System.Diagnostics.Debug.WriteLine("JobController - UpdateJobFromServer: Stack Trace: \n" + e.StackTrace);
                 System.Diagnostics.Debug.WriteLine("JobController - UpdateJobFromServer: End Of Stack Trace");
                 return;
             }
-
-            Job job = Deserialize(jsonString);
-            UpdateJob(job);
-
+            Deserialize(jsonString);
         }
 
         /// <summary>
@@ -319,7 +317,7 @@ namespace KompetansetorgetXamarin.Controllers
             }
 
             System.Diagnostics.Debug.WriteLine("JobController - UpdateJob: There was a record of job in the database.");
-
+            /*
             //Job do exist.
             CompaniesController cc = new CompaniesController();
             foreach (Company c in job.companies)
@@ -376,6 +374,7 @@ namespace KompetansetorgetXamarin.Controllers
                     System.Diagnostics.Debug.WriteLine("JobController - UpdateJob: End Of Stack Trace");
                 }
             }
+            */
         }
 
         /// <summary>
@@ -934,9 +933,12 @@ namespace KompetansetorgetXamarin.Controllers
                         return Db.Query<Job>(query + " ORDER BY Job.published ASC");
                     }
                 }
-                
-                return Db.Query<Job>(query + " ORDER BY Job.published ASC", prepValue);
-                
+
+                lock (DbContext.locker)
+                {
+                    return Db.Query<Job>(query + " ORDER BY Job.published ASC", prepValue);
+                }
+
             }
 
             System.Diagnostics.Debug.WriteLine("Filter and studyGroups is null");

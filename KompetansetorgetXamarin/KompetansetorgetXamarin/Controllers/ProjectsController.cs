@@ -462,8 +462,7 @@ namespace KompetansetorgetXamarin.Controllers
                 System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProjectFromServer: End Of Stack Trace");
                 return;
             }
-            Project project = Deserialize(jsonString);
-            UpdateProject(project);
+            Deserialize(jsonString);
 
         }
 
@@ -479,7 +478,7 @@ namespace KompetansetorgetXamarin.Controllers
                 System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProject: There was no stored record of Project.");
                 InsertProject(project);
             }
-     
+     /*  Already done is deserialize
             System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProject: There was a record of project in the database.");
 
             //Project do exist.
@@ -539,7 +538,7 @@ namespace KompetansetorgetXamarin.Controllers
                     System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProject: End Of Stack Trace");
                 }
             }  
-
+            */
         }
 
         /// <summary>
