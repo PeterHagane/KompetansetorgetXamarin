@@ -67,7 +67,6 @@ namespace KompetansetorgetXamarin
             jtc.UpdateJobTypesFromServer();
             sgc.UpdateStudyGroupsFromServer();
             lc.UpdateLocationsFromServer();
-
         }
 
         protected override void OnSleep()
