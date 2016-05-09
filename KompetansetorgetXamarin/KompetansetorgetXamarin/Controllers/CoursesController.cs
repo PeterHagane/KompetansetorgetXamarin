@@ -20,49 +20,16 @@ namespace KompetansetorgetXamarin.Controllers
             Adress += "v1/courses";
         }
 
-        public void InsertCourse(Course course)
-        {
-            lock (DbContext.locker)
-            {
-                var rowsAffected = Db.Update(course);
-                if (rowsAffected == 0)
-                {
-                    // The item does not exists in the database so safe to insert
-                    Db.Insert(course);
-                }
-            }
-        }
-
-        public void InsertCourseProject(string courseId, string projectUuid)
-        { 
-            CourseProject cp = new CourseProject();
-            cp.CourseId = courseId;
-            cp.ProjectUuid = projectUuid;
-
-            lock (DbContext.locker)
-            {
-                var rowsAffected =
-                    Db.Query<CourseProject>("Select * FROM CourseProject WHERE CourseProject.CourseId = ?" +
-                                            " AND CourseProject.ProjectUuid = ?", cp.CourseId, cp.ProjectUuid).Count;
-                System.Diagnostics.Debug.WriteLine("Deserialize: CourseProject rowsAffected: " +
-                                                    rowsAffected);
-                if (rowsAffected == 0)
-                {
-                    // The item does not exists in the database so safe to insert
-                    Db.Insert(cp);
-                }
-            }
-        }
-
         /// <summary>
         /// Gets all Courses from the servers REST Api.
         /// </summary>
         public async Task UpdateCoursesFromServer()
         {
+            DbCourse db = new DbCourse();
             System.Diagnostics.Debug.WriteLine("CoursesController - UpdateCoursesFromServer: initiated");
-            StudentsController sc = new StudentsController();
+            DbStudent dbStudent = new DbStudent();
 
-            string accessToken = sc.GetStudentAccessToken();
+            string accessToken = dbStudent.GetStudentAccessToken();
 
             if (accessToken == null)
             {
@@ -81,8 +48,8 @@ namespace KompetansetorgetXamarin.Controllers
                 {
                     System.Diagnostics.Debug.WriteLine("UpdateCoursesFromServer response " + response.StatusCode.ToString());
                     var newCourses = await response.Content.ReadAsAsync<IEnumerable<Course>>();
-                    DeleteAllCourses();
-                    InsertCourses(newCourses);
+                    db.DeleteAllCourses();
+                    db.InsertCourses(newCourses);
                 }
                 if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
@@ -99,44 +66,12 @@ namespace KompetansetorgetXamarin.Controllers
             }
         }
 
-        /// <summary>
-        /// Deletes all Course from the local database.
-        /// </summary>
-        private void DeleteAllCourses()
-        {
-            lock (DbContext.locker)
-            {
-                System.Diagnostics.Debug.WriteLine("CoursesController - DeleteAllCourses: Before delete.");
-                Db.Execute("delete from " + "Course");
-                System.Diagnostics.Debug.WriteLine("CoursesController - DeleteAllCourses: After delete.");
-            }
-        }
 
-        private void InsertCourses(IEnumerable<Course> courses)
-        {
-            foreach (var course in courses)
-            {
-                InsertCourse(course);
-            }
-        }
-
-
-        /// <summary>
-        /// Returns a List containing all stored Locations
-        /// </summary>
-        /// <returns></returns>
-        public List<Course> GetAllCourses()
-        {
-            lock (DbContext.locker)
-            {
-                return Db.Query<Course>("Select * from Course");
-            }
-        }
 
         public async Task CompareServerHash()
         {
-            StudentsController sc = new StudentsController();
-            string accessToken = sc.GetStudentAccessToken();
+            DbStudent dbStudent = new DbStudent();
+            string accessToken = dbStudent.GetStudentAccessToken();
 
             if (accessToken == null)
             {
@@ -191,7 +126,8 @@ namespace KompetansetorgetXamarin.Controllers
 
         private string CreateLocalHash()
         {
-            List<Course> courses = GetAllCourses();
+            DbCourse db = new DbCourse();
+            List<Course> courses = db.GetAllCourses();
             StringBuilder sb = new StringBuilder();
             foreach (var c in courses)
             {

@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using KompetansetorgetXamarin.Controllers;
+using KompetansetorgetXamarin.DAL;
 using KompetansetorgetXamarin.Models;
 using UAuth;
 //using Xamarin.Forms;
@@ -140,26 +141,28 @@ namespace KompetansetorgetXamarin
                     System.Diagnostics.Debug.WriteLine("access_token: " + localToken);
 
                     StudentsController sc = new StudentsController();
-                    if (sc.CheckIfStudentExist(username))
+                    DbStudent dbStudent = new DbStudent();
+                    if (dbStudent.CheckIfStudentExist(username))
                     {
-                        Student student = sc.GetStudent(username);
+                        Student student = dbStudent.GetStudent(username);
                         student.accessToken = localToken;
-                        sc.UpdateStudent(student);
+                        dbStudent.UpdateStudent(student);
                         DevicesController dc = new DevicesController();
                         dc.UpdateServersDb();
                     }
                     else
                     {
-                        sc.DeleteAllStudents();
+                        dbStudent.DeleteAllStudents();
                         Student student = new Student();
                         student.username = username;
                         student.accessToken = localToken;
                         student.receiveNotifications = true;
                         student.receiveJobNotifications = true;
                         student.receiveProjectNotifications = true;
-                        sc.InsertStudent(student);
+                        dbStudent.InsertStudent(student);
                         DevicesController dc = new DevicesController();
-                        dc.FixStudentForeignKey(username);
+                        DbDevice dbDevice = new DbDevice();
+                        dbDevice.FixStudentForeignKey(username);
                         dc.UpdateServersDb();
                     }
                 }

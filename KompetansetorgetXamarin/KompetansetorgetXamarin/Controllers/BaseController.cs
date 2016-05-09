@@ -22,15 +22,7 @@ namespace KompetansetorgetXamarin.Controllers
             Db = DbContext.Db;
         }
 
-        /// <summary>
-        /// Removes the milliseconds of a datetime, which is needed due to "lack" of precicion in SQLITE.
-        /// </summary>
-        /// <param name="dt"></param>
-        /// <returns></returns>
-        public DateTime TrimMilliseconds(DateTime dt)
-        {
-            return new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second, 0);
-        }
+
 
 
         /*

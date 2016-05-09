@@ -6,6 +6,7 @@ using System.Linq;
 using KompetansetorgetXamarin.Controllers;
 using PCLStorage;
 using KompetansetorgetXamarin.CRUD;
+using KompetansetorgetXamarin.DAL;
 using KompetansetorgetXamarin.Models;
 using UAuth;
 
@@ -22,8 +23,8 @@ namespace KompetansetorgetXamarin
         
         protected override void OnStart()
         {
-            StudentsController sc = new StudentsController();
-            Student student = sc.GetStudent();
+            DbStudent dbStudent = new DbStudent();
+            Student student = dbStudent.GetStudent();
 
             // Comment out the 4 lines under to deactive the GoToLogin at 
             if (student == null || student.accessToken == null)
@@ -42,9 +43,10 @@ namespace KompetansetorgetXamarin
             {
                 DeleteOutdatedData();
                 UpdateAllFilters();
-                DevicesController dc = new DevicesController();
-                if (dc.GetDevice() != null && !dc.GetDevice().tokenSent)
+                DbDevice dbDevice = new DbDevice();
+                if (dbDevice.GetDevice() != null && !dbDevice.GetDevice().tokenSent)
                 {
+                    DevicesController dc = new DevicesController();
                     dc.UpdateServersDb();
                 }
             }
@@ -52,19 +54,21 @@ namespace KompetansetorgetXamarin
 
         private void DeleteOutdatedData()
         {
-            JobsController jc = new JobsController();
-            jc.DeleteAllExpiredJobs();
+            DbJob dbJob = new DbJob();
+            dbJob.DeleteAllExpiredJobs();
         }
 
         private void UpdateAllFilters()
         {
             // This is to make sure that the app got the study groups that is used as search filters. 
+            DbLocation dbLocation = new DbLocation();
             StudyGroupsController sgc = new StudyGroupsController();
             LocationsController lc = new LocationsController();
             JobTypesController jtc = new JobTypesController();
             CoursesController cc = new CoursesController();
-            if (lc.GetAllLocations().Count != 0)
+            if (dbLocation.GetAllLocations().Count != 0)
             {
+
                 lc.CompareServerHash();
                 sgc.CompareServerHash();
                 jtc.CompareServerHash();
@@ -99,6 +103,7 @@ namespace KompetansetorgetXamarin
         public static void SuccessfulLoginAction()
         {
             // NavPage.Navigation.PopModalAsync();
+            DbLocation dbLocation = new DbLocation();
             StudyGroupsController sgc = new StudyGroupsController();
             LocationsController lc = new LocationsController();
             JobTypesController jtc = new JobTypesController();
@@ -106,7 +111,7 @@ namespace KompetansetorgetXamarin
             NavPage.Navigation.InsertPageBefore(new MainPage(), NavPage.Navigation.NavigationStack.First());
             NavPage.Navigation.PopToRootAsync();
 
-            if (lc.GetAllLocations().Count != 0)
+            if (dbLocation.GetAllLocations().Count != 0)
             {
                 lc.CompareServerHash();
                 sgc.CompareServerHash();

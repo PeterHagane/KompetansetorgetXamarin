@@ -20,42 +20,10 @@ namespace KompetansetorgetXamarin.Controllers
             Adress += "v1/locations";
         }
 
-        public void InsertLocation(Location location)
-        {
-            lock (DbContext.locker)
-            {
-                var rowsAffected = Db.Update(location);
-                if (rowsAffected == 0)
-                {
-                    // The item does not exists in the database so safe to insert
-                    Db.Insert(location);
-                }
-            }
-        }
-
-        public void InsertLocationJob(string locationId, string jobUuid)
-        { 
-            LocationJob lj = new LocationJob();
-            lj.LocationId = locationId;
-            lj.JobUuid = jobUuid;
-            lock (DbContext.locker)
-            {
-                var rowsAffected =
-                Db.Query<LocationJob>("Select * FROM LocationJob WHERE LocationJob.LocationId = ?" +
-                                      " AND LocationJob.JobUuid = ?", lj.LocationId, lj.JobUuid).Count;
-                System.Diagnostics.Debug.WriteLine("DeserializeOneJobs: StudyGroupJob rowsAffected: " + rowsAffected);
-                 if (rowsAffected == 0)
-                 {
-                    // The item does not exists in the database so safe to insert
-                    Db.Insert(lj);
-                 }
-            }
-        }
-
         public async Task CompareServerHash()
         {
-            StudentsController sc = new StudentsController();
-            string accessToken = sc.GetStudentAccessToken();
+            DbStudent dbStudent = new DbStudent();
+            string accessToken = dbStudent.GetStudentAccessToken();
 
             if (accessToken == null)
             {
@@ -113,10 +81,10 @@ namespace KompetansetorgetXamarin.Controllers
         /// </summary>
         public async Task UpdateLocationsFromServer()
         {
+            DbLocation db = new DbLocation();
             System.Diagnostics.Debug.WriteLine("LocationsController - UpdateLocationsFromServer: initiated");
-            StudentsController sc = new StudentsController();
-
-            string accessToken = sc.GetStudentAccessToken();
+            DbStudent dbStudent = new DbStudent();
+            string accessToken = dbStudent.GetStudentAccessToken();
 
             if (accessToken == null)
             {
@@ -135,8 +103,8 @@ namespace KompetansetorgetXamarin.Controllers
                 {
                     System.Diagnostics.Debug.WriteLine("UpdateLocationsFromServer response " + response.StatusCode.ToString());
                     var newLocations = await response.Content.ReadAsAsync<IEnumerable<Location>>();
-                    DeleteAllLocations();
-                    InsertLocations(newLocations);
+                    db.DeleteAllLocations();
+                    db.InsertLocations(newLocations);
                 }
                 if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
@@ -153,42 +121,10 @@ namespace KompetansetorgetXamarin.Controllers
             }
         }
 
-        /// <summary>
-        /// Deletes all Location from the local database.
-        /// </summary>
-        private void DeleteAllLocations()
-        {
-            lock (DbContext.locker)
-            {
-                System.Diagnostics.Debug.WriteLine("LocationsController - DeleteAllLocations: Before delete.");
-                Db.Execute("delete from " + "Location");
-                System.Diagnostics.Debug.WriteLine("LocationsController - DeleteAllLocations: After delete.");
-            }
-        }
-
-        private void InsertLocations(IEnumerable<Location> locations)
-        {
-            foreach (var location in locations)
-            {
-                InsertLocation(location);
-            }
-        }
-
-        /// <summary>
-        /// Returns a List containing all stored Locations
-        /// </summary>
-        /// <returns></returns>
-        public List<Location> GetAllLocations()
-        {
-            lock (DbContext.locker)
-            {
-                return Db.Query<Location>("Select * from Location ORDER BY Location.id ASC");
-            }
-        }
-
         private string CreateLocalHash()
         {
-            List<Location> locations = GetAllLocations();
+            DbLocation db = new DbLocation();
+            List<Location> locations = db.GetAllLocations();
             StringBuilder sb = new StringBuilder();
             foreach (var loc in locations)
             {
@@ -205,7 +141,7 @@ namespace KompetansetorgetXamarin.Controllers
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        private string CalculateMd5Hash(string input)
+        public string CalculateMd5Hash(string input)
         {
             var hasher = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Md5);
             byte[] inputBytes = Encoding.UTF8.GetBytes(input);
