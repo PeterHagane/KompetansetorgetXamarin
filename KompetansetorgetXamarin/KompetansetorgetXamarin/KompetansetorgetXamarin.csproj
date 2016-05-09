@@ -85,7 +85,7 @@
     <Compile Include="DataPassed.cs" />
     <Compile Include="CRUD\Crud.cs" />
     <Compile Include="DAL\DbContext.cs" />
-    <Compile Include="DateTimeHandler.cs" />
+    <Compile Include="Utility\DateTimeHandler.cs" />
     <Compile Include="Models\ApprovedCourse.cs" />
     <Compile Include="Models\Company.cs" />
     <Compile Include="Models\Contact.cs" />
@@ -104,6 +104,7 @@
     <Compile Include="Models\StudyGroup.cs" />
     <Compile Include="Models\Varsel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utility\Hasher.cs" />
     <Compile Include="Views\CarouselOppgaver.xaml.cs">
       <DependentUpon>CarouselOppgaver.xaml</DependentUpon>
     </Compile>

@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using KompetansetorgetXamarin.Controls;
 using KompetansetorgetXamarin.DAL;
 using KompetansetorgetXamarin.Models;
+using KompetansetorgetXamarin.Utility;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SQLite.Net;
@@ -114,7 +115,7 @@ namespace KompetansetorgetXamarin.Controllers
                     {
                         sb.Append(project.uuid);
                     }
-                    string localUuids = CalculateMd5Hash(sb.ToString());
+                    string localUuids = Hasher.CalculateMd5Hash(sb.ToString());
 
                     // if there is a greater amount of jobs on that search filter then the job that exist 
                     // in the database has been inserted throught another search filter
@@ -562,27 +563,7 @@ namespace KompetansetorgetXamarin.Controllers
             return p;
         }
 
-        /// <summary>
-        /// Used to create a 128 bit hash of all the projects uuid,
-        /// used as part of the cache strategy.
-        /// This is not to create a safe encryption, but to create a hash that im
-        /// certain that the php backend can replicate.
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        private string CalculateMd5Hash(string input)
-        {
-            var hasher = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Md5);
-            byte[] inputBytes = Encoding.UTF8.GetBytes(input);
-            byte[] hash = hasher.HashData(inputBytes);
 
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < hash.Length; i++)
-            {
-                sb.Append(hash[i].ToString("X2"));
-            }
-            return sb.ToString();
-        }
 
         /*
         public async void GetProjectsFromServer()

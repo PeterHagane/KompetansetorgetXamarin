@@ -11,6 +11,7 @@ using Xamarin.UITest;
 using Xamarin.UITest.Android;
 using Xamarin.UITest.Queries;
 using KompetansetorgetXamarin.Controllers;
+using KompetansetorgetXamarin.Utility;
 
 namespace KompetansetorgetXamarin.Tests
 {
@@ -42,8 +43,7 @@ namespace KompetansetorgetXamarin.Tests
             string toBeHashed =
                 "hashthisstring231pleasehashthisstringpleasehas4241hthisstringplea3123sehashthisstringplease";
             string md5FromExternalSource = "daa5084fe8ea9cbb2f9ff1cfac9f479e";
-            LocationsController lc = new LocationsController();
-            string hashed = lc.CalculateMd5Hash(toBeHashed);
+            string hashed = Hasher.CalculateMd5Hash(toBeHashed);
             Assert.AreEqual(hashed, md5FromExternalSource.ToUpper());
         }
 

@@ -9,6 +9,7 @@ using KompetansetorgetXamarin.Models;
 using SQLite.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using KompetansetorgetXamarin.Utility;
 
 namespace KompetansetorgetXamarin.Controllers
 {
@@ -105,7 +106,7 @@ namespace KompetansetorgetXamarin.Controllers
             //  {"Device":[{"id":"HT451WM08832","token":"longGCMToken","deviceType":"android"}]}
             System.Diagnostics.Debug.WriteLine("DevicesController - UpdateServersDb serializedJson: " + serializedJson);
 
-            string encodedUsername = Base64Encode(student.username);
+            string encodedUsername = Hasher.Base64Encode(student.username);
                                                 //"api/v1/students/{id}"
             string updateAdress = studentAdress + "/" + encodedUsername;
             System.Diagnostics.Debug.WriteLine("DevicesController - UpdateServersDb - adress: " + updateAdress);
@@ -143,18 +144,6 @@ namespace KompetansetorgetXamarin.Controllers
                 System.Diagnostics.Debug.WriteLine("StudentsController - PostStudentsStudyGroupToServer: End Of Stack Trace");
                 return;
             }
-        }
-
-        /// <summary>
-        /// Base64Encodes a string, should be used on all query strings that 
-        /// can contain special characters not suitable for in a url adress.  
-        /// </summary>
-        /// <param name="plainText"></param>
-        /// <returns></returns>
-        public static string Base64Encode(string plainText)
-        {
-            var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
-            return System.Convert.ToBase64String(plainTextBytes);
         }
     }
 }

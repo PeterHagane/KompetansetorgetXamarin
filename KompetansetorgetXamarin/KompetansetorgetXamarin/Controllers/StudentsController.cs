@@ -14,6 +14,7 @@ using SQLite.Net;
 using Newtonsoft.Json;
 using System.Web;
 using KompetansetorgetXamarin.Controls;
+using KompetansetorgetXamarin.Utility;
 using Xamarin.Forms;
 using Device = KompetansetorgetXamarin.Models.Device;
 
@@ -70,7 +71,7 @@ namespace KompetansetorgetXamarin.Controllers
                 return null;
             }
 
-            string encodedUsername = Base64Encode(student.username);
+            string encodedUsername = Hasher.Base64Encode(student.username);
             Uri url = new Uri(Adress + "/" + encodedUsername);
             
             System.Diagnostics.Debug.WriteLine("StudentsController - UpdateStudyGroupStudent uri: " + url.ToString());
@@ -148,7 +149,7 @@ namespace KompetansetorgetXamarin.Controllers
             // {"studyGroups":[{"id":"helse"},{"id":"ingeniør"},{"id":"samfunnsfag"}]} 
             System.Diagnostics.Debug.WriteLine("StudentsController - PostStudentsStudyGroupToServer jsonString: " + jsonString);
 
-            string encodedUsername = Base64Encode(student.username);
+            string encodedUsername = Hasher.Base64Encode(student.username);
             Uri url = new Uri(Adress + "/" + encodedUsername);
             System.Diagnostics.Debug.WriteLine("StudentsController - PostStudentsStudyGroupToServer uri: " + url.ToString());
 
@@ -223,17 +224,7 @@ namespace KompetansetorgetXamarin.Controllers
             return null;
         }
 
-        /// <summary>
-        /// Base64Encodes a string, should be used on all query strings that 
-        /// can contain special characters not suitable for in a url adress.  
-        /// </summary>
-        /// <param name="plainText"></param>
-        /// <returns></returns>
-        public static string Base64Encode(string plainText)
-        {
-            var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
-            return System.Convert.ToBase64String(plainTextBytes);
-        }
+
 
 
 

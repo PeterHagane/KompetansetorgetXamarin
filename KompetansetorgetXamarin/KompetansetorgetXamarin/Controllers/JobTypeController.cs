@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using KompetansetorgetXamarin.Models;
 using KompetansetorgetXamarin.DAL;
+using KompetansetorgetXamarin.Utility;
 using Newtonsoft.Json;
 using PCLCrypto;
 
@@ -128,29 +129,7 @@ namespace KompetansetorgetXamarin.Controllers
             {
                 sb.Append(jt.id);
             }
-            return CalculateMd5Hash(sb.ToString());
-        }
-
-        /// <summary>
-        /// Use to create a 128 bit hash
-        /// used as part of the cache strategy.
-        /// This is not to create a safe encryption, but to create a hash that im
-        /// certain that the php backend can replicate.
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        private string CalculateMd5Hash(string input)
-        {
-            var hasher = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Md5);
-            byte[] inputBytes = Encoding.UTF8.GetBytes(input);
-            byte[] hash = hasher.HashData(inputBytes);
-
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < hash.Length; i++)
-            {
-                sb.Append(hash[i].ToString("X2"));
-            }
-            return sb.ToString();
+            return Hasher.CalculateMd5Hash(sb.ToString());
         }
     }
 }
