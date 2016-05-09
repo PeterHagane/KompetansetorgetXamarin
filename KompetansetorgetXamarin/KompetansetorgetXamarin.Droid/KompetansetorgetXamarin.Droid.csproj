@@ -178,6 +178,7 @@
     <Compile Include="Renderers\DroidBaseButton.cs" />
     <Compile Include="Renderers\DroidButtonShadow.cs" />
     <Compile Include="Renderers\DroidRoundBox.cs" />
+    <Compile Include="Renderers\DroidStackButton.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SplashScreen.cs" />
@@ -215,6 +216,7 @@
     <AndroidResource Include="Resources\drawable-xhdpi\ArrowWhiteRight.png" />
     <AndroidResource Include="Resources\drawable-hdpi\User.png" />
     <AndroidResource Include="Resources\drawable-hdpi\UserBlack.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\RoundedRectangle.xml" />
     <Content Include="Resources\drawable-xhdpi\KTbanner.jpg" />
     <AndroidResource Include="Resources\drawable-xhdpi\icon.png" />
     <AndroidResource Include="Resources\drawable-xxhdpi\ArrowBlackLeft.png" />
@@ -223,6 +225,7 @@
     <AndroidResource Include="Resources\drawable-xxhdpi\ArrowWhiteRight.png" />
     <AndroidResource Include="Resources\drawable-xhdpi\User.png" />
     <AndroidResource Include="Resources\drawable-xhdpi\UserBlack.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\RoundedRectangle.xml" />
     <Content Include="Resources\drawable-xxhdpi\KTbanner.jpg" />
     <AndroidResource Include="Resources\drawable-xxhdpi\icon.png" />
     <AndroidResource Include="Resources\drawable\ArrowBlackLeft.png" />
@@ -231,10 +234,12 @@
     <AndroidResource Include="Resources\drawable\ArrowWhiteRight.png" />
     <AndroidResource Include="Resources\drawable-xxhdpi\User.png" />
     <AndroidResource Include="Resources\drawable-xxhdpi\UserBlack.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\RoundedRectangle.xml" />
     <Content Include="Resources\drawable\KTbanner.jpg" />
     <AndroidResource Include="Resources\drawable\icon.png" />
     <AndroidResource Include="Resources\drawable\User.png" />
     <AndroidResource Include="Resources\drawable\UserBlack.png" />
+    <AndroidResource Include="Resources\drawable\RoundedRectangle.xml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\KompetansetorgetXamarin\KompetansetorgetXamarin.csproj">

@@ -52,6 +52,7 @@
     <Compile Include="Controllers\StudentsController.cs" />
     <Compile Include="Controllers\StudyGroupsController.cs" />
     <Compile Include="Controls\ButtonShadow.cs" />
+    <Compile Include="Controls\ButtonStack.cs" />
     <Compile Include="Controls\CustomSwitchCell.cs" />
     <Compile Include="Controls\XLabsExtendedButton.cs" />
     <Compile Include="Controls\ImageOrientationOverride.cs" />

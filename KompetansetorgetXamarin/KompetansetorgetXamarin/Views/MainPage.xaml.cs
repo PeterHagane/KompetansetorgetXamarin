@@ -38,5 +38,6 @@ namespace KompetansetorgetXamarin.Views
             var viktorsTest = new ViktorTestView();
             await Navigation.PushAsync(viktorsTest);
         }
+
     }
 }

@@ -14,7 +14,7 @@
 
       
 
-      <local:ButtonShadow BorderRadius="13" Padding ="2,2,2,7" Style="{DynamicResource buttonShadowStyle}">
+      <!--<local:ButtonShadow BorderRadius="13" Padding ="2,2,2,7" Style="{DynamicResource buttonShadowStyle}">
         <local:BaseButton Clicked="VarselButton_OnClicked" x:Name="VarselButton" Text="Vis varsler" Style="{DynamicResource baseButtonStyle}"  Padding="35,0,0,0" HorizontalContentAlignment="Start"/>
       </local:ButtonShadow>
 
@@ -27,9 +27,54 @@
       </local:ButtonShadow>
 
       <local:ButtonShadow BorderRadius="13" Padding ="2,2,2,7" Style="{DynamicResource buttonShadowStyle}">
-        <local:BaseButton Clicked="ViktorButton_OnClicked" x:Name="ViktorButton" Text="Viktors test vindu" Style="{DynamicResource baseButtonStyle}"  Padding="35,0,0,0" HorizontalContentAlignment="Start"/>
+        <local:BaseButton Clicked="ViktorButton_OnClicked" x:Name="ViktorButton" Text="Viktors test vindu" Style="{DynamicResource baseButtonStyle}"  Padding="35,0,0,0" Orientation="ImageToRight" HorizontalContentAlignment="Start" Image="ArrowBlackLeft"/>
+      </local:ButtonShadow>-->
+
+
+      <local:ButtonShadow BorderRadius="17" Padding ="2,2,2,7" Style="{DynamicResource buttonShadowStyle}">
+        <local:ButtonStack x:Name="VarslerStackButton" Style="{DynamicResource buttonStackStyle}">
+          <local:ButtonStack.GestureRecognizers>
+            <TapGestureRecognizer Tapped="VarselButton_OnClicked">
+            </TapGestureRecognizer>
+          </local:ButtonStack.GestureRecognizers>
+          <Label Text="Vis varsler" Style="{DynamicResource buttonLabelStyle}"/>
+          <Image Source="ArrowBlackLeft.png"  Style="{DynamicResource buttonImageStyle}"/>
+        </local:ButtonStack>
+      </local:ButtonShadow>
+
+      <local:ButtonShadow BorderRadius="17" Padding ="2,2,2,7" Style="{DynamicResource buttonShadowStyle}">
+        <local:ButtonStack x:Name="StillingerStackButton" Style="{DynamicResource buttonStackStyle}">
+          <local:ButtonStack.GestureRecognizers>
+            <TapGestureRecognizer Tapped="StillingButton_OnClicked">
+            </TapGestureRecognizer>
+          </local:ButtonStack.GestureRecognizers>
+          <Label Text="Finn stillinger" Style="{DynamicResource buttonLabelStyle}"/>
+          <Image Source="ArrowBlackLeft.png"  Style="{DynamicResource buttonImageStyle}"/>
+        </local:ButtonStack>
       </local:ButtonShadow>
       
+      <local:ButtonShadow BorderRadius="17" Padding ="2,2,2,7" Style="{DynamicResource buttonShadowStyle}">
+        <local:ButtonStack x:Name="OppgaverStackButton" Style="{DynamicResource buttonStackStyle}">
+          <local:ButtonStack.GestureRecognizers>
+            <TapGestureRecognizer Tapped="OppgaveButton_OnClicked">
+            </TapGestureRecognizer>
+          </local:ButtonStack.GestureRecognizers>
+          <Label Text="Finn oppgaveforslag" Style="{DynamicResource buttonLabelStyle}"/>
+          <Image Source="ArrowBlackLeft.png"  Style="{DynamicResource buttonImageStyle}"/>
+        </local:ButtonStack>
+      </local:ButtonShadow>
+
+      <local:ButtonShadow BorderRadius="17" Padding ="2,2,2,7" Style="{DynamicResource buttonShadowStyle}">
+        <local:ButtonStack x:Name="ViktorButton" Style="{DynamicResource buttonStackStyle}">
+          <local:ButtonStack.GestureRecognizers>
+            <TapGestureRecognizer Tapped="ViktorButton_OnClicked">
+            </TapGestureRecognizer>
+          </local:ButtonStack.GestureRecognizers>
+          <Label Text="Viktorvindu" Style="{DynamicResource buttonLabelStyle}"/>
+          <Image Source="ArrowBlackLeft.png"  Style="{DynamicResource buttonImageStyle}"/>
+        </local:ButtonStack>
+      </local:ButtonShadow>
+
     </StackLayout>
   </ContentPage.Content>
 </local:BaseContentPage>

@@ -24,7 +24,7 @@
     </local:ButtonShadow>
 
     <local:ButtonShadow BorderRadius="13" Padding ="2,2,2,7" Style="{DynamicResource buttonShadowStyle}">
-      <local:BaseButton x:Name="Bypass" Text="Hopp over" Padding="35,0,0,0" HorizontalContentAlignment="Start" Clicked="OnBypassLogin" Style="{DynamicResource baseButtonStyle}" Orientation="ImageToLeft"  Image="ArrowBlackLeft"/> <!--ADD IMAGE HERE-->
+      <local:BaseButton x:Name="Bypass" Text="Hopp over" Padding="35,0,0,0" Clicked="OnBypassLogin" Style="{DynamicResource baseButtonStyle}" Orientation="ImageToRight" HorizontalContentAlignment="Start" Image="ArrowBlackLeft"/> <!--ADD IMAGE HERE-->
     </local:ButtonShadow>
 
     <!--<local:ButtonShadow BorderRadius="13" Padding ="2,2,2,7" Style="{DynamicResource buttonShadowStyle}">
