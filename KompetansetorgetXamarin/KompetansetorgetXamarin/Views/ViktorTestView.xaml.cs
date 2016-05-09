@@ -1012,5 +1012,19 @@ namespace KompetansetorgetXamarin.Views
             System.Diagnostics.Debug.WriteLine("date: " + date);
             System.Diagnostics.Debug.WriteLine("dateTime: " + dateTime);
         }
+
+        private async void TestGetServerHash(object sender, EventArgs e)
+        {
+            StudyGroupsController sgc = new StudyGroupsController();
+            LocationsController lc = new LocationsController();
+            JobTypesController jtc = new JobTypesController();
+            CoursesController cc = new CoursesController();
+            // this won't work properly with the placeholder backend due to the collation used on that sql database.
+            // but will work if xyzøæå gets sortered properly 
+            lc.CompareServerHash();
+            sgc.CompareServerHash();
+            jtc.CompareServerHash();
+            cc.CompareServerHash();
+        }           
     }
 }

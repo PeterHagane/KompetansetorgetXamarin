@@ -847,7 +847,6 @@ namespace KompetansetorgetXamarin.Controllers
                             {
                                 whereAnd = " AND StudyGroup.id = '" + studyGroups[i] + "'";
                             }
-
                         }
                     }
 
@@ -1081,7 +1080,7 @@ namespace KompetansetorgetXamarin.Controllers
         }
 
         /// <summary>
-        /// Used to create a 32 bit hash of all the projects uuid,
+        /// Used to create a 128 bit hash of all the projects uuid,
         /// used as part of the cache strategy.
         /// This is not to create a safe encryption, but to create a hash that im
         /// certain that the php backend can replicate.

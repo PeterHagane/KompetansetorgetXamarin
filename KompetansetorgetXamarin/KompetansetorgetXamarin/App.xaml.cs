@@ -63,10 +63,21 @@ namespace KompetansetorgetXamarin
             LocationsController lc = new LocationsController();
             JobTypesController jtc = new JobTypesController();
             CoursesController cc = new CoursesController();
-            cc.UpdateCoursesFromServer();
-            jtc.UpdateJobTypesFromServer();
-            sgc.UpdateStudyGroupsFromServer();
-            lc.UpdateLocationsFromServer();
+            if (lc.GetAllLocations().Count != 0)
+            {
+                lc.CompareServerHash();
+                sgc.CompareServerHash();
+                jtc.CompareServerHash();
+                cc.CompareServerHash();
+            }
+            else
+            {
+                cc.UpdateCoursesFromServer();
+                jtc.UpdateJobTypesFromServer();
+                sgc.UpdateStudyGroupsFromServer();
+                lc.UpdateLocationsFromServer();
+            }
+            
         }
 
         protected override void OnSleep()
@@ -94,11 +105,21 @@ namespace KompetansetorgetXamarin
             CoursesController cc = new CoursesController();
             NavPage.Navigation.InsertPageBefore(new MainPage(), NavPage.Navigation.NavigationStack.First());
             NavPage.Navigation.PopToRootAsync();
-            jtc.UpdateJobTypesFromServer();
-            sgc.UpdateStudyGroupsFromServer();
-            lc.UpdateLocationsFromServer();
-            cc.UpdateCoursesFromServer();
 
+            if (lc.GetAllLocations().Count != 0)
+            {
+                lc.CompareServerHash();
+                sgc.CompareServerHash();
+                jtc.CompareServerHash();
+                cc.CompareServerHash();
+            }
+            else
+            {
+                cc.UpdateCoursesFromServer();
+                jtc.UpdateJobTypesFromServer();
+                sgc.UpdateStudyGroupsFromServer();
+                lc.UpdateLocationsFromServer();
+            }
         }
     }
 }
