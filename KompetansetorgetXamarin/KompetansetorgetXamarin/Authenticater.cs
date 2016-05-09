@@ -14,7 +14,6 @@ namespace KompetansetorgetXamarin
 {
     public class Authenticater
     {
-
         public static bool Authorized = true;
 
         public Authenticater()

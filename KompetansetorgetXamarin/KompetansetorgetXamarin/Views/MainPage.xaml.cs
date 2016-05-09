@@ -12,7 +12,13 @@ namespace KompetansetorgetXamarin.Views
     {
         public MainPage()
         {
-            InitializeComponent();
+            if (!Authenticater.Authorized)
+            {
+                new Authenticater();
+            }
+            else { 
+                InitializeComponent();
+            }
         }
 
         private async void VarselButton_OnClicked(object sender, EventArgs e)

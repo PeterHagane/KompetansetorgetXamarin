@@ -12,6 +12,7 @@ using KompetansetorgetXamarin.Controls;
 using KompetansetorgetXamarin.DAL;
 using KompetansetorgetXamarin.Models;
 using Newtonsoft.Json;
+using PCLCrypto;
 using SQLite.Net;
 using SQLiteNetExtensions.Extensions;
 
@@ -124,9 +125,10 @@ namespace KompetansetorgetXamarin.Controllers
 
         /// <summary>
         /// Returns true if there are any new or modified jobs.
+        /// //TODO Way to complicated logic, simplify this method if theres time
         /// </summary>
         /// <returns></returns>
-        private async Task<bool?> CheckServerForNewData(List<string> studyGroups = null, Dictionary<string, string> filter = null)
+        private async Task<string> CheckServerForNewData(List<string> studyGroups = null, Dictionary<string, string> filter = null)
         {
             //"api/v1/jobs/lastmodifed"
             string queryParams = CreateQueryParams(studyGroups, null, filter);
@@ -174,11 +176,12 @@ namespace KompetansetorgetXamarin.Controllers
                 // using <string, object> instead of <string, string> makes the date be stored in the right format when using .ToString()
                 Dictionary<string, object> dict = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonString);
 
-                if (dict.ContainsKey("uuid") && dict.ContainsKey("modified") && dict.ContainsKey("amountOfJobs"))
+                if (dict.ContainsKey("uuid") && dict.ContainsKey("modified") && dict.ContainsKey("uuids") && dict.ContainsKey("amountOfJobs"))
                 {
                     string uuid = dict["uuid"].ToString();
                     DateTime dateTime = (DateTime)dict["modified"];
                     long modified = long.Parse(dateTime.ToString("yyyyMMddHHmmss"));
+                    string uuids = dict["uuids"].ToString();
                     int amountOfJobs = 0;
                     try
                     {
@@ -195,17 +198,32 @@ namespace KompetansetorgetXamarin.Controllers
                     bool existInDb = ExistsInDb(uuid, modified);
                     if (!existInDb)
                     {
-                        return existInDb;
+                        return "newData";
+                        //return existInDb;
                     }
-                    int localDbCount = GetJobsFromDbBasedOnFilter(studyGroups, filter).Count();
-                    System.Diagnostics.Debug.WriteLine("CheckServerForNewData: localDbCount: " + localDbCount + " serverCount: " + amountOfJobs);
+                    var localJobs = GetJobsFromDbBasedOnFilter(studyGroups, filter, true);
+                    int localDbCount = localJobs.Count();
+
+                    StringBuilder sb = new StringBuilder();
+                    foreach (var job in localJobs)
+                    {
+                        sb.Append(job.uuid);
+                    }
+                    string localUuids = CalculateMd5Hash(sb.ToString());
+                    
                     // if there is a greater amount of jobs on that search filter then the job that exist 
                     // in the database has been inserted throught another search filter
-                    if (amountOfJobs > localDbCount)
+                    if (uuids != localUuids)
                     {
-                        return !existInDb;
+                        if (amountOfJobs > localDbCount)
+                        {
+                            return "newData"; 
+                            //return !existInDb;
+                        }
+                        return "incorrectCache";
                     }
-                    return existInDb;                    
+                    return "exists";
+                    //return existInDb;
                 }
             }
             return null;
@@ -274,16 +292,14 @@ namespace KompetansetorgetXamarin.Controllers
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine("JobController - UpdateJobFromServer: await client.GetAsync(\"url\") Failed");
+                System.Diagnostics.Debug.WriteLine(
+                    "JobController - UpdateJobFromServer: await client.GetAsync(\"url\") Failed");
                 System.Diagnostics.Debug.WriteLine("JobController - UpdateJobFromServer: Exception msg: " + e.Message);
                 System.Diagnostics.Debug.WriteLine("JobController - UpdateJobFromServer: Stack Trace: \n" + e.StackTrace);
                 System.Diagnostics.Debug.WriteLine("JobController - UpdateJobFromServer: End Of Stack Trace");
                 return;
             }
-
-            Job job = Deserialize(jsonString);
-            UpdateJob(job);
-
+            Deserialize(jsonString);
         }
 
         /// <summary>
@@ -299,59 +315,20 @@ namespace KompetansetorgetXamarin.Controllers
                 InsertJob(job);
             }
 
-            System.Diagnostics.Debug.WriteLine("JobController - UpdateJob: There was a record of job in the database.");
-
-            //Job do exist.
-            CompaniesController cc = new CompaniesController();
-            foreach (Company c in job.companies)
+            else
             {
-                if (!cc.InsertCompany(c))
-                {
-                    System.Diagnostics.Debug.WriteLine("JobController - UpdateJob: company already exists: Calling UpdateCompany.");
-
-                    cc.UpdateCompany(c);
-                }
-            }
-            try
-            {
-                lock (DbContext.locker)
-                {
-                    System.Diagnostics.Debug.WriteLine("JobController - UpdateJob: Before Updating job.");
-
-                    Db.Update(job);
-                    System.Diagnostics.Debug.WriteLine("JobController - UpdateJob: After Updating job.");
-
-                    // Db.InsertOrReplaceWithChildren(job, recursive: true);
-                    //Db.UpdateWithChildren(job);
-                }
-            }
-            catch (Exception e)
-            {
-                System.Diagnostics.Debug.WriteLine("JobController - UpdateJob: Job update failed");
-                System.Diagnostics.Debug.WriteLine("JobController - UpdateJob: Exception msg: " + e.Message);
-                System.Diagnostics.Debug.WriteLine("JobController - UpdateJob: Stack Trace: \n" + e.StackTrace);
-                System.Diagnostics.Debug.WriteLine("JobController - UpdateJob: End Of Stack Trace");
-            }
-
-
-            // This should perhaps be done above in the other loop, but because of lack of concurrency its in its own loop.
-            foreach (Company c in job.companies)
-            {
-                CompanyJob cp = new CompanyJob();
-                cp.JobUuid = job.uuid;
-                cp.CompanyId = c.id;
                 try
                 {
                     lock (DbContext.locker)
                     {
-                        System.Diagnostics.Debug.WriteLine("JobController - UpdateJob: Inserting CompanyJob.");
-                        Db.Insert(cp);
-                        // Db.InsertOrReplaceWithChildren(job, recursive: true);
+                        System.Diagnostics.Debug.WriteLine("JobController - UpdateJob: Before Updating job.");
+                        Db.Update(job);
+                        System.Diagnostics.Debug.WriteLine("JobController - UpdateJob: After Updating job.");
                     }
                 }
                 catch (Exception e)
                 {
-                    System.Diagnostics.Debug.WriteLine("JobController - UpdateJob: CompanyJob Insertion failed");
+                    System.Diagnostics.Debug.WriteLine("JobController - UpdateJob: Job update failed");
                     System.Diagnostics.Debug.WriteLine("JobController - UpdateJob: Exception msg: " + e.Message);
                     System.Diagnostics.Debug.WriteLine("JobController - UpdateJob: Stack Trace: \n" + e.StackTrace);
                     System.Diagnostics.Debug.WriteLine("JobController - UpdateJob: End Of Stack Trace");
@@ -387,6 +364,43 @@ namespace KompetansetorgetXamarin.Controllers
                 job.companies = GetAllCompaniesRelatedToJob(job);
             }
             return jobs;
+        }
+
+        public void DeleteObsoleteJobs(List<Job> obsoleteJobs)
+        {
+            if (obsoleteJobs != null && obsoleteJobs.Count > 0)
+            {
+                foreach (var job in obsoleteJobs)
+                {
+                    lock (DbContext.locker)
+                    {
+                        Db.Execute("delete from CompanyJob " +
+                                   "where CompanyJob.JobUuid = ?", job.uuid);
+                        System.Diagnostics.Debug.WriteLine(
+                            "JobController - DeleteObsoleteJobs: after delete from CompanyJob");
+
+                        Db.Execute("delete from StudyGroupJob " +
+                                   "where StudyGroupJob.JobUuid = ?", job.uuid);
+                        System.Diagnostics.Debug.WriteLine(
+                            "JobController - DeleteObsoleteJobs: after delete from StudyGroupJob");
+
+                        Db.Execute("delete from LocationJob " +
+                                   "where LocationJob.JobUuid = ?", job.uuid);
+                        System.Diagnostics.Debug.WriteLine(
+                            "JobController - DeleteObsoleteJobs: after delete from LocationJob");
+
+                        Db.Execute("delete from JobTypeJob " +
+                                   "where JobTypeJob.JobUuid = ?", job.uuid);
+                        System.Diagnostics.Debug.WriteLine(
+                            "JobController - DeleteObsoleteJobs: after delete from JobTypeJob");
+
+                        Db.Execute("delete from Job " +
+                                   "where Job.uuid = ?", job.uuid);
+
+                        System.Diagnostics.Debug.WriteLine("JobController - DeleteObsoleteJobs: after delete from Job");
+                    }
+                }
+            }
         }
 
         public void DeleteAllExpiredJobs()
@@ -529,11 +543,15 @@ namespace KompetansetorgetXamarin.Controllers
         {
             //string adress = "http://kompetansetorgetserver1.azurewebsites.net/api/v1/jobs";
             string queryParams = CreateQueryParams(studyGroups, sortBy, filter);
-            bool ? dataExist = await CheckServerForNewData(studyGroups, filter);
-            System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter - dataExist" + dataExist);
-            if (dataExist != null)
+            string instructions = await CheckServerForNewData(studyGroups, filter);
+            if (!Authenticater.Authorized)
             {
-                if ((bool)dataExist)
+                return null;
+            }
+            if (instructions != null)
+            {
+                System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter - instructions" + instructions);
+                if (instructions == "exists")  // "newData"; incorrectCache exists
                 {
                     IEnumerable<Job> filteredJobs = GetJobsFromDbBasedOnFilter(studyGroups, filter);
                     filteredJobs = GetAllCompaniesRelatedToJobs(filteredJobs.ToList());
@@ -573,7 +591,22 @@ namespace KompetansetorgetXamarin.Controllers
                 else if (response.StatusCode == HttpStatusCode.OK)
                 {
                     jsonString = await response.Content.ReadAsStringAsync();
-                    jobs = DeserializeMany(jsonString);                   
+                    //DeleteJobs(GetJobsFromDbBasedOnFilter(studyGroups, filter));
+                    if (instructions != null && instructions == "incorrectCache")
+                    {
+                        var cachedJobs = GetJobsFromDbBasedOnFilter(studyGroups, filter);
+                        jobs = DeserializeMany(jsonString);
+                        // Get all jobs from that local dataset that was not in the data set provided by the server
+                        // These are manually deleted jobs and have to be cleared from cache.
+                        // linear search is ok because of small data set
+                        var manuallyDeletedJobs = cachedJobs.Where(j => !jobs.Any(cj2 => cj2.uuid == j.uuid));
+                        DeleteObsoleteJobs(manuallyDeletedJobs.ToList());
+                    }
+                    else
+                    {
+                        jobs = DeserializeMany(jsonString);
+                    }
+
                 }
 
                 else
@@ -613,9 +646,18 @@ namespace KompetansetorgetXamarin.Controllers
         ///                      locations (values: vestagder, austagder).
         ///                      </param>
         /// <returns></returns>
-        public IEnumerable<Job> GetJobsFromDbBasedOnFilter(List<string> studyGroups = null, Dictionary<string, string> filter = null)
+        public IEnumerable<Job> GetJobsFromDbBasedOnFilter(List<string> studyGroups = null, Dictionary<string, string> filter = null, bool checkUiids = false)
         {
-            string query = "SELECT * FROM Job";
+            string query = "";
+            if (checkUiids)
+            {
+                query =  "SELECT Job.uuid FROM Job";
+            }
+            else
+            {
+                query = "SELECT * FROM Job";
+            }
+            
 
             if (studyGroups != null && filter == null)
             {
@@ -637,7 +679,7 @@ namespace KompetansetorgetXamarin.Controllers
                 System.Diagnostics.Debug.WriteLine("query: " + query); 
                 lock (DbContext.locker)
                 {
-                    return Db.Query<Job>(query);
+                    return Db.Query<Job>(query + " ORDER BY Job.published ASC");
                 }
             }
 
@@ -704,13 +746,13 @@ namespace KompetansetorgetXamarin.Controllers
                 {
                     lock (DbContext.locker)
                     {
-                        return Db.Query<Job>(query);
+                        return Db.Query<Job>(query + " ORDER BY Job.published ASC");
                     }
                 }
         
                 lock (DbContext.locker)
                 {
-                    return Db.Query<Job>(query, prepValue);
+                    return Db.Query<Job>(query + " ORDER BY Job.published ASC", prepValue);
                 }                
             }
 
@@ -847,12 +889,15 @@ namespace KompetansetorgetXamarin.Controllers
                 {
                     lock (DbContext.locker)
                     {
-                        return Db.Query<Job>(query);
+                        return Db.Query<Job>(query + " ORDER BY Job.published ASC");
                     }
                 }
-                
-                return Db.Query<Job>(query, prepValue);
-                
+
+                lock (DbContext.locker)
+                {
+                    return Db.Query<Job>(query + " ORDER BY Job.published ASC", prepValue);
+                }
+
             }
 
             System.Diagnostics.Debug.WriteLine("Filter and studyGroups is null");
@@ -860,7 +905,7 @@ namespace KompetansetorgetXamarin.Controllers
             // if both studyGroups and filter is null
             lock (DbContext.locker)
             {
-                return Db.Query<Job>(query);
+                return Db.Query<Job>(query + " ORDER BY Job.published ASC");
             }          
         }
 
@@ -1074,7 +1119,26 @@ namespace KompetansetorgetXamarin.Controllers
             return j;
         }
 
-
+        /// <summary>
+        /// Use to create a 128 bit hash
+        /// used as part of the cache strategy.
+        /// This is not to create a safe encryption, but to create a hash that im
+        /// certain that the php backend can replicate.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        private string CalculateMd5Hash(string input)
+        {
+            var hasher = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Md5);   
+            byte[] inputBytes = Encoding.UTF8.GetBytes(input);
+            byte[] hash = hasher.HashData(inputBytes);
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < hash.Length; i++)
+            {
+                sb.Append(hash[i].ToString("X2"));
+            }
+            return sb.ToString();
+        }
     }
 }
 

@@ -14,7 +14,7 @@ public class SplashActivity : Activity
         base.OnCreate(bundle);
         var intent = new Intent(this, typeof(MainActivity));
 
-        System.Threading.Thread.Sleep(2000);
+        //System.Threading.Thread.Sleep(2000);
         this.StartActivity(typeof(MainActivity));
     }
 }

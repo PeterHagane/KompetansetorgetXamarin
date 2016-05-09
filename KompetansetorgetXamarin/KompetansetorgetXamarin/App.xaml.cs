@@ -17,23 +17,33 @@ namespace KompetansetorgetXamarin
 
         public App()
         {
-            InitializeComponent();   //must be included in order to initialise global xaml styles
-
-            // The root page of your application
-            NavPage = new NavigationPage(new LoginPage());
-            //NavPage.BarBackgroundColor = Color.FromHex("ec7a08");
-            //NavPage.BarTextColor = Color.White;
-            MainPage = NavPage;
+            InitializeComponent();   //must be included in order to initialise global xaml styles   
         }
         
         protected override void OnStart()
         {
             StudentsController sc = new StudentsController();
-            if (sc.GetStudent() != null) { 
+            Student student = sc.GetStudent();
+
+            // Comment out the 4 lines under to deactive the GoToLogin at 
+            if (student == null || student.accessToken == null)
+            {
+                Authenticater.Authorized = false;
+            }
+
+            NavPage = new NavigationPage(new MainPage());
+            //NavPage = new NavigationPage(new LoginPage());
+            MainPage = NavPage;
+            
+            //NavPage.BarBackgroundColor = Color.FromHex("ec7a08");
+            //NavPage.BarTextColor = Color.White;
+
+            if (student != null)
+            {
                 DeleteOutdatedData();
                 UpdateAllFilters();
                 DevicesController dc = new DevicesController();
-                if (!dc.GetDevice().tokenSent)
+                if (dc.GetDevice() != null && !dc.GetDevice().tokenSent)
                 {
                     dc.UpdateServersDb();
                 }
@@ -53,11 +63,21 @@ namespace KompetansetorgetXamarin
             LocationsController lc = new LocationsController();
             JobTypesController jtc = new JobTypesController();
             CoursesController cc = new CoursesController();
-            cc.UpdateCoursesFromServer();
-            jtc.UpdateJobTypesFromServer();
-            sgc.UpdateStudyGroupsFromServer();
-            lc.UpdateLocationsFromServer();
-
+            if (lc.GetAllLocations().Count != 0)
+            {
+                lc.CompareServerHash();
+                sgc.CompareServerHash();
+                jtc.CompareServerHash();
+                cc.CompareServerHash();
+            }
+            else
+            {
+                cc.UpdateCoursesFromServer();
+                jtc.UpdateJobTypesFromServer();
+                sgc.UpdateStudyGroupsFromServer();
+                lc.UpdateLocationsFromServer();
+            }
+            
         }
 
         protected override void OnSleep()
@@ -68,17 +88,6 @@ namespace KompetansetorgetXamarin
         protected override void OnResume()
         {
             // Handle when your app resumes
-        }
-
-        /// <summary>
-        /// Activate this method if Authorization fails and a new login is required.
-        /// </summary>
-        public static void GoToLogin()
-        {
-            System.Diagnostics.Debug.WriteLine("App - GoToLogin");
-            NavPage = new NavigationPage(new LoginPage());
-            NavPage.Navigation.InsertPageBefore(new LoginPage(), NavPage.Navigation.NavigationStack.First());
-            NavPage.Navigation.PopToRootAsync();
         }
 
         /// <summary>
@@ -96,47 +105,22 @@ namespace KompetansetorgetXamarin
             CoursesController cc = new CoursesController();
             NavPage.Navigation.InsertPageBefore(new MainPage(), NavPage.Navigation.NavigationStack.First());
             NavPage.Navigation.PopToRootAsync();
-            jtc.UpdateJobTypesFromServer();
-            sgc.UpdateStudyGroupsFromServer();
-            lc.UpdateLocationsFromServer();
-            cc.UpdateCoursesFromServer();
 
-        }
-    }
-}
-
-//public static Student Student { get; set; }
-
-/*
-public static bool IsLoggedIn
-{
-    get
-    {
-        if (Student != null)
-        {
-            return !string.IsNullOrWhiteSpace(Student.Mail);
-        }
-        else
-        {
-            return false;
-        }
-    }
-}
-/
-public static Action SuccessfulLoginAction
-{
-    get
-    {
-        return new Action(() => {
-            NavPage.Navigation.PopModalAsync();
-
-            if (IsLoggedIn)
+            if (lc.GetAllLocations().Count != 0)
             {
-                NavPage.Navigation.InsertPageBefore(new MainPage(), NavPage.Navigation.NavigationStack.First());
-                NavPage.Navigation.PopToRootAsync();
+                lc.CompareServerHash();
+                sgc.CompareServerHash();
+                jtc.CompareServerHash();
+                cc.CompareServerHash();
             }
-        });
+            else
+            {
+                cc.UpdateCoursesFromServer();
+                jtc.UpdateJobTypesFromServer();
+                sgc.UpdateStudyGroupsFromServer();
+                lc.UpdateLocationsFromServer();
+            }
+        }
     }
 }
-}
-*/
+

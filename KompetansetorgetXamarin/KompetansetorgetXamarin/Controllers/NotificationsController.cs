@@ -98,7 +98,7 @@ namespace KompetansetorgetXamarin.Controllers
                     Db.Insert(notification);
                 }
                 //THIRD: async get extra minimum info for the notification list.
-               await pc.UpdateProjectFromServer(typeUuid);
+                pc.UpdateProjectFromServer(typeUuid);
             }
             System.Diagnostics.Debug.WriteLine("NotificationsController - InsertNotification: Test: End of method");
         }

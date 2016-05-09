@@ -8,6 +8,8 @@ using KompetansetorgetXamarin.Models;
 using KompetansetorgetXamarin.DAL;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using PCLCrypto;
+using Newtonsoft.Json;
 
 namespace KompetansetorgetXamarin.Controllers
 {
@@ -129,6 +131,95 @@ namespace KompetansetorgetXamarin.Controllers
             {
                 return Db.Query<Course>("Select * from Course");
             }
+        }
+
+        public async Task CompareServerHash()
+        {
+            StudentsController sc = new StudentsController();
+            string accessToken = sc.GetStudentAccessToken();
+
+            if (accessToken == null)
+            {
+                Authenticater.Authorized = false;
+                return;
+            }
+
+            Uri url = new Uri(Adress + "/hash");
+            System.Diagnostics.Debug.WriteLine("CoursesController - url " + url.ToString());
+            var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", accessToken);
+            try
+            {
+                var response = await client.GetAsync(url);
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    System.Diagnostics.Debug.WriteLine("CompareServerHash response " + response.StatusCode.ToString());
+                    string json = await response.Content.ReadAsStringAsync();
+                    string hash = ExtractServersHash(json);
+                    string localHash = CreateLocalHash();
+                    if (hash != localHash)
+                    {
+                        await UpdateCoursesFromServer();
+                    }
+
+                }
+                if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    Authenticater.Authorized = false;
+                }
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine("CoursesController - CompareServerHash: await client.GetAsync(\"url\") Failed");
+                System.Diagnostics.Debug.WriteLine("CoursesController - CompareServerHash: Exception msg: " + e.Message);
+                System.Diagnostics.Debug.WriteLine("CoursesController - CompareServerHash: Stack Trace: \n" + e.StackTrace);
+                System.Diagnostics.Debug.WriteLine("CoursesController - CompareServerHash: End Of Stack Trace");
+            }
+        }
+
+        private string ExtractServersHash(string json)
+        {
+            Dictionary<string, string> dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+
+            if (dict.ContainsKey("hash"))
+            {
+                string hash = dict["hash"];
+                return hash;
+            }
+            return "";
+        }
+
+        private string CreateLocalHash()
+        {
+            List<Course> courses = GetAllCourses();
+            StringBuilder sb = new StringBuilder();
+            foreach (var c in courses)
+            {
+                sb.Append(c.id);
+            }
+            return CalculateMd5Hash(sb.ToString());
+        }
+
+        /// <summary>
+        /// Use to create a 128 bit hash
+        /// used as part of the cache strategy.
+        /// This is not to create a safe encryption, but to create a hash that im
+        /// certain that the php backend can replicate.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        private string CalculateMd5Hash(string input)
+        {
+            var hasher = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Md5);
+            byte[] inputBytes = Encoding.UTF8.GetBytes(input);
+            byte[] hash = hasher.HashData(inputBytes);
+
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < hash.Length; i++)
+            {
+                sb.Append(hash[i].ToString("X2"));
+            }
+            return sb.ToString();
         }
     }
 }

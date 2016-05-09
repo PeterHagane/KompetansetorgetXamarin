@@ -34,7 +34,10 @@ namespace KompetansetorgetXamarin.Controllers
             try
             {
                 // if exist company will not be inserted.
-                var checkIfExists = Db.Get<Company>(company.id);
+                lock (DbContext.locker)
+                {
+                    var checkIfExists = Db.Get<Company>(company.id);
+                }
                 System.Diagnostics.Debug.WriteLine("CompaniesController - InsertCompany: Company already exists");
                 return false;
             }
@@ -61,9 +64,10 @@ namespace KompetansetorgetXamarin.Controllers
             try
             {
                 // if exist company will be updated.
-                var checkIfExists = Db.Get<Company>(company.id);
+                
                 lock (DbContext.locker)
                 {
+                    var checkIfExists = Db.Get<Company>(company.id);
                     Db.Update(company);
                 }
             }
