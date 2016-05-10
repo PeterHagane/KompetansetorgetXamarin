@@ -26,6 +26,7 @@ namespace KompetansetorgetXamarin.Views
             addData();
             OppgaveList.ItemsSource = oppgaver;
             oppgaverSettings.ItemsSource = listInit.oppgaveSettings;
+
             //OnBackButtonPressed();
 
  
