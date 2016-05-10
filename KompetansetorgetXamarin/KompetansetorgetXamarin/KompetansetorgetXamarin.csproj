@@ -112,9 +112,6 @@
     <Compile Include="Views\CarouselStillinger.xaml.cs">
       <DependentUpon>CarouselStillinger.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ListsCarouselPage.xaml.cs">
-      <DependentUpon>ListsCarouselPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\LoginPage.xaml.cs">
       <DependentUpon>LoginPage.xaml</DependentUpon>
     </Compile>
@@ -124,7 +121,6 @@
     <Compile Include="Views\CarouselVarsler.xaml.cs">
       <DependentUpon>CarouselVarsler.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\VarselListPage.cs" />
     <Compile Include="Views\ViktorTestView.xaml.cs">
       <DependentUpon>ViktorTestView.xaml</DependentUpon>
     </Compile>
@@ -241,12 +237,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Views\LoginPage.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Views\ListsCarouselPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
