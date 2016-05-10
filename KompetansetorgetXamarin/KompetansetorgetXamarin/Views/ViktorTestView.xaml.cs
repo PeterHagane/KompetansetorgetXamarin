@@ -360,7 +360,7 @@ namespace KompetansetorgetXamarin.Views
             filter.Add("types", "heltid");
 
 
-            JobsController jc = new JobsController();
+            DbJob jc = new DbJob();
             var jobs = jc.GetJobsFromDbBasedOnFilter(null, filter);
 
             if (jobs == null)
@@ -507,7 +507,7 @@ namespace KompetansetorgetXamarin.Views
             filter.Add("courses", "DAT-304");
             filter.Add("types", "virksomhet");
 
-            ProjectsController pc = new ProjectsController();
+            DbProject pc = new DbProject();
             var projects = pc.GetProjectsFromDbBasedOnFilter(null, filter);
 
             if (projects == null)
@@ -631,10 +631,10 @@ namespace KompetansetorgetXamarin.Views
 
         private async void GetAllFilters(object sender, EventArgs e)
         {
-            LocationsController lc = new LocationsController();
-            CoursesController cc = new CoursesController();
-            StudyGroupsController sgc = new StudyGroupsController();
-            JobTypesController jtc = new JobTypesController();
+            DbLocation lc = new DbLocation();
+            DbCourse cc = new DbCourse();
+            DbStudyGroup sgc = new DbStudyGroup();
+            DbJobType jtc = new DbJobType();
             List<Location> locationsFilter = lc.GetAllLocations();
             List<Course> coursesFilter = cc.GetAllCourses();
             List<StudyGroup> studyGroupsFilter = sgc.GetAllStudyGroups();
@@ -656,7 +656,7 @@ namespace KompetansetorgetXamarin.Views
         /// <param name="e"></param>
         private async void TestDeleteExpiredJobs(object sender, EventArgs e)
         {
-            JobsController jc = new JobsController();
+            DbJob jc = new DbJob();
 
             DbContext DbContext = DbContext.GetDbContext;
             SQLiteConnection Db = DbContext.Db;

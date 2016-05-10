@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using KompetansetorgetXamarin.Controls;
 using KompetansetorgetXamarin.DAL;
 using KompetansetorgetXamarin.Models;
+using KompetansetorgetXamarin.Utility;
 using Newtonsoft.Json;
 using PCLCrypto;
 using SQLite.Net;
@@ -23,104 +24,6 @@ namespace KompetansetorgetXamarin.Controllers
         public JobsController()
         {
             Adress += "v1/jobs";
-        }
-
-        /// <summary>
-        /// Gets the job with the spesific uuid. 
-        /// If no matching Job is found it returns null.
-        /// </summary>
-        /// <param name="uuid"></param>
-        /// <returns></returns>
-        public Job GetJobByUuid(string uuid)
-        {
-            try
-            {
-                lock (DbContext.locker)
-                {
-                    return Db.GetWithChildren<Job>(uuid);
-                    //return Db.Get<Job>(uuid);
-                }
-            }
-            catch (Exception e)
-            {
-                System.Diagnostics.Debug.WriteLine("JobController - GetJobByUuid(string uuid): Exception msg: " + e.Message);
-                System.Diagnostics.Debug.WriteLine("JobController - GetJobByUuid(string uuid): Stack Trace: \n" + e.StackTrace);
-                System.Diagnostics.Debug.WriteLine("JobController - GetJobByUuid(string uuid): End Of Stack Trace");
-                return null;
-            }
-        }
-
-        /// <summary>
-        /// Inserts the job and its respective children (only Company and CompanyJob) 
-        /// into the database.
-        /// </summary>
-        /// <param name="job"></param>
-        /// <returns>Returns true if the job was inserted, returns false if a job with the same 
-        ///  uuid (primary key) already exists in the table.</returns>
-        public bool InsertJob(Job job)
-        {
-            System.Diagnostics.Debug.WriteLine("JobController InsertJob(Job job): initiated");
-            if (CheckIfJobExist(job.uuid))
-            {
-                return false;
-            }
-
-            //Job did not exist, safe to insert.
-            CompaniesController cc = new CompaniesController();
-
-            foreach (Company c in job.companies)
-            {
-                cc.InsertCompany(c);
-            }
-
-            lock (DbContext.locker)
-            {
-                Db.Insert(job);
-                // Db.InsertOrReplaceWithChildren(job, recursive: true);
-            }
-
-            // This could perhaps be done in the above foreach loop, 
-            // but because of lack of concurrency control in SQLite its done in its own loop.
-            foreach (Company c in job.companies)
-            {
-                CompanyJob cp = new CompanyJob();
-                cp.JobUuid = job.uuid;
-                cp.CompanyId = c.id;
-                lock (DbContext.locker)
-                {
-                    Db.Insert(cp);
-                    // Db.InsertOrReplaceWithChildren(job, recursive: true);
-                }
-            }
-            // Job was successfully inserted
-            return true;
-        }
-
-        /// <summary>
-        /// Inserts a new Job with the param as primary key 
-        /// </summary>
-        /// <param name="uuid">The new Jobs primary key</param>
-        /// <returns>Returns true if the job was inserted, returns false if a job with the same 
-        ///  uuid (primary key) already exists in the table.</returns>
-        public bool InsertJob(string uuid)
-        {
-            System.Diagnostics.Debug.WriteLine("JobController InsertJob(string uuid): initiated");
-            if (CheckIfJobExist(uuid))
-            {
-                System.Diagnostics.Debug.WriteLine("JobController InsertJob(string uuid): Job already exists");
-                return false;
-            }
-
-            //Job did not exist so it will be inserted
-            Job j = new Job();
-            j.uuid = uuid;
-            lock (DbContext.locker)
-            {
-                Db.Insert(j);
-                //Db.InsertOrReplaceWithChildren(j, recursive: true);
-                System.Diagnostics.Debug.WriteLine("JobController - InsertJob(string uuid): Job Inserted");
-                return true;
-            }
         }
 
         /// <summary>
@@ -138,8 +41,8 @@ namespace KompetansetorgetXamarin.Controllers
             System.Diagnostics.Debug.WriteLine("JobController - CheckServerForNewData - url.ToString: " + url.ToString());
 
             var client = new HttpClient();
-            StudentsController sc = new StudentsController();
-            string accessToken = sc.GetStudentAccessToken();
+            DbStudent dbStudent = new DbStudent();
+            string accessToken = dbStudent.GetStudentAccessToken();
             if (string.IsNullOrWhiteSpace(accessToken))
             {
                 Authenticater.Authorized = false;
@@ -195,13 +98,14 @@ namespace KompetansetorgetXamarin.Controllers
                         System.Diagnostics.Debug.WriteLine("JobController - CheckServerForNewData: End Of Stack Trace");
                         return null;
                     }
-                    bool existInDb = ExistsInDb(uuid, modified);
+                    DbJob db = new DbJob();
+                    bool existInDb = db.ExistsInDb(uuid, modified);
                     if (!existInDb)
                     {
                         return "newData";
                         //return existInDb;
                     }
-                    var localJobs = GetJobsFromDbBasedOnFilter(studyGroups, filter, true);
+                    var localJobs = db.GetJobsFromDbBasedOnFilter(studyGroups, filter, true);
                     int localDbCount = localJobs.Count();
 
                     StringBuilder sb = new StringBuilder();
@@ -209,7 +113,7 @@ namespace KompetansetorgetXamarin.Controllers
                     {
                         sb.Append(job.uuid);
                     }
-                    string localUuids = CalculateMd5Hash(sb.ToString());
+                    string localUuids = Hasher.CalculateMd5Hash(sb.ToString());
                     
                     // if there is a greater amount of jobs on that search filter then the job that exist 
                     // in the database has been inserted throught another search filter
@@ -229,30 +133,7 @@ namespace KompetansetorgetXamarin.Controllers
             return null;
         }
 
-        /// <summary>
-        /// Returns true if there exist an entry in the database matching 
-        /// the jobs uuid and modified.
-        /// Returns false if not.
-        /// </summary>
-        /// <param name="uuid"></param>
-        /// <param name="modified"></param>
-        /// <returns></returns>
-        private bool ExistsInDb(string uuid, long modified)
-        {
-            lock (DbContext.locker)
-            {
-                int rowsAffected = Db.Query<Job>("Select * from Job"
-                                 + " where Job.uuid = ?"
-                                 + " and Job.modified = ?", uuid, modified).Count;
-                if (rowsAffected > 0)
-                {
-                    System.Diagnostics.Debug.WriteLine("JobController - ExistsInDb: " + "true");
-                    return true;
-                }
-                System.Diagnostics.Debug.WriteLine("JobController - ExistsInDb: " + "false");
-                return false;
-            }
-        }
+
 
         /// <summary>
         /// Updates the Job from the servers REST Api.
@@ -271,9 +152,9 @@ namespace KompetansetorgetXamarin.Controllers
             Uri url = new Uri(adress);
             var client = new HttpClient();
             System.Diagnostics.Debug.WriteLine("JobController - UpdateJobFromServer: HttpClient created");
-            StudentsController sc = new StudentsController();
+            DbStudent dbStudent = new DbStudent();
 
-            string accessToken = sc.GetStudentAccessToken();
+            string accessToken = dbStudent.GetStudentAccessToken();
 
             if (string.IsNullOrWhiteSpace(accessToken))
             {
@@ -302,178 +183,6 @@ namespace KompetansetorgetXamarin.Controllers
             Deserialize(jsonString);
         }
 
-        /// <summary>
-        /// Updates an entry in the Job table. 
-        /// If it doesnt already exist InsertJob will be called.
-        /// </summary>
-        /// <param name="job"></param>
-        public void UpdateJob(Job job)
-        {
-            if (!CheckIfJobExist(job.uuid))
-            {
-                System.Diagnostics.Debug.WriteLine("JobController - UpdateJob: There was no stored record of Job.");
-                InsertJob(job);
-            }
-
-            else
-            {
-                try
-                {
-                    lock (DbContext.locker)
-                    {
-                        System.Diagnostics.Debug.WriteLine("JobController - UpdateJob: Before Updating job.");
-                        Db.Update(job);
-                        System.Diagnostics.Debug.WriteLine("JobController - UpdateJob: After Updating job.");
-                    }
-                }
-                catch (Exception e)
-                {
-                    System.Diagnostics.Debug.WriteLine("JobController - UpdateJob: Job update failed");
-                    System.Diagnostics.Debug.WriteLine("JobController - UpdateJob: Exception msg: " + e.Message);
-                    System.Diagnostics.Debug.WriteLine("JobController - UpdateJob: Stack Trace: \n" + e.StackTrace);
-                    System.Diagnostics.Debug.WriteLine("JobController - UpdateJob: End Of Stack Trace");
-                }
-            }
-        }
-
-        /// <summary>
-        /// Gets a list of all companies that are related to the spesific Job
-        /// </summary>
-        /// <param name="job"></param>
-        /// <returns></returns>
-        public List<Company> GetAllCompaniesRelatedToJob(Job job)
-        {
-            lock (DbContext.locker)
-            {
-                return Db.Query<Company>("Select * from Company"
-                                          + " inner join CompanyJob on Company.id = CompanyJob.CompanyId"
-                                          + " inner join Job on CompanyJob.JobUuid = Job.uuid"
-                                          + " where Job.uuid = ?", job.uuid);
-            }
-        }
-
-        /// <summary>
-        /// Gets a list of all companies that are related to each Job in the list.
-        /// </summary>
-        /// <param name="job"></param>
-        /// <returns></returns>
-        public List<Job> GetAllCompaniesRelatedToJobs(List<Job> jobs)
-        {
-            foreach (var job in jobs)
-            {
-                job.companies = GetAllCompaniesRelatedToJob(job);
-            }
-            return jobs;
-        }
-
-        public void DeleteObsoleteJobs(List<Job> obsoleteJobs)
-        {
-            if (obsoleteJobs != null && obsoleteJobs.Count > 0)
-            {
-                foreach (var job in obsoleteJobs)
-                {
-                    lock (DbContext.locker)
-                    {
-                        Db.Execute("delete from CompanyJob " +
-                                   "where CompanyJob.JobUuid = ?", job.uuid);
-                        System.Diagnostics.Debug.WriteLine(
-                            "JobController - DeleteObsoleteJobs: after delete from CompanyJob");
-
-                        Db.Execute("delete from StudyGroupJob " +
-                                   "where StudyGroupJob.JobUuid = ?", job.uuid);
-                        System.Diagnostics.Debug.WriteLine(
-                            "JobController - DeleteObsoleteJobs: after delete from StudyGroupJob");
-
-                        Db.Execute("delete from LocationJob " +
-                                   "where LocationJob.JobUuid = ?", job.uuid);
-                        System.Diagnostics.Debug.WriteLine(
-                            "JobController - DeleteObsoleteJobs: after delete from LocationJob");
-
-                        Db.Execute("delete from JobTypeJob " +
-                                   "where JobTypeJob.JobUuid = ?", job.uuid);
-                        System.Diagnostics.Debug.WriteLine(
-                            "JobController - DeleteObsoleteJobs: after delete from JobTypeJob");
-
-                        Db.Execute("delete from Job " +
-                                   "where Job.uuid = ?", job.uuid);
-
-                        System.Diagnostics.Debug.WriteLine("JobController - DeleteObsoleteJobs: after delete from Job");
-                    }
-                }
-            }
-        }
-
-        public void DeleteAllExpiredJobs()
-        {  
-            DateTime today = TrimMilliseconds(DateTime.Today);
-            long todayNumber = long.Parse(today.ToString("yyyyMMddHHmmss"));
-            List<Job> jobs;
-            lock (DbContext.locker)
-            {
-                jobs = Db.Query<Job>("Select * from Job "
-                                         + "where Job.expiryDate < ?", todayNumber);
-            }
-            System.Diagnostics.Debug.WriteLine("JobController - DeleteAllExpiredJobs: jobs.Count: " + jobs.Count);
-
-            if (jobs != null && jobs.Count > 0)
-            {
-                foreach (var job in jobs)
-                {
-                    lock (DbContext.locker)
-                    {
-                        Db.Execute("delete from CompanyJob " +
-                        "where CompanyJob.JobUuid = ?", job.uuid);
-                        System.Diagnostics.Debug.WriteLine("JobController - DeleteAllExpiredJobs: after delete from CompanyJob");
-
-                        Db.Execute("delete from StudyGroupJob " +
-                        "where StudyGroupJob.JobUuid = ?", job.uuid);
-                        System.Diagnostics.Debug.WriteLine("JobController - DeleteAllExpiredJobs: after delete from StudyGroupJob");
-
-                        Db.Execute("delete from LocationJob " +
-                        "where LocationJob.JobUuid = ?", job.uuid);
-                        System.Diagnostics.Debug.WriteLine("JobController - DeleteAllExpiredJobs: after delete from LocationJob");
-
-                        Db.Execute("delete from JobTypeJob " +
-                        "where JobTypeJob.JobUuid = ?", job.uuid);
-                        System.Diagnostics.Debug.WriteLine("JobController - DeleteAllExpiredJobs: after delete from JobTypeJob");
-
-                    }
-                }
-                lock (DbContext.locker)
-                {
-                    Db.Execute("delete from Job " +
-                               "where Job.expiryDate < ?", today);
-                }
-                System.Diagnostics.Debug.WriteLine("JobController - DeleteAllExpiredJobs: after delete from Job");
-            }
-        }
-
-        /// <summary>
-        /// Checks if there already is an entry of that Jobs primary key
-        /// In the database.
-        /// </summary>
-        /// <param name="uuid"></param>
-        /// <returns>Returns true if exist, false if it doesnt exist.</returns>
-        public bool CheckIfJobExist(string uuid)
-        {
-            try
-            {
-                lock (DbContext.locker)
-                {
-                    var checkIfExist = Db.Get<Job>(uuid);
-                }
-                System.Diagnostics.Debug.WriteLine("JobController - CheckIfJobExist(string uuid): Job Already exists");
-                return true;
-            }
-            catch (Exception e)
-            {
-                System.Diagnostics.Debug.WriteLine("JobController - CheckIfJobExist(string uuid): DB entry of job doesnt exists");
-                System.Diagnostics.Debug.WriteLine("JobController - GetJobByUuid(string uuid): Exception msg: " + e.Message);
-                // System.Diagnostics.Debug.WriteLine("JobController - GetJobByUuid(string uuid): Stack Trace: \n" + e.StackTrace);
-                // System.Diagnostics.Debug.WriteLine("JobController - GetJobByUuid(string uuid): End Of Stack Trace");
-                return false;
-            }
-        }
 
         private string CreateQueryParams(List<string> studyGroups = null,
             string sortBy = "", Dictionary<string, string> filter = null)
@@ -541,6 +250,7 @@ namespace KompetansetorgetXamarin.Controllers
         public async Task<IEnumerable<Job>> GetJobsBasedOnFilter(List<string> studyGroups = null,
             string sortBy = "", Dictionary<string, string> filter = null)
         {
+            DbJob db = new DbJob();
             //string adress = "http://kompetansetorgetserver1.azurewebsites.net/api/v1/jobs";
             string queryParams = CreateQueryParams(studyGroups, sortBy, filter);
             string instructions = await CheckServerForNewData(studyGroups, filter);
@@ -553,8 +263,8 @@ namespace KompetansetorgetXamarin.Controllers
                 System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter - instructions" + instructions);
                 if (instructions == "exists")  // "newData"; incorrectCache exists
                 {
-                    IEnumerable<Job> filteredJobs = GetJobsFromDbBasedOnFilter(studyGroups, filter);
-                    filteredJobs = GetAllCompaniesRelatedToJobs(filteredJobs.ToList());
+                    IEnumerable<Job> filteredJobs = db.GetJobsFromDbBasedOnFilter(studyGroups, filter);
+                    filteredJobs = db.GetAllCompaniesRelatedToJobs(filteredJobs.ToList());
                     return filteredJobs;
                 }
             }
@@ -562,9 +272,9 @@ namespace KompetansetorgetXamarin.Controllers
             Uri url = new Uri(Adress + queryParams);
             System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter - url: " + url.ToString());
 
-            StudentsController sc = new StudentsController();
+            DbStudent dbStudent = new DbStudent();
             
-            string accessToken = sc.GetStudentAccessToken();
+            string accessToken = dbStudent.GetStudentAccessToken();
 
             if (string.IsNullOrWhiteSpace(accessToken))
             {
@@ -594,13 +304,13 @@ namespace KompetansetorgetXamarin.Controllers
                     //DeleteJobs(GetJobsFromDbBasedOnFilter(studyGroups, filter));
                     if (instructions != null && instructions == "incorrectCache")
                     {
-                        var cachedJobs = GetJobsFromDbBasedOnFilter(studyGroups, filter);
+                        var cachedJobs = db.GetJobsFromDbBasedOnFilter(studyGroups, filter);
                         jobs = DeserializeMany(jsonString);
                         // Get all jobs from that local dataset that was not in the data set provided by the server
                         // These are manually deleted jobs and have to be cleared from cache.
                         // linear search is ok because of small data set
                         var manuallyDeletedJobs = cachedJobs.Where(j => !jobs.Any(cj2 => cj2.uuid == j.uuid));
-                        DeleteObsoleteJobs(manuallyDeletedJobs.ToList());
+                        db.DeleteObsoleteJobs(manuallyDeletedJobs.ToList());
                     }
                     else
                     {
@@ -612,8 +322,8 @@ namespace KompetansetorgetXamarin.Controllers
                 else
                 {
                     System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter - Using the local database");
-                    jobs = GetJobsFromDbBasedOnFilter(studyGroups, filter);
-                    jobs = GetAllCompaniesRelatedToJobs(jobs.ToList());
+                    jobs = db.GetJobsFromDbBasedOnFilter(studyGroups, filter);
+                    jobs = db.GetAllCompaniesRelatedToJobs(jobs.ToList());
                 }
                 return jobs;
             }
@@ -622,8 +332,8 @@ namespace KompetansetorgetXamarin.Controllers
                 // Hack workaround if mobil data and wifi is turned off
                 try
                 {
-                    jobs = GetJobsFromDbBasedOnFilter(studyGroups, filter);
-                    jobs = GetAllCompaniesRelatedToJobs(jobs.ToList());
+                    jobs = db.GetJobsFromDbBasedOnFilter(studyGroups, filter);
+                    jobs = db.GetAllCompaniesRelatedToJobs(jobs.ToList());
                     return jobs;
                 }
                 catch (Exception ex)
@@ -636,277 +346,6 @@ namespace KompetansetorgetXamarin.Controllers
                     return null;
                 }
             }
-        }
-
-        /// <summary>
-        ///  Used if the web api is unavailable (not 401)
-        /// </summary>
-        /// <param name="studyGroups">studyGroups can be a list of numerous studygroups ex: helse, idrettsfag, datateknologi </param>
-        /// <param name="filter">A dictionary where key can be: titles (values:title of the job), types (values: deltid, heltid, etc...),
-        ///                      locations (values: vestagder, austagder).
-        ///                      </param>
-        /// <returns></returns>
-        public IEnumerable<Job> GetJobsFromDbBasedOnFilter(List<string> studyGroups = null, Dictionary<string, string> filter = null, bool checkUiids = false)
-        {
-            string query = "";
-            if (checkUiids)
-            {
-                query =  "SELECT Job.uuid FROM Job";
-            }
-            else
-            {
-                query = "SELECT * FROM Job";
-            }
-            
-
-            if (studyGroups != null && filter == null)
-            {
-                for (int i = 0; i < studyGroups.Count; i++)
-                {
-                    if (i == 0)
-                    {
-                        query += " INNER JOIN StudyGroupJob ON Job.uuid = StudyGroupJob.JobUuid "
-                                 + "INNER JOIN StudyGroup ON StudyGroupJob.StudyGroupId = StudyGroup.id "
-                                 + "WHERE StudyGroup.id = '" + studyGroups[i] + "'";
-                    }
-                    else
-                    {
-                        query += " OR StudyGroup.id = '" + studyGroups[i] + "'";
-                    }
-                }
-
-                System.Diagnostics.Debug.WriteLine("if (studyGroups != null && filter == null)");
-                System.Diagnostics.Debug.WriteLine("query: " + query); 
-                lock (DbContext.locker)
-                {
-                    return Db.Query<Job>(query + " ORDER BY Job.published ASC");
-                }
-            }
-
-            if (filter != null && studyGroups == null)
-            {
-                string joins = "";
-                string whereAnd = "";
-
-                string prepValue = "";
-
-                foreach (var filterType in filter.Keys.ToArray())
-                {
-                    string value = filter[filterType];
-
-                    if (filterType == "titles")
-                    {
-                        prepValue = filter[filterType];
-
-                        if (string.IsNullOrWhiteSpace(whereAnd))
-                        {
-                            whereAnd += " WHERE Job.title = ?";
-                        }
-                        else
-                        {
-                            whereAnd += " AND Job.title = ?";
-                        }
-                    }
-
-                    if (filterType == "types")
-                    {
-                        joins += " INNER JOIN JobTypeJob ON Job.uuid = JobTypeJob.JobUuid"
-                               + " INNER JOIN JobType ON JobTypeJob.JobTypeId = JobType.id";
-
-                        if (string.IsNullOrWhiteSpace(whereAnd))
-                        {
-                            whereAnd += " WHERE JobType.id = '" + value + "'";
-                        }
-                        else
-                        {
-                            whereAnd += " AND JobType.id = '" + value + "'";
-                        }
-                    }
-
-                    if (filterType == "locations")
-                    {
-                        joins += " INNER JOIN LocationJob ON Job.uuid = LocationJob.JobUuid"
-                               + " INNER JOIN Location ON LocationJob.LocationId = Location.id";
-
-                        if (string.IsNullOrWhiteSpace(whereAnd))
-                        {
-                            whereAnd += " WHERE Location.id = '" + value + "'";
-                        }
-                        else
-                        {
-                            whereAnd += " AND Location.id = '" + value + "'";
-                        }
-                    }
-                }
-
-                query += joins + whereAnd;
-                System.Diagnostics.Debug.WriteLine("query: " + query);
-
-                if (string.IsNullOrWhiteSpace(prepValue))
-                {
-                    lock (DbContext.locker)
-                    {
-                        return Db.Query<Job>(query + " ORDER BY Job.published ASC");
-                    }
-                }
-        
-                lock (DbContext.locker)
-                {
-                    return Db.Query<Job>(query + " ORDER BY Job.published ASC", prepValue);
-                }                
-            }
-
-            if (filter != null && studyGroups != null)
-            {
-                string joins = "";
-                string whereAnd = "";
-                string prepValue = "";
-
-                foreach (var filterType in filter.Keys.ToArray())
-                {
-                    if (filterType == "titles")
-                    {
-                        prepValue = filter[filterType];
-
-                        if (string.IsNullOrWhiteSpace(whereAnd))
-                        {
-                            whereAnd += " WHERE Job.title = ?";
-                        }
-                        else
-                        {
-                            whereAnd += " AND Job.title = ?";
-                        }
-                    }
-
-                    string value = filter[filterType];
-                    if (filterType == "types")
-                    {
-                        joins += " INNER JOIN JobTypeJob ON Job.uuid = JobTypeJob.JobUuid"
-                               + " INNER JOIN JobType ON JobTypeJob.JobTypeId = JobType.id";
-                        // + " WHERE JobType.id = ?";
-
-                        if (string.IsNullOrWhiteSpace(whereAnd))
-                        {
-                            whereAnd += " WHERE JobType.id = '" + value + "'";
-                        }
-                        else
-                        {
-                            whereAnd += " AND JobType.id = '" + value + "'";
-                        }
-
-                        /*
-                        System.Diagnostics.Debug.WriteLine("if (filterType == \"types\")");
-                        System.Diagnostics.Debug.WriteLine("query before prepstatement insert:" + query);
-                        lock (DbContext.locker)
-                        {
-                            return Db.Query<Job>(query, value);
-                        }
-                        */
-                    }
-
-                    if (filterType == "locations")
-                    {
-                        joins += " INNER JOIN LocationJob ON Job.uuid = LocationJob.JobUuid"
-                               + " INNER JOIN Location ON LocationJob.LocationId = Location.id";
-                        //+ " WHERE Location.id = ?";
-
-                        if (string.IsNullOrWhiteSpace(whereAnd))
-                        {
-                            whereAnd += " WHERE Location.id = '" + value + "'";
-                        }
-                        else
-                        {
-                            whereAnd += " AND Location.id = '" + value + "'";
-                        }
-
-                        /*
-                        System.Diagnostics.Debug.WriteLine("if (filterType == \"locations\")");
-                        System.Diagnostics.Debug.WriteLine("query before prepstatement insert: " + query);
-                        lock (DbContext.locker)
-                        {
-                            return Db.Query<Job>(query, value);
-                        }
-                        */
-                    }
-                }
-
-                for (int i = 0; i < studyGroups.Count; i++)
-                {
-                    if (i == 0)
-                    {
-                        if (studyGroups.Count > 1)
-                        {
-                            joins += " INNER JOIN StudyGroupJob ON Job.uuid = StudyGroupJob.JobUuid "
-                                     + "INNER JOIN StudyGroup ON StudyGroupJob.StudyGroupId = StudyGroup.id ";
-
-                            if (string.IsNullOrWhiteSpace(whereAnd))
-                            {
-                                whereAnd += " WHERE (StudyGroup.id = '" + studyGroups[i] + "'";
-                            }
-                            else
-                            {
-                                whereAnd += " AND (StudyGroup.id = '" + studyGroups[i] + "'";
-                            }
-                            //+ "WHERE (StudyGroup.id = '" + studyGroups[i] + "'";
-                        }
-                        else
-                        {
-                            joins += " INNER JOIN StudyGroupJob ON Job.uuid = StudyGroupJob.JobUuid "
-                                     + "INNER JOIN StudyGroup ON StudyGroupJob.StudyGroupId = StudyGroup.id ";
-
-                            if (string.IsNullOrWhiteSpace(whereAnd))
-                            {
-                                whereAnd += " WHERE StudyGroup.id = '" + studyGroups[i] + "'";
-                            }
-
-                            else
-                            {
-                                whereAnd = " AND StudyGroup.id = '" + studyGroups[i] + "'";
-                            }
-                            
-                        }
-                    }
-
-                    else if (i != 0 && i + 1 == studyGroups.Count)
-                    {
-                        whereAnd += " OR StudyGroup.id = '" + studyGroups[i] + "')";
-                    }
-                    else
-                    {
-                        whereAnd += " OR StudyGroup.id = '" + studyGroups[i] + "'";
-                    }
-                }
-
-                System.Diagnostics.Debug.WriteLine("if(filter != null && studyGroups != null)");
-                System.Diagnostics.Debug.WriteLine("query: " + query + joins + whereAnd);
-                System.Diagnostics.Debug.WriteLine("full query: " + query + joins + whereAnd);
-
-
-                query += joins + whereAnd;
-
-
-                if (string.IsNullOrWhiteSpace(prepValue))
-                {
-                    lock (DbContext.locker)
-                    {
-                        return Db.Query<Job>(query + " ORDER BY Job.published ASC");
-                    }
-                }
-
-                lock (DbContext.locker)
-                {
-                    return Db.Query<Job>(query + " ORDER BY Job.published ASC", prepValue);
-                }
-
-            }
-
-            System.Diagnostics.Debug.WriteLine("Filter and studyGroups is null");
-            System.Diagnostics.Debug.WriteLine("query: " + query);
-            // if both studyGroups and filter is null
-            lock (DbContext.locker)
-            {
-                return Db.Query<Job>(query + " ORDER BY Job.published ASC");
-            }          
         }
 
         /// <summary>
@@ -943,6 +382,7 @@ namespace KompetansetorgetXamarin.Controllers
         /// <returns>A deserialized Jobs object</returns>
         private Job Deserialize(string jsonString)
         {
+            DbJob db = new DbJob();
             Dictionary<string, object> dict = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonString);
             System.Diagnostics.Debug.WriteLine("DeserializeApiData. Printing Key Value:");
 
@@ -1005,6 +445,7 @@ namespace KompetansetorgetXamarin.Controllers
                 if (key.Equals("companies"))
                 {
                     CompaniesController cc = new CompaniesController();
+                    DbCompany dbCompany = new DbCompany();
                     IEnumerable companies = (IEnumerable)dict[key];
                     //Newtonsoft.Json.Linq.JArray'
                     System.Diagnostics.Debug.WriteLine("companies created");
@@ -1015,10 +456,10 @@ namespace KompetansetorgetXamarin.Controllers
                         Company company = cc.DeserializeCompany(companyDict);
                         System.Diagnostics.Debug.WriteLine("DeserializeOneJobs: company.id: " + company.id);
                         j.companies.Add(company);
-                        cc.UpdateCompany(company);
+                        dbCompany.UpdateCompany(company);
                         System.Diagnostics.Debug.WriteLine("DeserializeOneJobs: After j.companies.Add(company)");
                         string jobUuid = dict["uuid"].ToString();
-                        cc.InsertCompanyJob(company.id, jobUuid);
+                        dbCompany.InsertCompanyJob(company.id, jobUuid);
                     }
                 }
 
@@ -1027,7 +468,7 @@ namespace KompetansetorgetXamarin.Controllers
                     IEnumerable studyGroups = (IEnumerable)dict[key];
                     //Newtonsoft.Json.Linq.JArray'
                     System.Diagnostics.Debug.WriteLine("studyGroups created");
-                    StudyGroupsController sgc = new StudyGroupsController();
+                    DbStudyGroup dbStudyGroup = new DbStudyGroup();
                     foreach (var studyGroup in studyGroups)
                     {
                         System.Diagnostics.Debug.WriteLine("foreach initiated");
@@ -1047,7 +488,7 @@ namespace KompetansetorgetXamarin.Controllers
                         j.studyGroups.Add(sg);
 
                         string jobUuid = dict["uuid"].ToString();
-                        sgc.InsertStudyGroupJob(sg.id, jobUuid);
+                        dbStudyGroup.InsertStudyGroupJob(sg.id, jobUuid);
 
                     }
                 }
@@ -1056,7 +497,7 @@ namespace KompetansetorgetXamarin.Controllers
                 {
                     IEnumerable locations = (IEnumerable)dict[key];
                     //Newtonsoft.Json.Linq.JArray'
-                    LocationsController lc = new LocationsController();
+                    DbLocation dbLocation = new DbLocation();
                     System.Diagnostics.Debug.WriteLine("location created");
                     foreach (var location in locations)
                     {
@@ -1075,10 +516,10 @@ namespace KompetansetorgetXamarin.Controllers
                             loc.name = locationDict["name"].ToString();
                         }
 
-                        lc.InsertLocation(loc);
+                        dbLocation.InsertLocation(loc);
                         j.locations.Add(loc);
                         string jobUuid = dict["uuid"].ToString();
-                        lc.InsertLocationJob(loc.id, jobUuid);
+                        dbLocation.InsertLocationJob(loc.id, jobUuid);
                     }
                 }
 
@@ -1087,7 +528,7 @@ namespace KompetansetorgetXamarin.Controllers
                 {
                     IEnumerable jobTypes = (IEnumerable)dict[key];
                     //Newtonsoft.Json.Linq.JArray'
-                    JobTypesController jtc = new JobTypesController();
+                    DbJobType dbJobType = new DbJobType();
                     System.Diagnostics.Debug.WriteLine("jobTypes created");
                     foreach (var jobType in jobTypes)
                     {
@@ -1105,39 +546,18 @@ namespace KompetansetorgetXamarin.Controllers
                             jt.name = jtDict["name"].ToString();
                         }
 
-                        jtc.InsertJobType(jt);
+                        dbJobType.InsertJobType(jt);
 
                         System.Diagnostics.Debug.WriteLine("before j.jobTypes.Add(jt);");
                         j.jobTypes.Add(jt);
 
                         string jobUuid = dict["uuid"].ToString();
-                        jtc.InsertJobTypeJob(jt.id, jobUuid);
+                        dbJobType.InsertJobTypeJob(jt.id, jobUuid);
                     }
                 }
             }
-            UpdateJob(j);
+            db.UpdateJob(j);
             return j;
-        }
-
-        /// <summary>
-        /// Use to create a 128 bit hash
-        /// used as part of the cache strategy.
-        /// This is not to create a safe encryption, but to create a hash that im
-        /// certain that the php backend can replicate.
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        private string CalculateMd5Hash(string input)
-        {
-            var hasher = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Md5);   
-            byte[] inputBytes = Encoding.UTF8.GetBytes(input);
-            byte[] hash = hasher.HashData(inputBytes);
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < hash.Length; i++)
-            {
-                sb.Append(hash[i].ToString("X2"));
-            }
-            return sb.ToString();
         }
     }
 }

@@ -15,124 +15,6 @@ namespace KompetansetorgetXamarin.Controllers
     {
 
         /// <summary>
-        /// Get all stored notifications
-        /// </summary>
-        /// <returns></returns>
-        public IEnumerable<Notification> GetNotifications()
-        {
-            lock (DbContext.locker)
-            {
-                return (from i in Db.Table<Notification>() select i).ToList();
-            }
-        }
-
-        /// <summary>
-        /// Get all stored notifications
-        /// </summary>
-        /// <returns></returns>
-        public IEnumerable<Notification> GetNotificationsWithChildren()
-        {
-            lock (DbContext.locker)
-            {
-                return Db.GetAllWithChildren<Notification>();
-            }
-        }
-
-
-        /// <summary>
-        /// Inserts a notification into the database.
-        /// </summary>
-        /// <param name="type">This param can either be job or project, and will determine what kind of notification it is.</param>
-        /// <param name="typeUuid">the foreign key of type</param>
-        public async Task InsertNotification(string type, string typeUuid)
-        {
-            System.Diagnostics.Debug.WriteLine("NotificationsController - InsertNotification: initiated");
-
-            Notification notification = new Notification();
-            System.Diagnostics.Debug.WriteLine("NotificationsController - InsertNotification: type: " + type);
-            System.Diagnostics.Debug.WriteLine("NotificationsController - InsertNotification: typeUuid: " + typeUuid);
-
-            if (String.IsNullOrEmpty(typeUuid) || String.IsNullOrEmpty(type))
-            {
-                return;
-            }
-
-            if (type.Equals("job"))
-            {
-                // FIRST !!
-                // insert a new job object matching the uuid as long as it doesn't exist
-                System.Diagnostics.Debug.WriteLine("NotificationsController - InsertNotification: new JobsController();");
-                JobsController jc = new JobsController();
-                System.Diagnostics.Debug.WriteLine(
-                    "NotificationsController - InsertNotification: JobsController Created");
-
-                jc.InsertJob(typeUuid);
-
-                // SECOND insert the notification.
-                notification.jobUuid = typeUuid;
-                lock (DbContext.locker)
-                {
-                    Db.Insert(notification);
-                }
-                //THIRD: async get extra minimum info for the notification list.
-                jc.UpdateJobFromServer(typeUuid);
-
-            }
-
-            else if (type.Equals("project"))
-            {
-                // FIRST !!
-                // insert a new project object matching the uuid as long as it doesn't exist
-                System.Diagnostics.Debug.WriteLine(
-                    "NotificationsController - InsertNotification: new ProjectsController();");
-                ProjectsController pc = new ProjectsController();
-                System.Diagnostics.Debug.WriteLine(
-                    "NotificationsController - InsertNotification: ProjectsController Created");
-
-                pc.InsertProject(typeUuid);
-
-                // SECOND insert the notification.
-                notification.projectUuid = typeUuid;
-                lock (DbContext.locker)
-                {
-                    Db.Insert(notification);
-                }
-                //THIRD: async get extra minimum info for the notification list.
-                pc.UpdateProjectFromServer(typeUuid);
-            }
-            System.Diagnostics.Debug.WriteLine("NotificationsController - InsertNotification: Test: End of method");
-        }
-
-        /// <summary>
-        /// Delete a Notification based on projectUuid, which is a foreign key to a row in Project.
-        /// This method will not effect the row in the Project table.
-        /// </summary>
-        /// <param name="uuid"></param>
-        public void DeleteNotificationBasedOnProject(string uuid)
-        {
-            lock (DbContext.locker)
-            {
-                Db.Execute("DELETE FROM Notification " +
-                                       "WHERE Notification.projectUuid = ?", uuid);
-            }
-        }
-
-        /// <summary>
-        /// Delete a Notification based on jobUuid, which is a foreign key to a row in Job.
-        /// This method will not effect the row in the Job table.
-        /// </summary>
-        /// <param name="uuid"></param>
-        public void DeleteNotificationBasedOnJob(string uuid)
-        {
-            System.Diagnostics.Debug.WriteLine("NotificationsController - DeleteNotificationBasedOnJob: Trying to delete notification based on jobUuid: " + uuid);
-            lock (DbContext.locker)
-            {
-                Db.Execute("DELETE FROM Notification " +
-                           "WHERE Notification.jobUuid = ?", uuid);
-            }
-        }
-
-        /// <summary>
         /// Gets all notifications stored in a collection as an 'object'.
         /// These notifications must NOT be mistaken as the Model class Notification.
         /// The objects can be of either Job or Project
@@ -154,9 +36,11 @@ namespace KompetansetorgetXamarin.Controllers
         /// <returns>A list of objects suitable for to be dislayed to the user as notifications</returns>
         public List<object> GetNotificationList()
         {
+            DbJob dbJob = new DbJob();
+            DbNotification db = new DbNotification();
             JobsController jc = new JobsController();
-            ProjectsController pc = new ProjectsController();
-            IEnumerable<Notification> notifications = GetNotifications();
+            DbProject dbProject = new DbProject();
+            IEnumerable<Notification> notifications = db.GetNotifications();
 
             List<object> notificationList = new List<object>();
 
@@ -169,14 +53,14 @@ namespace KompetansetorgetXamarin.Controllers
                 if (!string.IsNullOrWhiteSpace(n.jobUuid))
                 {
 
-                    Job job = jc.GetJobByUuid(n.jobUuid);
-                    job.companies = jc.GetAllCompaniesRelatedToJob(job);
+                    Job job = dbJob.GetJobByUuid(n.jobUuid);
+                    job.companies = dbJob.GetAllCompaniesRelatedToJob(job);
                     notificationList.Add(job);
                 }
                 else
                 {
-                    Project project = pc.GetProjectByUuid(n.projectUuid);
-                    project.companies = pc.GetAllCompaniesRelatedToProject(project);
+                    Project project = dbProject.GetProjectByUuid(n.projectUuid);
+                    project.companies = dbProject.GetAllCompaniesRelatedToProject(project);
                     notificationList.Add(project);
                 }
             }
