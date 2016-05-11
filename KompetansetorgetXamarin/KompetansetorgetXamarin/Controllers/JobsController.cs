@@ -79,12 +79,12 @@ namespace KompetansetorgetXamarin.Controllers
                 // using <string, object> instead of <string, string> makes the date be stored in the right format when using .ToString()
                 Dictionary<string, object> dict = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonString);
 
-                if (dict.ContainsKey("uuid") && dict.ContainsKey("modified") && dict.ContainsKey("uuids") && dict.ContainsKey("amountOfJobs"))
+                if (dict.ContainsKey("uuid") && dict.ContainsKey("modified") && dict.ContainsKey("hash") && dict.ContainsKey("amountOfJobs"))
                 {
                     string uuid = dict["uuid"].ToString();
                     DateTime dateTime = (DateTime)dict["modified"];
                     long modified = long.Parse(dateTime.ToString("yyyyMMddHHmmss"));
-                    string uuids = dict["uuids"].ToString();
+                    string uuids = dict["hash"].ToString();
                     int amountOfJobs = 0;
                     try
                     {
