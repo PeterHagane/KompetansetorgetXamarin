@@ -310,8 +310,7 @@ namespace KompetansetorgetXamarin.Controllers
         public async Task UpdateProjectFromServer(string uuid)
         {
             System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProjectFromServer(string uuid): initiated");
-                            //as in minimumInformationForNotifications=true
-            string adress = Adress + "/" + uuid + "?minnot=true";
+            string adress = Adress + "/" + uuid;
             System.Diagnostics.Debug.WriteLine("UpdateProjectFromServer: var url = " + adress);
 
             DbStudent dbStudent = new DbStudent();

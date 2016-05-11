@@ -43,8 +43,6 @@ namespace KompetansetorgetXamarin.Controllers
             }
 
             return company;
-        }
-
- 
+        } 
     }
 }

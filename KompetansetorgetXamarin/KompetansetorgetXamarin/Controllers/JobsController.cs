@@ -145,8 +145,7 @@ namespace KompetansetorgetXamarin.Controllers
         public async Task UpdateJobFromServer(string uuid)
         {
             System.Diagnostics.Debug.WriteLine("JobController - UpdateJobFromServer(string uuid): initiated");
-                       //as in minimumInformationForNotifications=true
-            string adress = Adress + "/" + uuid + "?minnot=true";
+            string adress = Adress + "/" + uuid;
             System.Diagnostics.Debug.WriteLine("UpdateJobFromServer: var url = " + adress);
 
             Uri url = new Uri(adress);
@@ -563,65 +562,4 @@ namespace KompetansetorgetXamarin.Controllers
 }
 
 
-/* Kan kanskje brukes for tester
-                var rowsLocation =
-                    Db.Query<Location>("Select * FROM Location WHERE Location.id = ?", "vestagder")
-                        .Count;
-                System.Diagnostics.Debug.WriteLine("Query Location Count: " + rowsLocation);
 
-                var rowsLocationJob =
-                    Db.Query<LocationJob>("Select * FROM LocationJob WHERE LocationJob.LocationId = ?", "vestagder")
-                        .Count;
-                System.Diagnostics.Debug.WriteLine("Query LocationJob Count: " + rowsLocationJob);
-
-                var rowsLocationJob2 =
-                    Db.Query<LocationJob>("Select * FROM LocationJob WHERE LocationJob.JobUuid = ?", "09706b08-78b9-42a5-88f9-ba0a45705432")
-                        .Count;
-                System.Diagnostics.Debug.WriteLine("Query LocationJob on JobUuid Count: " + rowsLocationJob2);
-
-                var rowsStudyGroup =
-                     Db.Query<StudyGroup>("Select * FROM StudyGroup WHERE StudyGroup.id = ?", "helse")
-                        .Count;
-                System.Diagnostics.Debug.WriteLine("Query StudyGroup Count: " + rowsStudyGroup);
-
-                var rowsStudyGroupJob =
-                    Db.Query<StudyGroupJob>("Select * FROM StudyGroupJob WHERE StudyGroupJob.StudyGroupId = ?", "helse")
-                        .Count;
-                System.Diagnostics.Debug.WriteLine("Query StudyGroupJob on helse Count: " + rowsStudyGroupJob);
-
-                var rowsStudyGroupJob3 =
-                    Db.Query<StudyGroupJob>("Select * FROM StudyGroupJob WHERE StudyGroupJob.StudyGroupId = ?", "datateknologi")
-                    .Count;
-                System.Diagnostics.Debug.WriteLine("Query StudyGroupJob on datateknologi Count: " + rowsStudyGroupJob3);
-
-                var rowsStudyGroupJob4 =
-                    Db.Query<StudyGroupJob>("Select * FROM StudyGroupJob WHERE (StudyGroupJob.StudyGroupId = ? OR StudyGroupJob.StudyGroupId = ?)", "datateknologi", "helse")
-                        .Count;
-                System.Diagnostics.Debug.WriteLine("Query StudyGroupJob on datateknologi or helse Count: " + rowsStudyGroupJob4);
-
-                var rowsStudyGroupJob2 =
-                    Db.Query<StudyGroupJob>("Select * FROM StudyGroupJob WHERE StudyGroupJob.JobUuid = ?", "09706b08-78b9-42a5-88f9-ba0a45705432")
-                        .Count;
-                System.Diagnostics.Debug.WriteLine("Query StudyGroupJob on JobUuid Count: " + rowsStudyGroupJob2);
-
-                var rowsInner1 =
-                    Db.Query<Job>("Select * FROM Job INNER JOIN LocationJob WHERE LocationJob.JobUuid = Job.uuid")
-                        .Count;
-                System.Diagnostics.Debug.WriteLine("Query rowsInner1 Count: " + rowsInner1);
-
-                var rowsInner2 =
-                    Db.Query<Job>("Select * FROM Job INNER JOIN LocationJob WHERE LocationJob.JobUuid = Job.uuid AND LocationJob.LocationId = ?", "vestagder")
-                        .Count;
-                System.Diagnostics.Debug.WriteLine("Query rowsInner2 Count: " + rowsInner2);
-
-                var rowsJobs =
-                    Db.Query<Job>("Select * FROM Job")
-                        .Count;
-                System.Diagnostics.Debug.WriteLine("Query rowsInner2 Count: " + rowsJobs);
-
-                var rowsJob =
-                    Db.Query<Job>(query)
-                    .Count;
-                System.Diagnostics.Debug.WriteLine("Query Job without LastAnd, value count: " + rowsJob);
-
-                */
