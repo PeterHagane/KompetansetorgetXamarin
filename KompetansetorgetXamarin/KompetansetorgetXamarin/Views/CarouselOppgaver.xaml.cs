@@ -112,7 +112,7 @@ namespace KompetansetorgetXamarin.Views
             filter.Add("types", "virksomhet");
 
             ProjectsController jc = new ProjectsController();
-            IEnumerable<Project> projects = await jc.GetProjectsBasedOnFilter(checkedStudyGroups, null , filter);
+            IEnumerable<Project> projects = await jc.GetProjectsBasedOnFilter(checkedStudyGroups, null, null);
             foreach(Project p in projects)
             {
                 oppgaver.Add(p);

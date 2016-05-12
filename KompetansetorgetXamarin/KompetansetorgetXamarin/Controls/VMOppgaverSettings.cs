@@ -71,7 +71,7 @@ namespace KompetansetorgetXamarin.Controls
             {
                 oppgaveSettings = new ObservableCollection<fagområdeSetting> { };
 
-                foreach (string name in studyDict.Values)
+                foreach (string name in studyDict.Keys)
                 {
                     System.Diagnostics.Debug.WriteLine("string name in studyDict.Values: " + name);
                     oppgaveSettings.Add(new fagområdeSetting(name, true));
