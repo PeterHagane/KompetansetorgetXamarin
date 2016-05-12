@@ -15,6 +15,7 @@ namespace KompetansetorgetXamarin.Models
         [PrimaryKey]
         public string id { get; set; }
         public string name { get; set; }
+        public bool? filterChecked { get; set; }
 
         [ManyToMany(typeof(LocationJob))]
         public List<Job> Jobs { get; set; }

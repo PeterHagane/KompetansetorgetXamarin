@@ -53,6 +53,8 @@ namespace KompetansetorgetXamarin.Controllers
 
                     foreach (var studygroup in results)
                     {
+                        // ugly gui filter hack
+                        studygroup.filterChecked = false;
                         db.InsertStudyGroup(studygroup);
                     }
                 }

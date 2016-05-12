@@ -77,5 +77,17 @@ namespace KompetansetorgetXamarin.DAL
             }
         }
 
+        public void UpdateCourses(List<Course> courses)
+        {
+            foreach (var course in courses)
+            {
+                UpdateCourses(course);
+            } 
+        }
+
+        public void UpdateCourse(Course course)
+        {
+            InsertCourse(course);
+        }
     }
 }

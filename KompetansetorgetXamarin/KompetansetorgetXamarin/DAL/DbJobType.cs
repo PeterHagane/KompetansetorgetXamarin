@@ -76,6 +76,27 @@ namespace KompetansetorgetXamarin.DAL
             }
         }
 
+        public void UpdateJobTypes(List<JobType> jobTypes)
+        {
+            foreach (var jobType in jobTypes)
+            {
+                UpdateJobType(jobType);
+            }
+        }
+
+        // fix later
+        public void UpdateJobType(JobType jobType)
+        {
+            try
+            {
+                lock (DbContext.locker)
+                {
+                    Db.Update(jobType);
+                }
+            }
+            catch { }
+        }
+
         public void InsertJobTypes(IEnumerable<JobType> jobTypes)
         {
             foreach (var jobType in jobTypes)

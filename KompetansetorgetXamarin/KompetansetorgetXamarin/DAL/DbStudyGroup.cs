@@ -69,11 +69,19 @@ namespace KompetansetorgetXamarin.DAL
             }
         }
 
+        public void UpdateStudyGroups(List<StudyGroup> studyGroups)
+        {
+            foreach (var studygroup in studyGroups)
+            {
+                UpdateStudyGroup(studygroup);
+            }
+        }
+
         /// <summary>
         /// Updates a studygroup, if it doesnt already exist a new entry will be inserted into the db.
         /// </summary>
         /// <param name="studyGroup"></param>
-        public void UpdateStudyGroups(StudyGroup studyGroup)
+        public void UpdateStudyGroup(StudyGroup studyGroup)
         {
             if (CheckIfStudyGroupExist(studyGroup.id))
             {

@@ -49,6 +49,15 @@ namespace KompetansetorgetXamarin.DAL
             }
         }
 
+        public void UpdateLocations(List<Location> locations)
+        {
+            foreach (var location in locations)
+            {
+                InsertLocation(location);
+            }
+        }
+
+
         /// <summary>
         /// Returns a List containing all stored Locations
         /// </summary>

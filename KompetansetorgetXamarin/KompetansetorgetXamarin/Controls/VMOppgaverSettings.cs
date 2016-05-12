@@ -103,7 +103,14 @@ namespace KompetansetorgetXamarin.Controls
                 studyDict.Add(studygroup.name, studygroup.id);
             }
 
-            
+            // for jobs
+            // DbLocation.UpdateLocations(List<Location>) sett max 1 til TRUE !
+            // for projects
+            // DbCourse.UpdateCourses(List<Course> courses) sett max 1 til TRUE !
+            // for all
+            // DbJobTypes.UpdateJobTypes(List<JobType> jobTypes) sett max 1 til TRUE !
+            // DbStudyGroup.UpdateStudyGroups(List<StudyGroup> studyGroups) 
+
 
             //System.Diagnostics.Debug.WriteLine("GetAllFilters: locationsFilter.Count: " + locationsFilter.Count);
             //System.Diagnostics.Debug.WriteLine("GetAllFilters: coursesFilter.Count: " + coursesFilter.Count);
