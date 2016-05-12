@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<CarouselPage xmlns="http://xamarin.com/schemas/2014/forms"
+<local:BaseCarouselPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="KompetansetorgetXamarin.Views.CarouselOppgaver"
              xmlns:local="clr-namespace:KompetansetorgetXamarin.Controls;assembly=KompetansetorgetXamarin">
@@ -28,26 +28,53 @@
     </local:BaseContentPage.ToolbarItems>
 
     <ContentPage.Padding>
-      <OnPlatform x:TypeArguments="Thickness" iOS="15,0,15,0" Android="15,0,15,0" />
+      <OnPlatform x:TypeArguments="Thickness" iOS="15,0,15,0" Android="15,5,15,0" />
     </ContentPage.Padding>
 
     <StackLayout VerticalOptions="FillAndExpand">
 
-      <Entry x:Name="søk" Placeholder="Sok" Style="{DynamicResource entryStyle}"/>
+      <Grid>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="*" />
+          <RowDefinition Height="0" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="Auto" />
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="65" />
+        </Grid.ColumnDefinitions>
+
+        <Entry x:Name="søk" Placeholder="Sok" Style="{DynamicResource entryStyle}" HeightRequest="35"
+               Grid.Row="0"
+               Grid.Column="0"
+               Grid.ColumnSpan="2"/>
+
+        <local:ButtonShadow BorderRadius="13" Padding ="2,2,2,7" Style="{DynamicResource buttonShadowStyle}" WidthRequest="65" HeightRequest="35"
+                            Grid.Row="0"
+                            Grid.Column="2">
+          <local:BaseButton Clicked="OnClick" x:Name="Sorter" Text="Sort" Style="{DynamicResource baseButtonStyle}"/>
+        </local:ButtonShadow>
+
+      </Grid>
+
+
+
 
       <ListView x:Name="OppgaveList" RowHeight="75">
         <!--ItemTapped="OnOppgaveSelected"-->
         <ListView.ItemTemplate>
           <DataTemplate>
             <ImageCell
-                ImageSource="{Binding Image}"
-                Text="{Binding Text}"
-                Detail="{Binding Detail}">
+                ImageSource="{Binding logo}" 
+                Text="{Binding name}"
+                Detail="{Binding title}">
             </ImageCell>
           </DataTemplate>
         </ListView.ItemTemplate>
       </ListView>
-
+ <!--"{Binding Image}"-->
     </StackLayout>
 
   </local:BaseContentPage>
@@ -70,7 +97,7 @@
       </ToolbarItem>
 
     </local:BaseContentPage.ToolbarItems>
-
+    
     <ContentPage.Padding>
       <OnPlatform x:TypeArguments="Thickness" iOS="15,15,15,0" Android="15,15,15,0" />
     </ContentPage.Padding>
@@ -92,4 +119,4 @@
     </StackLayout>
   </local:BaseContentPage>
 
-</CarouselPage>
+</local:BaseCarouselPage>
