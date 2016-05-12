@@ -251,7 +251,7 @@
     <AndroidResource Include="Resources\drawable-hdpi\User.png" />
     <AndroidResource Include="Resources\drawable-hdpi\UserBlack.png" />
     <AndroidResource Include="Resources\drawable-hdpi\RoundedRectangle.xml" />
-    <AndroidResource Include="Resources\drawable-hdpi\logo-virksomhet.jpg" />
+    <AndroidResource Include="Resources\drawable-hdpi\logo_virksomhet.jpg" />
     <Content Include="Resources\drawable-xhdpi\KTbanner.jpg" />
     <AndroidResource Include="Resources\drawable-xhdpi\icon.png" />
     <AndroidResource Include="Resources\drawable-xxhdpi\ArrowBlackLeft.png" />
@@ -261,7 +261,7 @@
     <AndroidResource Include="Resources\drawable-xhdpi\User.png" />
     <AndroidResource Include="Resources\drawable-xhdpi\UserBlack.png" />
     <AndroidResource Include="Resources\drawable-xhdpi\RoundedRectangle.xml" />
-    <AndroidResource Include="Resources\drawable-xhdpi\logo-virksomhet.jpg" />
+    <AndroidResource Include="Resources\drawable-xhdpi\logo_virksomhet.jpg" />
     <Content Include="Resources\drawable-xxhdpi\KTbanner.jpg" />
     <AndroidResource Include="Resources\drawable-xxhdpi\icon.png" />
     <AndroidResource Include="Resources\drawable\ArrowBlackLeft.png" />
@@ -271,13 +271,13 @@
     <AndroidResource Include="Resources\drawable-xxhdpi\User.png" />
     <AndroidResource Include="Resources\drawable-xxhdpi\UserBlack.png" />
     <AndroidResource Include="Resources\drawable-xxhdpi\RoundedRectangle.xml" />
-    <AndroidResource Include="Resources\drawable-xxhdpi\logo-virksomhet.jpg" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\logo_virksomhet.jpg" />
     <Content Include="Resources\drawable\KTbanner.jpg" />
     <AndroidResource Include="Resources\drawable\icon.png" />
     <AndroidResource Include="Resources\drawable\User.png" />
     <AndroidResource Include="Resources\drawable\UserBlack.png" />
     <AndroidResource Include="Resources\drawable\RoundedRectangle.xml" />
-    <AndroidResource Include="Resources\drawable\logo-virksomhet.jpg" />
+    <AndroidResource Include="Resources\drawable\logo_virksomhet.jpg" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\KompetansetorgetXamarin\KompetansetorgetXamarin.csproj">
