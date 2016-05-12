@@ -80,12 +80,12 @@ namespace KompetansetorgetXamarin.Controllers
                 // using <string, object> instead of <string, string> makes the date be stored in the right format when using .ToString()
                 Dictionary<string, object> dict = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonString);
 
-                if (dict.ContainsKey("uuid") && dict.ContainsKey("modified") && dict.ContainsKey("uuids") && dict.ContainsKey("amountOfProjects"))
+                if (dict.ContainsKey("uuid") && dict.ContainsKey("modified") && dict.ContainsKey("hash") && dict.ContainsKey("amountOfProjects"))
                 {
                     string uuid = dict["uuid"].ToString();
                     DateTime dateTime = (DateTime)dict["modified"];
                     long modified = long.Parse(dateTime.ToString("yyyyMMddHHmmss"));
-                    string uuids = dict["uuids"].ToString();
+                    string uuids = dict["hash"].ToString();
                     int amountOfProjects = 0;
                     try
                     {
@@ -310,8 +310,7 @@ namespace KompetansetorgetXamarin.Controllers
         public async Task UpdateProjectFromServer(string uuid)
         {
             System.Diagnostics.Debug.WriteLine("ProjectController - UpdateProjectFromServer(string uuid): initiated");
-                            //as in minimumInformationForNotifications=true
-            string adress = Adress + "/" + uuid + "?minnot=true";
+            string adress = Adress + "/" + uuid;
             System.Diagnostics.Debug.WriteLine("UpdateProjectFromServer: var url = " + adress);
 
             DbStudent dbStudent = new DbStudent();

@@ -24,93 +24,7 @@ namespace KompetansetorgetXamarin.Views
         public ViktorTestView()
         {
             InitializeComponent();
-        }
-
-
-        private async void StudentButton_OnClicked(object sender, EventArgs e)
-        {
-            var client = new HttpClient();
-            var response = await client.GetAsync("http://kompetansetorgetserver1.azurewebsites.net/api/v1/students");
-            if (response.IsSuccessStatusCode)
-            {
-                var results = await response.Content.ReadAsAsync<IEnumerable<Student>>();
-
-
-                var sb = new StringBuilder();
-                foreach (var student in results)
-                {
-                    var text = string.Format("Mail: {0}, Username: {1}", student.email, student.username);
-                    sb.AppendLine(text);
-
-                }
-                TextBox.Text = sb.ToString();
-            }
-        }
-
-
-
-        /*
-        private void PathButton_OnClicked(object sender, EventArgs e)
-        {
-            try
-            {
-                IFolder rootFolder = FileSystem.Current.LocalStorage;
-                TextBox.Text = rootFolder.Path;
-
-             }
-             catch (Exception ex)
-            {
-                TextBox.Text = ex.Message;
-            }
-        }
-
-         private async void TokenButton_OnClicked(object sender, EventArgs e)
-         {
-             TokenHandler th = new TokenHandler();
-             string token = await th.GetToken();
-             TextBox.Text = token;
-         }
-
-         private async void DeviceIdButton_OnClicked(object sender, EventArgs e)
-         {
-             TokenHandler th = new TokenHandler();
-             string deviceId = await th.GetDeviceId();
-             TextBox.Text = deviceId;
-         }
-         */
-        /*
-        private async void GetJobsFromServer_OnClicked(object sender, EventArgs e)
-        {
-            //JobsController jc = new JobsController();
-            // jc.GetJobsFromServer();
-
-            var client = new HttpClient();
-            var response = await client.GetAsync("http://kompetansetorgetserver1.azurewebsites.net/api/v1/jobs");
-            var results = await response.Content.ReadAsAsync<IEnumerable<Job>>();
-
-            var sb = new StringBuilder();
-            foreach (var job in results)
-            {
-                var id = new StringBuilder();
-                foreach (var c in job.companies)
-                {
-                    id.AppendLine(c.id);
-                }
-             
-                string[] s = new string[2];
-                s[0] = "a";
-                s[1] = "b";
-
-                var text = string.Format("title: {0}, published: {1}, id: {2}", job.title, job.published,
-                id.ToString());
-                //job.companies.Select(c => new { c.id }));
-                sb.AppendLine(text);
-
-            }
-            TextBox.Text = sb.ToString();
-
-        }
-        */
+        }        
 
         private async void NotificationsFromDb_OnClicked(object sender, EventArgs e)
         {
@@ -158,7 +72,7 @@ namespace KompetansetorgetXamarin.Views
             }
         }
 
-        /*
+      /*
             NotificationsController nc = new NotificationsController();
             ProjectsController pc = new ProjectsController();
             JobsController jc = new JobsController();
@@ -250,8 +164,8 @@ namespace KompetansetorgetXamarin.Views
 
             }
             TextBox.Text = sb.ToString();
+            }
             */
-
         private async void GetAllJobsFromWebApi_OnClicked(object sender, EventArgs e)
         {
             JobsController jc = new JobsController();
@@ -607,7 +521,7 @@ namespace KompetansetorgetXamarin.Views
         {
             List<StudyGroup> studyGroups = new List<StudyGroup>();
             StudyGroup idrettsfag = new StudyGroup();
-            idrettsfag.id = "idrettsfag";
+            idrettsfag.id = "idrett";
             StudyGroup datateknologi = new StudyGroup();
             datateknologi.id = "datateknologi";
             studyGroups.Add(idrettsfag);
@@ -618,10 +532,6 @@ namespace KompetansetorgetXamarin.Views
             realfag.id = "realfag";
             //studyGroups.Add(samfunnsfag);
             //studyGroups.Add(realfag);
-
-
-
-
             StudentsController sc = new StudentsController();
             bool success = await sc.PostStudentsStudyGroupToServer(studyGroups);
 
@@ -1025,6 +935,156 @@ namespace KompetansetorgetXamarin.Views
             sgc.CompareServerHash();
             jtc.CompareServerHash();
             cc.CompareServerHash();
-        }           
+        }
+
+        private async void StudentButton_OnClicked(object sender, EventArgs e)
+        {
+            var client = new HttpClient();
+            var response = await client.GetAsync("http://kompetansetorgetserver1.azurewebsites.net/api/v1/students");
+            if (response.IsSuccessStatusCode)
+            {
+                var results = await response.Content.ReadAsAsync<IEnumerable<Student>>();
+
+
+                var sb = new StringBuilder();
+                foreach (var student in results)
+                {
+                    var text = string.Format("Mail: {0}, Username: {1}", student.email, student.username);
+                    sb.AppendLine(text);
+
+                }
+                TextBox.Text = sb.ToString();
+            }
+        }
+
+
+
+
+        private void PathButton_OnClicked(object sender, EventArgs e)
+        {
+            try
+            {
+                IFolder rootFolder = FileSystem.Current.LocalStorage;
+                TextBox.Text = rootFolder.Path;
+
+            }
+            catch (Exception ex)
+            {
+                TextBox.Text = ex.Message;
+            }
+        }
+
+        [Obsolete]
+        private async void TokenButton_OnClicked(object sender, EventArgs e)
+        {
+            TokenHandler th = new TokenHandler();
+            string token = await th.GetToken();
+            TextBox.Text = token;
+        }
+
+        [Obsolete]
+        private async void DeviceIdButton_OnClicked(object sender, EventArgs e)
+        {
+            TokenHandler th = new TokenHandler();
+            string deviceId = await th.GetDeviceId();
+            TextBox.Text = deviceId;
+        }
+
+        [Obsolete]
+        private async void GetJobsFromServer_OnClicked(object sender, EventArgs e)
+        {
+            //JobsController jc = new JobsController();
+            // jc.GetJobsFromServer();
+
+            var client = new HttpClient();
+            var response = await client.GetAsync("http://kompetansetorgetserver1.azurewebsites.net/api/v1/jobs");
+            var results = await response.Content.ReadAsAsync<IEnumerable<Job>>();
+
+            var sb = new StringBuilder();
+            foreach (var job in results)
+            {
+                var id = new StringBuilder();
+                foreach (var c in job.companies)
+                {
+                    id.AppendLine(c.id);
+                }
+
+                string[] s = new string[2];
+                s[0] = "a";
+                s[1] = "b";
+
+                var text = string.Format("title: {0}, published: {1}, id: {2}", job.title, job.published,
+                id.ToString());
+                //job.companies.Select(c => new { c.id }));
+                sb.AppendLine(text);
+
+            }
+            TextBox.Text = sb.ToString();
+
+        }
+        /*
+        private async void DbCountRelatedToJob(object sender, EventArgs e)
+
+                var rowsLocation =
+                    Db.Query<Location>("Select * FROM Location WHERE Location.id = ?", "vestagder")
+                        .Count;
+                System.Diagnostics.Debug.WriteLine("Query Location Count: " + rowsLocation);
+
+                var rowsLocationJob =
+                    Db.Query<LocationJob>("Select * FROM LocationJob WHERE LocationJob.LocationId = ?", "vestagder")
+                        .Count;
+                System.Diagnostics.Debug.WriteLine("Query LocationJob Count: " + rowsLocationJob);
+
+                var rowsLocationJob2 =
+                    Db.Query<LocationJob>("Select * FROM LocationJob WHERE LocationJob.JobUuid = ?", "09706b08-78b9-42a5-88f9-ba0a45705432")
+                        .Count;
+                System.Diagnostics.Debug.WriteLine("Query LocationJob on JobUuid Count: " + rowsLocationJob2);
+
+                var rowsStudyGroup =
+                     Db.Query<StudyGroup>("Select * FROM StudyGroup WHERE StudyGroup.id = ?", "helse")
+                        .Count;
+                System.Diagnostics.Debug.WriteLine("Query StudyGroup Count: " + rowsStudyGroup);
+
+                var rowsStudyGroupJob =
+                    Db.Query<StudyGroupJob>("Select * FROM StudyGroupJob WHERE StudyGroupJob.StudyGroupId = ?", "helse")
+                        .Count;
+                System.Diagnostics.Debug.WriteLine("Query StudyGroupJob on helse Count: " + rowsStudyGroupJob);
+
+                var rowsStudyGroupJob3 =
+                    Db.Query<StudyGroupJob>("Select * FROM StudyGroupJob WHERE StudyGroupJob.StudyGroupId = ?", "datateknologi")
+                    .Count;
+                System.Diagnostics.Debug.WriteLine("Query StudyGroupJob on datateknologi Count: " + rowsStudyGroupJob3);
+
+                var rowsStudyGroupJob4 =
+                    Db.Query<StudyGroupJob>("Select * FROM StudyGroupJob WHERE (StudyGroupJob.StudyGroupId = ? OR StudyGroupJob.StudyGroupId = ?)", "datateknologi", "helse")
+                        .Count;
+                System.Diagnostics.Debug.WriteLine("Query StudyGroupJob on datateknologi or helse Count: " + rowsStudyGroupJob4);
+
+                var rowsStudyGroupJob2 =
+                    Db.Query<StudyGroupJob>("Select * FROM StudyGroupJob WHERE StudyGroupJob.JobUuid = ?", "09706b08-78b9-42a5-88f9-ba0a45705432")
+                        .Count;
+                System.Diagnostics.Debug.WriteLine("Query StudyGroupJob on JobUuid Count: " + rowsStudyGroupJob2);
+
+                var rowsInner1 =
+                    Db.Query<Job>("Select * FROM Job INNER JOIN LocationJob WHERE LocationJob.JobUuid = Job.uuid")
+                        .Count;
+                System.Diagnostics.Debug.WriteLine("Query rowsInner1 Count: " + rowsInner1);
+
+                var rowsInner2 =
+                    Db.Query<Job>("Select * FROM Job INNER JOIN LocationJob WHERE LocationJob.JobUuid = Job.uuid AND LocationJob.LocationId = ?", "vestagder")
+                        .Count;
+                System.Diagnostics.Debug.WriteLine("Query rowsInner2 Count: " + rowsInner2);
+
+                var rowsJobs =
+                    Db.Query<Job>("Select * FROM Job")
+                        .Count;
+                System.Diagnostics.Debug.WriteLine("Query rowsInner2 Count: " + rowsJobs);
+
+                var rowsJob =
+                    Db.Query<Job>(query)
+                    .Count;
+                System.Diagnostics.Debug.WriteLine("Query Job without LastAnd, value count: " + rowsJob);
+                }
+                */
     }
 }
