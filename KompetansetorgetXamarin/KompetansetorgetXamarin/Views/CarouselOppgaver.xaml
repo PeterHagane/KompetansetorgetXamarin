@@ -67,8 +67,8 @@
         <ListView.ItemTemplate>
           <DataTemplate>
             <ImageCell
-                ImageSource="{Binding logo}" 
-                Text="{Binding name}"
+                ImageSource="{Binding companies[0].logo}" 
+                Text="{Binding companies[0].name}"
                 Detail="{Binding title}">
             </ImageCell>
           </DataTemplate>

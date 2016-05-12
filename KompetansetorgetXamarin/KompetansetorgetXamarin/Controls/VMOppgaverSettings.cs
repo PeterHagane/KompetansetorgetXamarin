@@ -15,9 +15,12 @@ namespace KompetansetorgetXamarin.Controls
         public ObservableCollection<fagområdeSetting> oppgaveSettings { get; set; }
         //private List<StudyGroup> fagområderList = null;
         private List<string> checkedStudyGroups = new List<string>();
-        private List<string> names = new List<string>();
+        public Dictionary<string, string> studyDict { private set; get; }
+    
+
 
         public VMOppgaverSettings() {
+            studyDict = new Dictionary<string, string>();
 
             GetAllFilters();
             SetSettings();
@@ -42,13 +45,15 @@ namespace KompetansetorgetXamarin.Controls
             if (oppgaveSettings == null)
             {
                 SetSettings();
-                return checkedStudyGroups;
+                return null;
             }
             else
                 foreach(fagområdeSetting setting in oppgaveSettings) {
                     bool checkSwitch = setting.IsSelected;
-                    if (checkSwitch == true) {
-                        checkedStudyGroups.Add(setting.Name);                
+                    if (checkSwitch == true)
+                    {
+                        System.Diagnostics.Debug.WriteLine("setting.Name: " + setting.Name);
+                        checkedStudyGroups.Add(studyDict[setting.Name]);                
                     }
                 }
                 
@@ -66,8 +71,9 @@ namespace KompetansetorgetXamarin.Controls
             {
                 oppgaveSettings = new ObservableCollection<fagområdeSetting> { };
 
-                foreach (string name in names)
+                foreach (string name in studyDict.Values)
                 {
+                    System.Diagnostics.Debug.WriteLine("string name in studyDict.Values: " + name);
                     oppgaveSettings.Add(new fagområdeSetting(name, true));
                 }
             }
@@ -90,8 +96,14 @@ namespace KompetansetorgetXamarin.Controls
             List<StudyGroup> studyGroupsFilter = sgc.GetAllStudyGroups();
             List<JobType> jobTypesJobFilter = jtc.GetJobTypeFilterJob();
             List<JobType> jobTypesProjectFilter = jtc.GetJobTypeFilterProject();
+
+
+            foreach (var studygroup in studyGroupsFilter)
+            {
+                studyDict.Add(studygroup.name, studygroup.id);
+            }
+
             
-            names = studyGroupsFilter.Select(c => c.name).ToList();
 
             //System.Diagnostics.Debug.WriteLine("GetAllFilters: locationsFilter.Count: " + locationsFilter.Count);
             //System.Diagnostics.Debug.WriteLine("GetAllFilters: coursesFilter.Count: " + coursesFilter.Count);

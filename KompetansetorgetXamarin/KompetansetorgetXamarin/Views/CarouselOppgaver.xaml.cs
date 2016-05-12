@@ -28,7 +28,7 @@ namespace KompetansetorgetXamarin.Views
         {
             InitializeComponent();
             addData();
-            OppgaveList.ItemsSource = oppgaver;
+            OppgaveList.ItemsSource = oppgaver;   // oppgave.companies[0].name  .logo
             oppgaverSettings.ItemsSource = listInit.oppgaveSettings;
             OppgaveList.IsPullToRefreshEnabled = true;
             OppgaveList.IsRefreshing = false;
@@ -103,6 +103,7 @@ namespace KompetansetorgetXamarin.Views
         {
             //checkedstudygroups must be uuid
             List<string> checkedStudyGroups = listInit.GetSettings();
+            
             //LEGG FAGOMRÅDER TIL AKTIVT FILTER HER MED EN SWITCH ELLER LIGNENDE
 
 
@@ -111,7 +112,7 @@ namespace KompetansetorgetXamarin.Views
             filter.Add("types", "virksomhet");
 
             ProjectsController jc = new ProjectsController();
-            IEnumerable<Project> projects = await jc.GetProjectsBasedOnFilter(checkedStudyGroups, "-published", null);
+            IEnumerable<Project> projects = await jc.GetProjectsBasedOnFilter(checkedStudyGroups, null , filter);
             foreach(Project p in projects)
             {
                 oppgaver.Add(p);
