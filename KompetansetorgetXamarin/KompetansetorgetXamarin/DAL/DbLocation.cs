@@ -45,6 +45,7 @@ namespace KompetansetorgetXamarin.DAL
         {
             foreach (var location in locations)
             {
+                location.filterChecked = false;
                 InsertLocation(location);
             }
         }

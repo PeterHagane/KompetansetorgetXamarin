@@ -13,7 +13,7 @@ namespace KompetansetorgetXamarin.Models
         [PrimaryKey]
         public string id { get; set; } // e.g administrasjon
         public string name { get; set; }
-        public bool? filterChecked { get; set; }
+        public bool filterChecked { get; set; }
 
         [ManyToMany(typeof(StudyGroupStudent))]
         public List<Student> Students { get; set; }

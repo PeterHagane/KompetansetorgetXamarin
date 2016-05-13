@@ -80,9 +80,11 @@ namespace KompetansetorgetXamarin.Views
             });
         }
 
+        
 
         protected override bool OnBackButtonPressed()
         {
+            listInit.SaveSettings();
             var p0 = this.Children[0];
             var p1 = this.Children[1];
 

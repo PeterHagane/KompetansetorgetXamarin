@@ -16,7 +16,9 @@ namespace KompetansetorgetXamarin.Controls
         //private List<StudyGroup> fagområderList = null;
         private List<string> checkedStudyGroups = new List<string>();
         public Dictionary<string, string> studyDict { private set; get; }
-    
+        private List<StudyGroup> studyGroupsFilter = new List<StudyGroup>();
+
+
 
 
         public VMOppgaverSettings() {
@@ -33,10 +35,10 @@ namespace KompetansetorgetXamarin.Controls
         }
 
 
-
-        void ToggleSelection(object sender, EventArgs e)
+        public void ToggleSelection(object sender, EventArgs e)
         {
             var fagområdeSetting = sender as fagområdeSetting;
+            SaveSettings();
             System.Diagnostics.Debug.WriteLine("{0} has been toggled to {1}", fagområdeSetting.Name, fagområdeSetting.IsSelected);
         }
 
@@ -71,12 +73,50 @@ namespace KompetansetorgetXamarin.Controls
             {
                 oppgaveSettings = new ObservableCollection<fagområdeSetting> { };
 
-                foreach (string name in studyDict.Keys)
+                foreach (var sg in studyGroupsFilter)
                 {
-                    System.Diagnostics.Debug.WriteLine("string name in studyDict.Values: " + name);
-                    oppgaveSettings.Add(new fagområdeSetting(name, true));
+                    System.Diagnostics.Debug.WriteLine("string name in studyDict.Values: " + sg.name);
+                    oppgaveSettings.Add(new fagområdeSetting(sg.name, sg.filterChecked));
                 }
             }
+        }
+
+        //public async void SetSettings()
+        //{
+
+        //    if (oppgaveSettings == null)
+        //    {
+        //        oppgaveSettings = new ObservableCollection<fagområdeSetting> { };
+
+        //        foreach (string name in studyDict.Keys)
+        //        {
+        //            System.Diagnostics.Debug.WriteLine("string name in studyDict.Values: " + name);
+        //            oppgaveSettings.Add(new fagområdeSetting(name, true));
+        //        }
+        //    }
+        //}
+
+
+        public void SaveSettings()
+        {
+            DbStudyGroup sgc = new DbStudyGroup();
+            foreach (fagområdeSetting setting in oppgaveSettings)
+            {
+                //gets the name and setting from 
+                string setName = setting.Name;
+                bool setSwitch = setting.IsSelected;
+
+                foreach (var studygroup in studyGroupsFilter)
+                {
+                    if (studygroup.name == setName)
+                    {
+                        studygroup.name = setName;
+                        studygroup.filterChecked = setSwitch;
+                        break;
+                    }
+                }
+            }
+            sgc.UpdateStudyGroups(studyGroupsFilter);
         }
 
         //Get the studygroups of the student, put the names into a list
@@ -93,7 +133,7 @@ namespace KompetansetorgetXamarin.Controls
             DbJobType jtc = new DbJobType();
             List<Location> locationsFilter = lc.GetAllLocations();
             List<Course> coursesFilter = cc.GetAllCourses();
-            List<StudyGroup> studyGroupsFilter = sgc.GetAllStudyGroups();
+            studyGroupsFilter = sgc.GetAllStudyGroups();
             List<JobType> jobTypesJobFilter = jtc.GetJobTypeFilterJob();
             List<JobType> jobTypesProjectFilter = jtc.GetJobTypeFilterProject();
 
@@ -109,6 +149,7 @@ namespace KompetansetorgetXamarin.Controls
             // DbCourse.UpdateCourses(List<Course> courses) sett max 1 til TRUE !
             // for all
             // DbJobTypes.UpdateJobTypes(List<JobType> jobTypes) sett max 1 til TRUE !
+            //
             // DbStudyGroup.UpdateStudyGroups(List<StudyGroup> studyGroups) 
 
 

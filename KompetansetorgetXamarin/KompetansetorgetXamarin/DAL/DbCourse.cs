@@ -27,6 +27,7 @@ namespace KompetansetorgetXamarin.DAL
     {
         foreach (var course in courses)
         {
+            course.filterChecked = false;
             InsertCourse(course);
         }
     }
@@ -81,7 +82,7 @@ namespace KompetansetorgetXamarin.DAL
         {
             foreach (var course in courses)
             {
-                UpdateCourses(course);
+                UpdateCourse(course);
             } 
         }
 

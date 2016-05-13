@@ -83,23 +83,9 @@ namespace KompetansetorgetXamarin.DAL
         /// <param name="studyGroup"></param>
         public void UpdateStudyGroup(StudyGroup studyGroup)
         {
-            if (CheckIfStudyGroupExist(studyGroup.id))
+            lock (DbContext.locker)
             {
-                System.Diagnostics.Debug.WriteLine("DbStudyGroup - UpdateStudyGroups: updates: " + studyGroup.id);
-                lock (DbContext.locker)
-                {
-                    Db.Update(studyGroup);
-                }
-            }
-
-            else
-            {
-                lock (DbContext.locker)
-                {
-                    System.Diagnostics.Debug.WriteLine("DbStudyGroup - UpdateStudyGroups: inserts: + " + studyGroup.id);
-
-                    Db.Insert(studyGroup);
-                }
+                Db.Update(studyGroup);
             }
         }
 

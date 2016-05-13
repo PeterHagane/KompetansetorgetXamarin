@@ -65,6 +65,7 @@
     <Compile Include="Controls\ButtonStack.cs" />
     <Compile Include="Controls\CustomImageCell.cs" />
     <Compile Include="Controls\CustomSwitchCell.cs" />
+    <Compile Include="Controls\VMStillingSettings.cs" />
     <Compile Include="Controls\XLabsExtendedButton.cs" />
     <Compile Include="Controls\ImageOrientationOverride.cs" />
     <Compile Include="Controls\RoundBox.cs" />

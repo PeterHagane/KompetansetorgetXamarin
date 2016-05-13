@@ -101,6 +101,7 @@ namespace KompetansetorgetXamarin.DAL
         {
             foreach (var jobType in jobTypes)
             {
+                jobType.filterChecked = false;
                 InsertJobType(jobType);
             }
         }
