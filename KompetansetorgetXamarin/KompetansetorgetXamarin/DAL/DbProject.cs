@@ -304,7 +304,7 @@ namespace KompetansetorgetXamarin.DAL
                 System.Diagnostics.Debug.WriteLine("query: " + query);
                 lock (DbContext.locker)
                 {
-                    return Db.Query<Project>(query + " ORDER BY Project.published ASC");
+                    return Db.Query<Project>(query + " ORDER BY Project.published DESC");
                 }
             }
 
@@ -371,13 +371,13 @@ namespace KompetansetorgetXamarin.DAL
                 {
                     lock (DbContext.locker)
                     {
-                        return Db.Query<Project>(query + " ORDER BY Project.published ASC");
+                        return Db.Query<Project>(query + " ORDER BY Project.published DESC");
                     }
                 }
 
                 lock (DbContext.locker)
                 {
-                    return Db.Query<Project>(query + " ORDER BY Project.published ASC", prepValue);
+                    return Db.Query<Project>(query + " ORDER BY Project.published DESC", prepValue);
                 }
             }
 
@@ -514,11 +514,11 @@ namespace KompetansetorgetXamarin.DAL
                 {
                     lock (DbContext.locker)
                     {
-                        return Db.Query<Project>(query + " ORDER BY Project.published ASC");
+                        return Db.Query<Project>(query + " ORDER BY Project.published DESC");
                     }
                 }
 
-                return Db.Query<Project>(query + " ORDER BY Project.published ASC", prepValue);
+                return Db.Query<Project>(query + " ORDER BY Project.published DESC", prepValue);
 
             }
 
@@ -527,7 +527,7 @@ namespace KompetansetorgetXamarin.DAL
             // if both studyGroups and filter is null
             lock (DbContext.locker)
             {
-                return Db.Query<Project>(query + " ORDER BY Project.published ASC");
+                return Db.Query<Project>(query + " ORDER BY Project.published DESC");
             }
         }        
     }

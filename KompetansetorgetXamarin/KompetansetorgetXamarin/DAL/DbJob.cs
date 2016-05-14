@@ -350,7 +350,7 @@ namespace KompetansetorgetXamarin.DAL
                 System.Diagnostics.Debug.WriteLine("query: " + query);
                 lock (DbContext.locker)
                 {
-                    return Db.Query<Job>(query + " ORDER BY Job.published ASC");
+                    return Db.Query<Job>(query + " ORDER BY Job.published DESC");
                 }
             }
 
@@ -417,13 +417,13 @@ namespace KompetansetorgetXamarin.DAL
                 {
                     lock (DbContext.locker)
                     {
-                        return Db.Query<Job>(query + " ORDER BY Job.published ASC");
+                        return Db.Query<Job>(query + " ORDER BY Job.published DESC");
                     }
                 }
 
                 lock (DbContext.locker)
                 {
-                    return Db.Query<Job>(query + " ORDER BY Job.published ASC", prepValue);
+                    return Db.Query<Job>(query + " ORDER BY Job.published DESC", prepValue);
                 }
             }
 
@@ -560,13 +560,13 @@ namespace KompetansetorgetXamarin.DAL
                 {
                     lock (DbContext.locker)
                     {
-                        return Db.Query<Job>(query + " ORDER BY Job.published ASC");
+                        return Db.Query<Job>(query + " ORDER BY Job.published DESC");
                     }
                 }
 
                 lock (DbContext.locker)
                 {
-                    return Db.Query<Job>(query + " ORDER BY Job.published ASC", prepValue);
+                    return Db.Query<Job>(query + " ORDER BY Job.published DESC", prepValue);
                 }
 
             }
@@ -576,7 +576,7 @@ namespace KompetansetorgetXamarin.DAL
             // if both studyGroups and filter is null
             lock (DbContext.locker)
             {
-                return Db.Query<Job>(query + " ORDER BY Job.published ASC");
+                return Db.Query<Job>(query + " ORDER BY Job.published DESC");
             }
         }
     }

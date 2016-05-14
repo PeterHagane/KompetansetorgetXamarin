@@ -259,7 +259,7 @@ namespace KompetansetorgetXamarin.Controllers
             }
             if (instructions != null)
             {
-                System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter - instructions" + instructions);
+                System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter - instructions: " + instructions);
                 if (instructions == "exists")  // "newData"; incorrectCache exists
                 {
                     IEnumerable<Job> filteredJobs = db.GetJobsFromDbBasedOnFilter(studyGroups, filter);

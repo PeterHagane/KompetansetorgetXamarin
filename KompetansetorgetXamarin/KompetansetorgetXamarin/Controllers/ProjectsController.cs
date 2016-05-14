@@ -190,8 +190,8 @@ namespace KompetansetorgetXamarin.Controllers
         /// Gets a project based on optional filters.
         /// </summary>
         /// <param name="studyGroups">studyGroups can be a list of numerous studygroups ex: helse, idrettsfag, datateknologi </param>
-        /// <param name="sortBy">published - oldest to newest
-        ///                      -published - newest to oldest
+        /// <param name="sortBy">publish - oldest to newest
+        ///                      -publish - newest to oldest
         ///                      expirydate - descending order
         ///                      -expirydate - ascending order
         /// </param>
