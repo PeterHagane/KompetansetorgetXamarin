@@ -345,12 +345,12 @@ namespace KompetansetorgetXamarin.DAL
                         query += " OR StudyGroup.id = '" + studyGroups[i] + "'";
                     }
                 }
-
+                query += " ORDER BY Job.published DESC";
                 System.Diagnostics.Debug.WriteLine("if (studyGroups != null && filter == null)");
                 System.Diagnostics.Debug.WriteLine("query: " + query);
                 lock (DbContext.locker)
                 {
-                    return Db.Query<Job>(query + " ORDER BY Job.published DESC");
+                    return Db.Query<Job>(query);
                 }
             }
 

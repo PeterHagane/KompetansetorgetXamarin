@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using KompetansetorgetXamarin.Models;
+using KompetansetorgetXamarin.Utility;
 
 namespace KompetansetorgetXamarin.DAL
 {
@@ -25,7 +26,7 @@ namespace KompetansetorgetXamarin.DAL
         public void InsertLocationJob(string locationId, string jobUuid)
         {
             LocationJob lj = new LocationJob();
-            lj.LocationId = locationId;
+            lj.LocationId = Hasher.Base64Encode(locationId);
             lj.JobUuid = jobUuid;
             lock (DbContext.locker)
             {
@@ -46,6 +47,7 @@ namespace KompetansetorgetXamarin.DAL
             foreach (var location in locations)
             {
                 location.filterChecked = false;
+                location.id = Hasher.Base64Encode(location.id); 
                 InsertLocation(location);
             }
         }

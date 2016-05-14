@@ -22,6 +22,17 @@ namespace KompetansetorgetXamarin.Utility
         }
 
         /// <summary>
+        /// Decodes a Base64 encoded string
+        /// </summary>
+        /// <param name="base64EncodedData"></param>
+        /// <returns></returns>
+        public static string Base64Decode(string base64EncodedData)
+        {
+            var base64EncodedBytes = System.Convert.FromBase64String(base64EncodedData);
+            return System.Text.Encoding.UTF8.GetString(base64EncodedBytes, 0, base64EncodedBytes.Length);
+        }
+
+        /// <summary>
         /// Use to create a 128 bit hash
         /// used as part of the cache strategy.
         /// This is not to create a safe encryption, but to create a hash that im

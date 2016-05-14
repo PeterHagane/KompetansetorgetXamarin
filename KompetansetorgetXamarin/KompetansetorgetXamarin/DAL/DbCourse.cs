@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using KompetansetorgetXamarin.Models;
+using KompetansetorgetXamarin.Utility;
 
 namespace KompetansetorgetXamarin.DAL
 {
@@ -28,6 +29,7 @@ namespace KompetansetorgetXamarin.DAL
         foreach (var course in courses)
         {
             course.filterChecked = false;
+            course.id = Hasher.Base64Encode(course.id);
             InsertCourse(course);
         }
     }
@@ -60,7 +62,7 @@ namespace KompetansetorgetXamarin.DAL
         public void InsertCourseProject(string courseId, string projectUuid)
         {
             CourseProject cp = new CourseProject();
-            cp.CourseId = courseId;
+            cp.CourseId = Hasher.Base64Encode(courseId);
             cp.ProjectUuid = projectUuid;
 
             lock (DbContext.locker)

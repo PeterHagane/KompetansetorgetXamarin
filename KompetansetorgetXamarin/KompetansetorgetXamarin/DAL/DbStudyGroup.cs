@@ -23,6 +23,7 @@ namespace KompetansetorgetXamarin.DAL
                 var rowsAffected = Db.Update(studyGroup);
                 if (rowsAffected == 0)
                 {
+                    studyGroup.id = Utility.Hasher.Base64Encode(studyGroup.id);
                     Db.Insert(studyGroup);
                 }
             }
@@ -73,6 +74,7 @@ namespace KompetansetorgetXamarin.DAL
         {
             foreach (var studygroup in studyGroups)
             {
+                //studygroup.id = Utility.Hasher.Base64Encode(studygroup.id);
                 UpdateStudyGroup(studygroup);
             }
         }

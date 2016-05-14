@@ -129,7 +129,7 @@ namespace KompetansetorgetXamarin.Controllers
             StringBuilder sb = new StringBuilder();
             foreach (var loc in locations)
             {
-                sb.Append(loc.id);
+                sb.Append(Hasher.Base64Decode(loc.id));
             }
             return Hasher.CalculateMd5Hash(sb.ToString());
         }

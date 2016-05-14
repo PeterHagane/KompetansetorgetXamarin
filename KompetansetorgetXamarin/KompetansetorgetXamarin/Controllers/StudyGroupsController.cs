@@ -136,7 +136,8 @@ namespace KompetansetorgetXamarin.Controllers
             StringBuilder sb = new StringBuilder();
             foreach (var sg in studyGroups)
             {
-                sb.Append(sg.id);
+                
+                sb.Append(Hasher.Base64Decode(sg.id));
             }
             return Hasher.CalculateMd5Hash(sb.ToString());
         }

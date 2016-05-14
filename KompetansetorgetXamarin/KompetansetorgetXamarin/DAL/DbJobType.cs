@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using KompetansetorgetXamarin.Models;
+using KompetansetorgetXamarin.Utility;
 
 namespace KompetansetorgetXamarin.DAL
 {
@@ -25,7 +26,7 @@ namespace KompetansetorgetXamarin.DAL
         public void InsertJobTypeJob(string jobTypeId, string jobUuid)
         {
             JobTypeJob jtj = new JobTypeJob();
-            jtj.JobTypeId = jobTypeId;
+            jtj.JobTypeId = Hasher.Base64Encode(jobTypeId);
             jtj.JobUuid = jobUuid;
 
             lock (DbContext.locker)
@@ -46,7 +47,7 @@ namespace KompetansetorgetXamarin.DAL
         public void InsertJobTypeProject(string jobTypeId, string projectUuid)
         {
             JobTypeProject jtp = new JobTypeProject();
-            jtp.JobTypeId = jobTypeId;
+            jtp.JobTypeId = Hasher.Base64Encode(jobTypeId);
             jtp.ProjectUuid = projectUuid;
 
             lock (DbContext.locker)
@@ -102,6 +103,7 @@ namespace KompetansetorgetXamarin.DAL
             foreach (var jobType in jobTypes)
             {
                 jobType.filterChecked = false;
+                jobType.id = Hasher.Base64Encode(jobType.id);
                 InsertJobType(jobType);
             }
         }

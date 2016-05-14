@@ -127,7 +127,7 @@ namespace KompetansetorgetXamarin.Controllers
             StringBuilder sb = new StringBuilder();
             foreach (var jt in jobTypes)
             {
-                sb.Append(jt.id);
+                sb.Append(Hasher.Base64Decode(jt.id));
             }
             return Hasher.CalculateMd5Hash(sb.ToString());
         }

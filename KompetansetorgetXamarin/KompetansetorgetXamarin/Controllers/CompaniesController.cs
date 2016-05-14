@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using KompetansetorgetXamarin.DAL;
 using KompetansetorgetXamarin.Models;
+using KompetansetorgetXamarin.Utility;
 using Newtonsoft.Json;
 using SQLite.Net;
 
@@ -26,6 +27,7 @@ namespace KompetansetorgetXamarin.Controllers
             System.Diagnostics.Debug.WriteLine("companyDict created");
 
             company.id = companyDict["id"].ToString();
+            company.id = Hasher.Base64Encode(company.id);
 
             if (companyDict.ContainsKey("name"))
             {
