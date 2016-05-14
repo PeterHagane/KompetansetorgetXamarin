@@ -38,7 +38,6 @@ namespace KompetansetorgetXamarin.Controls
         public void ToggleSelection(object sender, EventArgs e)
         {
             var fagområdeSetting = sender as fagområdeSetting;
-            SaveSettings();
             System.Diagnostics.Debug.WriteLine("{0} has been toggled to {1}", fagområdeSetting.Name, fagområdeSetting.IsSelected);
         }
 

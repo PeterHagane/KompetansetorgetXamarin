@@ -20,14 +20,14 @@ namespace KompetansetorgetXamarin.Views
         VMOppgaverSettings listInit = new VMOppgaverSettings();
         //ObservableCollection<Oppgave> oppgaver = new ObservableCollection<Oppgave>();
         ObservableCollection<Project> oppgaver = new ObservableCollection<Project>();
-        ObservableCollection<fagområdeSetting> fagområder; 
+        ObservableCollection<fagområdeSetting> fagområder;
         int currentPage = 0;
         ICommand refreshCommand;
 
         public CarouselOppgaver()
         {
             InitializeComponent();
-            addData();
+            AddData();
             OppgaveList.ItemsSource = oppgaver;   // oppgave.companies[0].name  .logo
             oppgaverSettings.ItemsSource = listInit.oppgaveSettings;
             OppgaveList.IsPullToRefreshEnabled = true;
@@ -35,11 +35,6 @@ namespace KompetansetorgetXamarin.Views
             OppgaveList.RefreshCommand = RefreshCommand;
             //OnBackButtonPressed();
             //oppgaverSettings.ItemsSource = fagområder;
-        }
-
-        public void addData()
-        {
-            TestProjectsFilter_OnClicked();
         }
 
         public void getList()
@@ -54,14 +49,15 @@ namespace KompetansetorgetXamarin.Views
         }
 
         private ICommand RefreshCommand {
-            get { return refreshCommand ?? (refreshCommand = new Command(async () => await ExcecuteRefreshCommand()));}
+            get { return refreshCommand ?? (refreshCommand = new Command(async () => await ExcecuteRefreshCommand())); }
         }
-            
-            
+
+
         async Task ExcecuteRefreshCommand() {
+            oppgaver.Clear();
             OppgaveList.ItemsSource = null;
-            await Task.Delay(1000);
-            addData();
+            AddData();
+            OppgaveList.ItemsSource = oppgaver;
             OppgaveList.IsRefreshing = false;
         }
 
@@ -80,11 +76,14 @@ namespace KompetansetorgetXamarin.Views
             });
         }
 
-        
+        protected override void OnDisappearing()
+        {
+            listInit.SaveSettings(); //saves the settings when pressing the up button/leaving the page
+        }
 
         protected override bool OnBackButtonPressed()
         {
-            listInit.SaveSettings();
+            listInit.SaveSettings(); //saves the settings when pressing hardware back button
             var p0 = this.Children[0];
             var p1 = this.Children[1];
 
@@ -101,7 +100,7 @@ namespace KompetansetorgetXamarin.Views
             return true;
         }
 
-        private async void TestProjectsFilter_OnClicked()
+        private async void AddData()
         {
             //checkedstudygroups must be uuid
             List<string> checkedStudyGroups = listInit.GetSettings();
@@ -110,13 +109,14 @@ namespace KompetansetorgetXamarin.Views
 
 
             Dictionary<string, string> filter = new Dictionary<string, string>();
-            filter.Add("courses", "DAT-304");
-            filter.Add("types", "virksomhet");
+            //filter.Add("courses", "DAT-304");
+            //filter.Add("types", "virksomhet");
 
             ProjectsController jc = new ProjectsController();
             IEnumerable<Project> projects = await jc.GetProjectsBasedOnFilter(checkedStudyGroups, null, null);
             foreach(Project p in projects)
             {
+                oppgaver.Clear();
                 oppgaver.Add(p);
             }
 
