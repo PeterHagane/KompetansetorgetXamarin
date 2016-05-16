@@ -134,14 +134,15 @@ namespace KompetansetorgetXamarin.Controllers
             string jsonString = "";
             foreach (var studyGroup in studyGroups)
             {
+                string id = Hasher.Base64Decode(studyGroup.id);
                 if (string.IsNullOrWhiteSpace(jsonString))
                 {
-                    jsonString = "{\"StudyGroup\":[{\"id\":\"" + studyGroup.id + "\"}";
+                    jsonString = "{\"StudyGroup\":[{\"id\":\"" + id + "\"}";
                 }
 
                 else
                 {
-                    jsonString += ",{\"id\":\"" + studyGroup.id + "\"}";
+                    jsonString += ",{\"id\":\"" + id + "\"}";
                 }
             }
             jsonString += "]}";

@@ -19,9 +19,9 @@
 
      
        <local:BaseButton Clicked="TestGetStudyGroupStudent_OnClicked"  x:Name="TestGetStudyGroupStudentButton" Text="Henter studentes registrerte fagområder" Style="{DynamicResource baseButtonStyle}" />
-     -->
+     
       <local:BaseButton Clicked="TestProjectsFilterDb_OnClicked"  x:Name="TestProjectsFilterDbButton" Text="Querier Project i databasen utifra et bestemt filter" Style="{DynamicResource baseButtonStyle}" />
-
+-->
       <local:BaseButton Clicked="TestJobsFilterDb_OnClicked"  x:Name="TestJobsFilterDbButton" Text="Querier Job i databasen utifra et bestemt filter" Style="{DynamicResource baseButtonStyle}" />
      
       <local:BaseButton Clicked="TestProjectsFilter_OnClicked"  x:Name="TestProjectsFilterButton" Text="Henter projecter basert på hardkodet filter" Style="{DynamicResource baseButtonStyle}" />
@@ -30,7 +30,9 @@
       <local:BaseButton Clicked="GetAllJobsFromWebApi_OnClicked"  x:Name="GetAllJobsFromWebApiButton" Text="Henter alle jobber fra web api" Style="{DynamicResource baseButtonStyle}" />
       <local:BaseButton Clicked="GetAllProjectsFromWebApi_OnClicked"  x:Name="GetAllProjectsFromWebApiButton" Text="Henter alle oppgaver fra web api" Style="{DynamicResource baseButtonStyle}" />
       <local:BaseButton Clicked="TestInsertJob"  x:Name="TestInsertJobButton" Text="TestInsertJob" Style="{DynamicResource baseButtonStyle}" />
-   <!--   <local:BaseButton Clicked="TestInsertProject"  x:Name="TestInsertProjectButton" Text="TestInsertProject" Style="{DynamicResource baseButtonStyle}" />
+      <local:BaseButton Clicked="TestPostStudentsStudyGroupToServer"  x:Name="TestPostStudentsStudyGroupToServerButton" Text="Endrer registrerte fagområder for studenten" Style="{DynamicResource baseButtonStyle}" />
+
+      <!--   <local:BaseButton Clicked="TestInsertProject"  x:Name="TestInsertProjectButton" Text="TestInsertProject" Style="{DynamicResource baseButtonStyle}" />
       <local:BaseButton Clicked="TestPresentableDateTime" x:Name="TestPresentableDateTimeButton" Text="TestPresentableDateTime" Style="{DynamicResource baseButtonStyle}" />
 
       
@@ -42,7 +44,6 @@
       <local:BaseButton Clicked="TestTurnOffJobNotification" x:Name="TestTurnOffJobNotificationButton" Text="TestTurnOffJobNotification" Style="{DynamicResource baseButtonStyle}" />
  -->
     <!--   <local:BaseButton Clicked="GetAllFilters"  x:Name="GetAllFiltersButton" Text="Henter alle filtre" Style="{DynamicResource baseButtonStyle}" />
-     <local:BaseButton Clicked="TestPostStudentsStudyGroupToServer"  x:Name="TestPostStudentsStudyGroupToServerButton" Text="Endrer registrerte fagområder for studenten" Style="{DynamicResource baseButtonStyle}" />
           <local:BaseButton Clicked="DbCountRelatedToJob  x:Name="DbCountRelatedToJobButton" Text="DbCountRelatedToJob" Style="{DynamicResource baseButtonStyle}" />
         
       

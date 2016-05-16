@@ -541,15 +541,20 @@ namespace KompetansetorgetXamarin.Views
         {
             List<StudyGroup> studyGroups = new List<StudyGroup>();
             StudyGroup idrettsfag = new StudyGroup();
-            idrettsfag.id = "idrett";
+            string idrett = Hasher.Base64Encode("idrett");
+            idrettsfag.id = idrett;
             StudyGroup datateknologi = new StudyGroup();
-            datateknologi.id = "datateknologi";
+            string datatekn = Hasher.Base64Encode("datateknologi");
+            datateknologi.id = datatekn;
             studyGroups.Add(idrettsfag);
             studyGroups.Add(datateknologi);
             StudyGroup samfunnsfag = new StudyGroup();
-            samfunnsfag.id = "samfunnsfag";
+            string samfunn = Hasher.Base64Encode("samfunnsfag");
+
+            samfunnsfag.id = samfunn;
             StudyGroup realfag = new StudyGroup();
-            realfag.id = "realfag";
+            string realfa = Hasher.Base64Encode("realfag");
+            realfag.id = realfa;
             //studyGroups.Add(samfunnsfag);
             //studyGroups.Add(realfag);
             StudentsController sc = new StudentsController();
