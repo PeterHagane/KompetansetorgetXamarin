@@ -319,14 +319,14 @@ namespace KompetansetorgetXamarin.DAL
         /// <returns></returns>
         public IEnumerable<Job> GetJobsFromDbBasedOnFilter(List<string> studyGroups = null, Dictionary<string, string> filter = null, bool checkUiids = false)
         {
-            string query = "";
+            StringBuilder query = new StringBuilder();
             if (checkUiids)
             {
-                query = "SELECT Job.uuid FROM Job";
+                query.Append("SELECT Job.uuid FROM Job");
             }
             else
             {
-                query = "SELECT * FROM Job";
+                query.Append("SELECT * FROM Job");
             }
 
 
@@ -336,28 +336,28 @@ namespace KompetansetorgetXamarin.DAL
                 {
                     if (i == 0)
                     {
-                        query += " INNER JOIN StudyGroupJob ON Job.uuid = StudyGroupJob.JobUuid "
+                        query.Append(" INNER JOIN StudyGroupJob ON Job.uuid = StudyGroupJob.JobUuid "
                                  + "INNER JOIN StudyGroup ON StudyGroupJob.StudyGroupId = StudyGroup.id "
-                                 + "WHERE StudyGroup.id = '" + studyGroups[i] + "'";
+                                 + "WHERE StudyGroup.id = '" + studyGroups[i] + "'");
                     }
                     else
                     {
-                        query += " OR StudyGroup.id = '" + studyGroups[i] + "'";
+                        query.Append(" OR StudyGroup.id = '" + studyGroups[i] + "'");
                     }
                 }
-                query += " ORDER BY Job.published DESC";
+                query.Append(" ORDER BY Job.published DESC");
                 System.Diagnostics.Debug.WriteLine("if (studyGroups != null && filter == null)");
                 System.Diagnostics.Debug.WriteLine("query: " + query);
                 lock (DbContext.locker)
                 {
-                    return Db.Query<Job>(query);
+                    return Db.Query<Job>(query.ToString());
                 }
             }
 
             if (filter != null && studyGroups == null)
             {
                 string joins = "";
-                string whereAnd = "";
+                StringBuilder whereAnd = new StringBuilder();
 
                 string prepValue = "";
 
@@ -369,13 +369,13 @@ namespace KompetansetorgetXamarin.DAL
                     {
                         prepValue = filter[filterType];
 
-                        if (string.IsNullOrWhiteSpace(whereAnd))
+                        if (string.IsNullOrWhiteSpace(whereAnd.ToString()))
                         {
-                            whereAnd += " WHERE Job.title = ?";
+                            whereAnd.Append(" WHERE Job.title = ?");
                         }
                         else
                         {
-                            whereAnd += " AND Job.title = ?";
+                            whereAnd.Append(" AND Job.title = ?");
                         }
                     }
 
@@ -384,13 +384,13 @@ namespace KompetansetorgetXamarin.DAL
                         joins += " INNER JOIN JobTypeJob ON Job.uuid = JobTypeJob.JobUuid"
                                + " INNER JOIN JobType ON JobTypeJob.JobTypeId = JobType.id";
 
-                        if (string.IsNullOrWhiteSpace(whereAnd))
+                        if (string.IsNullOrWhiteSpace(whereAnd.ToString()))
                         {
-                            whereAnd += " WHERE JobType.id = '" + value + "'";
+                            whereAnd.Append(" WHERE JobType.id = '" + value + "'");
                         }
                         else
                         {
-                            whereAnd += " AND JobType.id = '" + value + "'";
+                            whereAnd.Append(" AND JobType.id = '" + value + "'");
                         }
                     }
 
@@ -399,38 +399,39 @@ namespace KompetansetorgetXamarin.DAL
                         joins += " INNER JOIN LocationJob ON Job.uuid = LocationJob.JobUuid"
                                + " INNER JOIN Location ON LocationJob.LocationId = Location.id";
 
-                        if (string.IsNullOrWhiteSpace(whereAnd))
+                        if (string.IsNullOrWhiteSpace(whereAnd.ToString()))
                         {
-                            whereAnd += " WHERE Location.id = '" + value + "'";
+                            whereAnd.Append(" WHERE Location.id = '" + value + "'");
                         }
                         else
                         {
-                            whereAnd += " AND Location.id = '" + value + "'";
+                            whereAnd.Append(" AND Location.id = '" + value + "'");
                         }
                     }
                 }
 
-                query += joins + whereAnd;
+                query.Append(joins);
+                query.Append(whereAnd.ToString());
                 System.Diagnostics.Debug.WriteLine("query: " + query);
-
+                query.Append(" ORDER BY Job.published DESC");
                 if (string.IsNullOrWhiteSpace(prepValue))
                 {
                     lock (DbContext.locker)
                     {
-                        return Db.Query<Job>(query + " ORDER BY Job.published DESC");
+                        return Db.Query<Job>(query.ToString());
                     }
                 }
 
                 lock (DbContext.locker)
                 {
-                    return Db.Query<Job>(query + " ORDER BY Job.published DESC", prepValue);
+                    return Db.Query<Job>(query.ToString(), prepValue);
                 }
             }
 
             if (filter != null && studyGroups != null)
             {
                 string joins = "";
-                string whereAnd = "";
+                StringBuilder whereAnd = new StringBuilder();
                 string prepValue = "";
 
                 foreach (var filterType in filter.Keys.ToArray())
@@ -439,13 +440,13 @@ namespace KompetansetorgetXamarin.DAL
                     {
                         prepValue = filter[filterType];
 
-                        if (string.IsNullOrWhiteSpace(whereAnd))
+                        if (string.IsNullOrWhiteSpace(whereAnd.ToString()))
                         {
-                            whereAnd += " WHERE Job.title = ?";
+                            whereAnd.Append(" WHERE Job.title = ?");
                         }
                         else
                         {
-                            whereAnd += " AND Job.title = ?";
+                            whereAnd.Append(" AND Job.title = ?");
                         }
                     }
 
@@ -456,13 +457,13 @@ namespace KompetansetorgetXamarin.DAL
                                + " INNER JOIN JobType ON JobTypeJob.JobTypeId = JobType.id";
                         // + " WHERE JobType.id = ?";
 
-                        if (string.IsNullOrWhiteSpace(whereAnd))
+                        if (string.IsNullOrWhiteSpace(whereAnd.ToString()))
                         {
-                            whereAnd += " WHERE JobType.id = '" + value + "'";
+                            whereAnd.Append(" WHERE JobType.id = '" + value + "'");
                         }
                         else
                         {
-                            whereAnd += " AND JobType.id = '" + value + "'";
+                            whereAnd.Append(" AND JobType.id = '" + value + "'");
                         }
 
                         /*
@@ -481,13 +482,13 @@ namespace KompetansetorgetXamarin.DAL
                                + " INNER JOIN Location ON LocationJob.LocationId = Location.id";
                         //+ " WHERE Location.id = ?";
 
-                        if (string.IsNullOrWhiteSpace(whereAnd))
+                        if (string.IsNullOrWhiteSpace(whereAnd.ToString()))
                         {
-                            whereAnd += " WHERE Location.id = '" + value + "'";
+                            whereAnd.Append(" WHERE Location.id = '" + value + "'");
                         }
                         else
                         {
-                            whereAnd += " AND Location.id = '" + value + "'";
+                            whereAnd.Append(" AND Location.id = '" + value + "'");
                         }
 
                         /*
@@ -510,13 +511,13 @@ namespace KompetansetorgetXamarin.DAL
                             joins += " INNER JOIN StudyGroupJob ON Job.uuid = StudyGroupJob.JobUuid "
                                      + "INNER JOIN StudyGroup ON StudyGroupJob.StudyGroupId = StudyGroup.id ";
 
-                            if (string.IsNullOrWhiteSpace(whereAnd))
+                            if (string.IsNullOrWhiteSpace(whereAnd.ToString()))
                             {
-                                whereAnd += " WHERE (StudyGroup.id = '" + studyGroups[i] + "'";
+                                whereAnd.Append(" WHERE (StudyGroup.id = '" + studyGroups[i] + "'");
                             }
                             else
                             {
-                                whereAnd += " AND (StudyGroup.id = '" + studyGroups[i] + "'";
+                                whereAnd.Append(" AND (StudyGroup.id = '" + studyGroups[i] + "'");
                             }
                             //+ "WHERE (StudyGroup.id = '" + studyGroups[i] + "'";
                         }
@@ -525,14 +526,14 @@ namespace KompetansetorgetXamarin.DAL
                             joins += " INNER JOIN StudyGroupJob ON Job.uuid = StudyGroupJob.JobUuid "
                                      + "INNER JOIN StudyGroup ON StudyGroupJob.StudyGroupId = StudyGroup.id ";
 
-                            if (string.IsNullOrWhiteSpace(whereAnd))
+                            if (string.IsNullOrWhiteSpace(whereAnd.ToString()))
                             {
-                                whereAnd += " WHERE StudyGroup.id = '" + studyGroups[i] + "'";
+                                whereAnd.Append(" WHERE StudyGroup.id = '" + studyGroups[i] + "'");
                             }
 
                             else
                             {
-                                whereAnd = " AND StudyGroup.id = '" + studyGroups[i] + "'";
+                                whereAnd.Append(" AND StudyGroup.id = '" + studyGroups[i] + "'");
                             }
 
                         }
@@ -540,11 +541,11 @@ namespace KompetansetorgetXamarin.DAL
 
                     else if (i != 0 && i + 1 == studyGroups.Count)
                     {
-                        whereAnd += " OR StudyGroup.id = '" + studyGroups[i] + "')";
+                        whereAnd.Append(" OR StudyGroup.id = '" + studyGroups[i] + "')");
                     }
                     else
                     {
-                        whereAnd += " OR StudyGroup.id = '" + studyGroups[i] + "'";
+                        whereAnd.Append(" OR StudyGroup.id = '" + studyGroups[i] + "'");
                     }
                 }
 
@@ -553,20 +554,21 @@ namespace KompetansetorgetXamarin.DAL
                 System.Diagnostics.Debug.WriteLine("full query: " + query + joins + whereAnd);
 
 
-                query += joins + whereAnd;
-
+                query.Append(joins);
+                query.Append(whereAnd);
+                query.Append(" ORDER BY Job.published DESC");
 
                 if (string.IsNullOrWhiteSpace(prepValue))
                 {
                     lock (DbContext.locker)
                     {
-                        return Db.Query<Job>(query + " ORDER BY Job.published DESC");
+                        return Db.Query<Job>(query.ToString());
                     }
                 }
 
                 lock (DbContext.locker)
                 {
-                    return Db.Query<Job>(query + " ORDER BY Job.published DESC", prepValue);
+                    return Db.Query<Job>(query.ToString(), prepValue);
                 }
 
             }
@@ -574,9 +576,10 @@ namespace KompetansetorgetXamarin.DAL
             System.Diagnostics.Debug.WriteLine("Filter and studyGroups is null");
             System.Diagnostics.Debug.WriteLine("query: " + query);
             // if both studyGroups and filter is null
+            query.Append(" ORDER BY Job.published DESC");
             lock (DbContext.locker)
             {
-                return Db.Query<Job>(query + " ORDER BY Job.published DESC");
+                return Db.Query<Job>(query.ToString());
             }
         }
     }

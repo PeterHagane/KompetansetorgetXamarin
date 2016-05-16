@@ -273,14 +273,15 @@ namespace KompetansetorgetXamarin.DAL
         /// <returns></returns>
         public IEnumerable<Project> GetProjectsFromDbBasedOnFilter(List<string> studyGroups = null, Dictionary<string, string> filter = null, bool checkUiids = false)
         {
-            string query = "";
+            //string query = "";
+            StringBuilder query = new StringBuilder();
             if (checkUiids)
             {
-                query = "SELECT Project.uuid FROM Project";
+                query.Append("SELECT Project.uuid FROM Project");
             }
             else
             {
-                query = "SELECT * FROM Project";
+                query.Append("SELECT * FROM Project");
             }
 
 
@@ -290,29 +291,29 @@ namespace KompetansetorgetXamarin.DAL
                 {
                     if (i == 0)
                     {
-                        query += " INNER JOIN StudyGroupProject ON Project.uuid = StudyGroupProject.ProjectUuid "
+                        query.Append(" INNER JOIN StudyGroupProject ON Project.uuid = StudyGroupProject.ProjectUuid "
                                  + "INNER JOIN StudyGroup ON StudyGroupProject.StudyGroupId = StudyGroup.id "
-                                 + "WHERE StudyGroup.id = '" + studyGroups[i] + "'";
+                                 + "WHERE StudyGroup.id = '" + studyGroups[i] + "'");
                     }
                     else
                     {
-                        query += " OR StudyGroup.id = '" + studyGroups[i] + "'";
+                        query.Append(" OR StudyGroup.id = '" + studyGroups[i] + "'");
                     }
                 }
-                query += " ORDER BY Project.published DESC";
+                query.Append(" ORDER BY Project.published DESC");
                 System.Diagnostics.Debug.WriteLine("if (studyGroups != null && filter == null)");
-                System.Diagnostics.Debug.WriteLine("query: " + query);
+                System.Diagnostics.Debug.WriteLine("query: " + query.ToString());
                 lock (DbContext.locker)
                 {
-                    return Db.Query<Project>(query);
+                    return Db.Query<Project>(query.ToString());
                 }
             }
 
             if (filter != null && studyGroups == null)
             {
                 string joins = "";
-                string whereAnd = "";
-
+                //string whereAnd = "";
+                StringBuilder whereAnd = new StringBuilder();
                 string prepValue = "";
 
                 foreach (var filterType in filter.Keys.ToArray())
@@ -323,13 +324,13 @@ namespace KompetansetorgetXamarin.DAL
                     {
                         prepValue = filter[filterType];
 
-                        if (string.IsNullOrWhiteSpace(whereAnd))
+                        if (string.IsNullOrWhiteSpace(whereAnd.ToString()))
                         {
-                            whereAnd += " WHERE Project.title = ?";
+                            whereAnd.Append(" WHERE Project.title = ?");
                         }
                         else
                         {
-                            whereAnd += " AND Project.title = ?";
+                            whereAnd.Append(" AND Project.title = ?");
                         }
                     }
 
@@ -338,13 +339,13 @@ namespace KompetansetorgetXamarin.DAL
                         joins += " INNER JOIN JobTypeProject ON Project.uuid = JobTypeProject.ProjectUuid"
                                + " INNER JOIN JobType ON JobTypeProject.JobTypeId = JobType.id";
 
-                        if (string.IsNullOrWhiteSpace(whereAnd))
+                        if (string.IsNullOrWhiteSpace(whereAnd.ToString()))
                         {
-                            whereAnd += " WHERE JobType.id = '" + value + "'";
+                            whereAnd.Append(" WHERE JobType.id = '" + value + "'");
                         }
                         else
                         {
-                            whereAnd += " AND JobType.id = '" + value + "'";
+                            whereAnd.Append(" AND JobType.id = '" + value + "'");
                         }
                     }
 
@@ -353,31 +354,33 @@ namespace KompetansetorgetXamarin.DAL
                         joins += " INNER JOIN CourseProject ON Project.uuid = CourseProject.ProjectUuid"
                                + " INNER JOIN Course ON CourseProject.CourseId = Course.id";
 
-                        if (string.IsNullOrWhiteSpace(whereAnd))
+                        if (string.IsNullOrWhiteSpace(whereAnd.ToString()))
                         {
-                            whereAnd += " WHERE Course.id = '" + value + "'";
+                            whereAnd.Append(" WHERE Course.id = '" + value + "'");
                         }
                         else
                         {
-                            whereAnd += " AND Course.id = '" + value + "'";
+                            whereAnd.Append(" AND Course.id = '" + value + "'");
                         }
                     }
                 }
 
-                query += joins + whereAnd;
-                System.Diagnostics.Debug.WriteLine("query: " + query);
+                query.Append(joins);
+                query.Append(whereAnd.ToString());
+                query.Append(" ORDER BY Project.published DESC");
+                System.Diagnostics.Debug.WriteLine("query: " + query.ToString());
 
                 if (string.IsNullOrWhiteSpace(prepValue))
                 {
                     lock (DbContext.locker)
                     {
-                        return Db.Query<Project>(query + " ORDER BY Project.published DESC");
+                        return Db.Query<Project>(query.ToString());
                     }
                 }
 
                 lock (DbContext.locker)
                 {
-                    return Db.Query<Project>(query + " ORDER BY Project.published DESC", prepValue);
+                    return Db.Query<Project>(query.ToString(), prepValue);
                 }
             }
 
@@ -385,7 +388,7 @@ namespace KompetansetorgetXamarin.DAL
             {
 
                 string joins = "";
-                string whereAnd = "";
+                StringBuilder whereAnd = new StringBuilder();
                 string prepValue = "";
 
                 foreach (var filterType in filter.Keys.ToArray())
@@ -394,13 +397,13 @@ namespace KompetansetorgetXamarin.DAL
                     {
                         prepValue = filter[filterType];
 
-                        if (string.IsNullOrWhiteSpace(whereAnd))
+                        if (string.IsNullOrWhiteSpace(whereAnd.ToString()))
                         {
-                            whereAnd += " WHERE Project.title = ?";
+                            whereAnd.Append(" WHERE Project.title = ?");
                         }
                         else
                         {
-                            whereAnd += " AND Project.title = ?";
+                            whereAnd.Append(" AND Project.title = ?");
                         }
                     }
 
@@ -411,13 +414,13 @@ namespace KompetansetorgetXamarin.DAL
                                + " INNER JOIN JobType ON JobTypeProject.JobTypeId = JobType.id";
                         // + " WHERE JobType.id = ?";
 
-                        if (string.IsNullOrWhiteSpace(whereAnd))
+                        if (string.IsNullOrWhiteSpace(whereAnd.ToString()))
                         {
-                            whereAnd += " WHERE JobType.id = '" + value + "'";
+                            whereAnd.Append(" WHERE JobType.id = '" + value + "'");
                         }
                         else
                         {
-                            whereAnd += " AND JobType.id = '" + value + "'";
+                            whereAnd.Append(" AND JobType.id = '" + value + "'");
                         }
 
                         /*
@@ -436,13 +439,13 @@ namespace KompetansetorgetXamarin.DAL
                                + " INNER JOIN Course ON CourseProject.CourseId = Course.id";
                         //+ " WHERE Course.id = ?";
 
-                        if (string.IsNullOrWhiteSpace(whereAnd))
+                        if (string.IsNullOrWhiteSpace(whereAnd.ToString()))
                         {
-                            whereAnd += " WHERE Course.id = '" + value + "'";
+                            whereAnd.Append(" WHERE Course.id = '" + value + "'");
                         }
                         else
                         {
-                            whereAnd += " AND Course.id = '" + value + "'";
+                            whereAnd.Append(" AND Course.id = '" + value + "'");
                         }
 
                         /*
@@ -465,13 +468,13 @@ namespace KompetansetorgetXamarin.DAL
                             joins += " INNER JOIN StudyGroupProject ON Project.uuid = StudyGroupProject.ProjectUuid "
                                      + "INNER JOIN StudyGroup ON StudyGroupProject.StudyGroupId = StudyGroup.id ";
 
-                            if (string.IsNullOrWhiteSpace(whereAnd))
+                            if (string.IsNullOrWhiteSpace(whereAnd.ToString()))
                             {
-                                whereAnd += " WHERE (StudyGroup.id = '" + studyGroups[i] + "'";
+                                whereAnd.Append(" WHERE (StudyGroup.id = '" + studyGroups[i] + "'");
                             }
                             else
                             {
-                                whereAnd += " AND (StudyGroup.id = '" + studyGroups[i] + "'";
+                                whereAnd.Append(" AND (StudyGroup.id = '" + studyGroups[i] + "'");
                             }
                             //+ "WHERE (StudyGroup.id = '" + studyGroups[i] + "'";
                         }
@@ -480,25 +483,25 @@ namespace KompetansetorgetXamarin.DAL
                             joins += " INNER JOIN StudyGroupProject ON Project.uuid = StudyGroupProject.ProjectUuid "
                                      + "INNER JOIN StudyGroup ON StudyGroupProject.StudyGroupId = StudyGroup.id ";
 
-                            if (string.IsNullOrWhiteSpace(whereAnd))
+                            if (string.IsNullOrWhiteSpace(whereAnd.ToString()))
                             {
-                                whereAnd += " WHERE StudyGroup.id = '" + studyGroups[i] + "'";
+                                whereAnd.Append(" WHERE StudyGroup.id = '" + studyGroups[i] + "'");
                             }
 
                             else
                             {
-                                whereAnd = " AND StudyGroup.id = '" + studyGroups[i] + "'";
+                                whereAnd.Append(" AND StudyGroup.id = '" + studyGroups[i] + "'");
                             }
                         }
                     }
 
                     else if (i != 0 && i + 1 == studyGroups.Count)
                     {
-                        whereAnd += " OR StudyGroup.id = '" + studyGroups[i] + "')";
+                        whereAnd.Append(" OR StudyGroup.id = '" + studyGroups[i] + "')");
                     }
                     else
                     {
-                        whereAnd += " OR StudyGroup.id = '" + studyGroups[i] + "'";
+                        whereAnd.Append(" OR StudyGroup.id = '" + studyGroups[i] + "'");
                     }
                 }
 
@@ -507,27 +510,29 @@ namespace KompetansetorgetXamarin.DAL
                 System.Diagnostics.Debug.WriteLine("full query: " + query + joins + whereAnd);
 
 
-                query += joins + whereAnd;
-
+                query.Append(joins);
+                query.Append(whereAnd.ToString());
+                query.Append(" ORDER BY Project.published DESC");
 
                 if (string.IsNullOrWhiteSpace(prepValue))
                 {
                     lock (DbContext.locker)
                     {
-                        return Db.Query<Project>(query + " ORDER BY Project.published DESC");
+                        return Db.Query<Project>(query.ToString());
                     }
                 }
 
-                return Db.Query<Project>(query + " ORDER BY Project.published DESC", prepValue);
+                return Db.Query<Project>(query.ToString(), prepValue);
 
             }
 
             System.Diagnostics.Debug.WriteLine("Filter and studyGroups is null");
             System.Diagnostics.Debug.WriteLine("query: " + query);
             // if both studyGroups and filter is null
+            query.Append(" ORDER BY Project.published DESC");
             lock (DbContext.locker)
             {
-                return Db.Query<Project>(query + " ORDER BY Project.published DESC");
+                return Db.Query<Project>(query.ToString());
             }
         }        
     }

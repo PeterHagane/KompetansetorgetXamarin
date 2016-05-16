@@ -11,6 +11,7 @@ using KompetansetorgetXamarin.DAL;
 using Xamarin.Forms;
 using KompetansetorgetXamarin.Models;
 using KompetansetorgetXamarin.Controls;
+using KompetansetorgetXamarin.Utility;
 using Newtonsoft.Json;
 using PCLStorage;
 using SQLite.Net;
@@ -199,14 +200,18 @@ namespace KompetansetorgetXamarin.Views
         private async void TestJobsFilterWeb_OnClicked(object sender, EventArgs e)
         {
             List<string> studyGroups = new List<string>();
-            studyGroups.Add("helse");
-            studyGroups.Add("datateknologi");
+            string helse = Hasher.Base64Encode("helse");
+            string datateknologi = Hasher.Base64Encode("datateknologi");
+            studyGroups.Add(helse);
+            studyGroups.Add(datateknologi);
             //LEGG FAGOMRÅDER TIL AKTIVT FILTER HER MED EN SWITCH ELLER LIGNENDE
 
 
             Dictionary<string, string> filter = new Dictionary<string, string>();
-            filter.Add("locations", "vestagder");
-            filter.Add("types", "heltid");
+            string vestagder = Hasher.Base64Encode("vestagder");
+            string heltid = Hasher.Base64Encode("heltid");
+            filter.Add("locations", vestagder);
+            filter.Add("types", heltid);
 
             JobsController jc = new JobsController();
             IEnumerable<Job> jobs = await jc.GetJobsBasedOnFilter(studyGroups, "-publish", filter);
@@ -266,12 +271,16 @@ namespace KompetansetorgetXamarin.Views
         private async void TestJobsFilterDb_OnClicked(object sender, EventArgs e)
         {
             List<string> studyGroups = new List<string>();
-            studyGroups.Add("helse");
-            studyGroups.Add("datateknologi");
+            string helse = Hasher.Base64Encode("helse");
+            string datateknologi = Hasher.Base64Encode("datateknologi");
+            studyGroups.Add(helse);
+            studyGroups.Add(datateknologi);
 
             Dictionary<string, string> filter = new Dictionary<string, string>();
-            filter.Add("locations", "vestagder");
-            filter.Add("types", "heltid");
+            string vestagder = Hasher.Base64Encode("vestagder");
+            string heltid = Hasher.Base64Encode("heltid");
+            filter.Add("locations", vestagder);
+            filter.Add("types", heltid);
 
 
             DbJob jc = new DbJob();
@@ -343,7 +352,8 @@ namespace KompetansetorgetXamarin.Views
             }
 
             Dictionary<string, string> filter2 = new Dictionary<string, string>();
-            filter2.Add("titles", "Database ansvarlig");
+            //string internship = Hasher.Base64Encode("Internship");
+            filter2.Add("titles", "Internship");
 
             var jobs4 = jc.GetJobsFromDbBasedOnFilter(studyGroups, filter2);
 
@@ -375,14 +385,19 @@ namespace KompetansetorgetXamarin.Views
         private async void TestProjectsFilter_OnClicked(object sender, EventArgs e)
         {
             List<string> studyGroups = new List<string>();
-            studyGroups.Add("helse");
-            studyGroups.Add("datateknologi");
+            string helse = Hasher.Base64Encode("helse");
+            string datateknologi = Hasher.Base64Encode("datateknologi");
+
+            studyGroups.Add(helse);
+            studyGroups.Add(datateknologi);
             //LEGG FAGOMRÅDER TIL AKTIVT FILTER HER MED EN SWITCH ELLER LIGNENDE
 
 
             Dictionary<string, string> filter = new Dictionary<string, string>();
-            filter.Add("courses", "DAT-304");
-            filter.Add("types", "virksomhet");
+            string DAT304 = Hasher.Base64Encode("DAT-304");
+            string virksomhet = Hasher.Base64Encode("virksomhet");
+            filter.Add("courses", DAT304);
+            filter.Add("types", virksomhet);
 
             ProjectsController jc = new ProjectsController();
             IEnumerable<Project> projects = await jc.GetProjectsBasedOnFilter(studyGroups, "-publish", filter);
@@ -412,14 +427,18 @@ namespace KompetansetorgetXamarin.Views
         private async void TestProjectsFilterDb_OnClicked(object sender, EventArgs e)
         {
             List<string> studyGroups = new List<string>();
-            studyGroups.Add("helse");
-            studyGroups.Add("datateknologi");
+            string helse = Hasher.Base64Encode("helse");
+            string datateknologi = Hasher.Base64Encode("datateknologi");
+            studyGroups.Add(helse);
+            studyGroups.Add(datateknologi);
             //LEGG FAGOMRÅDER TIL AKTIVT FILTER HER MED EN SWITCH ELLER LIGNENDE
 
 
             Dictionary<string, string> filter = new Dictionary<string, string>();
-            filter.Add("courses", "DAT-304");
-            filter.Add("types", "virksomhet");
+            string DAT304 = Hasher.Base64Encode("DAT-304");
+            string virksomhet = Hasher.Base64Encode("virksomhet");
+            filter.Add("courses", DAT304);
+            filter.Add("types", virksomhet);
 
             DbProject pc = new DbProject();
             var projects = pc.GetProjectsFromDbBasedOnFilter(null, filter);
@@ -492,6 +511,7 @@ namespace KompetansetorgetXamarin.Views
             }
 
             Dictionary<string, string> filter2 = new Dictionary<string, string>();
+            //string titles = Hasher.Base64Encode("Strømavleser vha gammel mobil");
             filter2.Add("titles", "Strømavleser vha gammel mobil");
 
             var projects4 = pc.GetProjectsFromDbBasedOnFilter(studyGroups, filter2);

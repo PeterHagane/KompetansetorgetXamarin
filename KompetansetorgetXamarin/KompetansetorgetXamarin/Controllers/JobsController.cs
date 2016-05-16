@@ -186,7 +186,7 @@ namespace KompetansetorgetXamarin.Controllers
         private string CreateQueryParams(List<string> studyGroups = null,
             string sortBy = "", Dictionary<string, string> filter = null)
         {
-            string queryParams = "";
+            StringBuilder queryParams = new StringBuilder();
             if (studyGroups != null)
             {
                 System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter - studyGroups.Count(): " + studyGroups.Count());
@@ -194,13 +194,14 @@ namespace KompetansetorgetXamarin.Controllers
                 {
                     if (i == 0)
                     {
-                        queryParams = "?studygroups=" + studyGroups[i];
+                        queryParams.Append("?studygroups=");
                     }
 
                     else
                     {
-                        queryParams += "&studygroups=" + studyGroups[i];
+                        queryParams.Append("&studygroups=");
                     }
+                    queryParams.Append(Hasher.Base64Decode(studyGroups[i]));
                 }
             }
 
@@ -209,28 +210,38 @@ namespace KompetansetorgetXamarin.Controllers
                 System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter - amount of filters: " + filter.Keys.ToArray().Length);
                 foreach (var category in filter.Keys.ToArray())
                 {
-                    if (string.IsNullOrWhiteSpace(queryParams))
+                    if (string.IsNullOrWhiteSpace(queryParams.ToString()))
                     {
-                        queryParams = "?";
+                        queryParams.Append("?");
                     }
-                    else queryParams += "&";
-                    // removes whitespaces from a potential user typed parameters like title search.
-                    // And replaces them with +
-                    string value = filter[category].Replace(" ", "+");
-                    queryParams += category + "=" + value;
+                    else queryParams.Append("&");
+                    string value = filter[category];
+                    if (category != "titles")
+                    {
+                        value = Hasher.Base64Decode(value);
+                    }
+                    else {
+                        // removes whitespaces from a potential user typed parameters like title search.
+                        // And replaces them with +
+                        value = value.Replace(" ", "+");
+                    }
+                    queryParams.Append(category);
+                    queryParams.Append("=");
+                    queryParams.Append(value);
                 }
             }
 
             if (!string.IsNullOrWhiteSpace(sortBy))
             {
-                if (string.IsNullOrWhiteSpace(queryParams))
+                if (string.IsNullOrWhiteSpace(queryParams.ToString()))
                 {
-                    queryParams = "?";
+                    queryParams.Append("?");
                 }
-                else queryParams += "&";
-                queryParams += "sortby=" + sortBy;
+                else queryParams.Append("&");
+                queryParams.Append("sortby=");
+                queryParams.Append(sortBy);
             }
-            return queryParams;
+            return queryParams.ToString();
         }
 
         /// <summary>
