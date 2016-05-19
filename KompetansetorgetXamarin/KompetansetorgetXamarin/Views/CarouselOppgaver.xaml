@@ -4,10 +4,19 @@
              x:Class="KompetansetorgetXamarin.Views.CarouselOppgaver"
              xmlns:local="clr-namespace:KompetansetorgetXamarin.Controls;assembly=KompetansetorgetXamarin">
 
+
+  <!--////////////////////////////////
+  OPPGAVELISTE PAGE (page 1)
+  /////////////////////////////////-->  
   <local:BaseContentPage Padding="0,0,0,0">
-
-
     <local:BaseContentPage.ToolbarItems>
+      <ToolbarItem Name="Refresh" Activated="Refresh_OnTapped"  Order="Primary" Priority="0">
+        <ToolbarItem.Icon>
+          <OnPlatform x:TypeArguments="FileImageSource"
+                      Android="Reload.png" />
+        </ToolbarItem.Icon>
+      </ToolbarItem>
+
       <ToolbarItem Name="User" Activated="OnClick"  Order="Primary" Priority="1">
         <ToolbarItem.Icon>
           <OnPlatform x:TypeArguments="FileImageSource"
@@ -21,29 +30,29 @@
                       Android="ArrowWhiteRight.png" />
         </ToolbarItem.Icon>
       </ToolbarItem>
+      
 
-      <ToolbarItem Name="Finn oppgaveforslag" Order="Primary" Priority="0">
-      </ToolbarItem>
+
+      <!--<ToolbarItem Name="Finn oppgaveforslag" Order="Primary" Priority="0">
+      </ToolbarItem>-->
 
     </local:BaseContentPage.ToolbarItems>
 
     <ContentPage.Padding>
-      <OnPlatform x:TypeArguments="Thickness" iOS="15,0,15,0" Android="15,5,15,0" />
+      <OnPlatform x:TypeArguments="Thickness" iOS="15,0,15,0" Android="15,0,15,0" />
     </ContentPage.Padding>
 
     <StackLayout VerticalOptions="FillAndExpand">
 
       <Grid>
         <Grid.RowDefinitions>
-          <RowDefinition Height="Auto" />
-          <RowDefinition Height="*" />
-          <RowDefinition Height="0" />
+          <RowDefinition Height="45" />
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
           <ColumnDefinition Width="Auto" />
           <ColumnDefinition Width="*" />
-          <ColumnDefinition Width="65" />
+          <ColumnDefinition Width="45" />
         </Grid.ColumnDefinitions>
 
         <Entry x:Name="søk" Placeholder="Sok" Style="{DynamicResource entryStyle}" HeightRequest="35"
@@ -51,22 +60,26 @@
                Grid.Column="0"
                Grid.ColumnSpan="2"/>
 
-        <local:ButtonShadow BorderRadius="13" Padding ="2,2,2,7" Style="{DynamicResource buttonShadowStyle}" WidthRequest="65" HeightRequest="35"
-                            Grid.Row="0"
-                            Grid.Column="2">
-          <local:BaseButton Clicked="OnClick" x:Name="Sorter" Text="Sort" Style="{DynamicResource baseButtonStyle}"/>
-        </local:ButtonShadow>
+        <StackLayout x:Name="Sorter"
+                     Grid.Row="0"
+                     Grid.Column="2"
+                     Grid.ColumnSpan="1">
+          <StackLayout.GestureRecognizers>
+            <TapGestureRecognizer Tapped="Sorter_OnTapped">
+            </TapGestureRecognizer>
+          </StackLayout.GestureRecognizers>
+          <Image Source="SortSort.png" HeightRequest="45" WidthRequest="45"/>
+        </StackLayout>
 
       </Grid>
 
-
-
-
-      <ListView x:Name="OppgaveList" RowHeight="75">
-        <!--ItemTapped="OnOppgaveSelected"-->
+<!--RowHeight="100"-->
+      <ListView x:Name="OppgaveList">
         <ListView.ItemTemplate>
           <DataTemplate>
             <ImageCell
+                TextColor="#565E61"
+                DetailColor="#00759A"
                 ImageSource="{Binding companies[0].logo}" 
                 Text="{Binding companies[0].name}"
                 Detail="{Binding title}">
@@ -74,16 +87,61 @@
           </DataTemplate>
         </ListView.ItemTemplate>
       </ListView>
- <!--"{Binding Image}"-->
     </StackLayout>
-
   </local:BaseContentPage>
 
-  
+
+  <!--////////////////////////////////
+  INNSTILLINGER/SETTINGS PAGE (page x)
+  /////////////////////////////////-->
+  <!--<local:BaseContentPage Padding="0,0,0,0">
+    <local:BaseContentPage.ToolbarItems>
+      <ToolbarItem Name="User" Activated="OnClick"  Order="Primary" Priority="1">
+        <ToolbarItem.Icon>
+          <OnPlatform x:TypeArguments="FileImageSource"
+                      Android="User.png" />
+        </ToolbarItem.Icon>
+      </ToolbarItem>
+      --><!--<ToolbarItem Name="Innstillinger" Order="Primary" Priority="0">--><!--
+      --><!--</ToolbarItem>--><!--
+    </local:BaseContentPage.ToolbarItems>
+
+    <ContentPage.Padding>
+      <OnPlatform x:TypeArguments="Thickness" iOS="30,30,30,0" Android="30,30,30,0" />
+    </ContentPage.Padding>
+
+    <StackLayout VerticalOptions="FillAndExpand"
+                 Orientation="Vertical"
+                 Spacing="15">
+      <local:ButtonShadow BorderRadius="17" Padding ="2,2,2,7" Style="{DynamicResource buttonShadowStyle}">
+        <local:ButtonStack x:Name="VelgFagområder" Style="{DynamicResource buttonStackStyle}">
+          <local:ButtonStack.GestureRecognizers>
+            <TapGestureRecognizer Tapped="VelgFagområdeButton_OnTapped">
+            </TapGestureRecognizer>
+          </local:ButtonStack.GestureRecognizers>
+          <Label Text="Velg Fagområder" Style="{DynamicResource buttonLabelStyle}"/>
+          <Image Source="ArrowBlackLeft.png"  Style="{DynamicResource buttonImageStyle}"/>
+        </local:ButtonStack>
+      </local:ButtonShadow>
+
+      <local:ButtonShadow BorderRadius="17" Padding ="2,2,2,7" Style="{DynamicResource buttonShadowStyle}">
+        <local:ButtonStack x:Name="VelgEmne" Style="{DynamicResource buttonStackStyle}">
+          <local:ButtonStack.GestureRecognizers>
+            <TapGestureRecognizer Tapped="VelgEmneButton_OnTapped">
+            </TapGestureRecognizer>
+          </local:ButtonStack.GestureRecognizers>
+          <Label Text="Velg Emne" Style="{DynamicResource buttonLabelStyle}"/>
+          <Image Source="ArrowBlackLeft.png"  Style="{DynamicResource buttonImageStyle}"/>
+        </local:ButtonStack>
+      </local:ButtonShadow>
     
-      
-        
-          
+    </StackLayout>
+  </local:BaseContentPage>-->
+
+
+  <!--////////////////////////////////
+  FAGOMRÅDER/STUDYGROUPS PAGE (page 2)
+  /////////////////////////////////-->
   <local:BaseContentPage Padding="0,0,0,0">
     <local:BaseContentPage.ToolbarItems>
       <ToolbarItem Name="User" Activated="OnClick"  Order="Primary" Priority="1">
@@ -92,31 +150,71 @@
                       Android="User.png" />
         </ToolbarItem.Icon>
       </ToolbarItem>
-
-      <ToolbarItem Name="Innstillinger" Order="Primary" Priority="0">
+      
+      <ToolbarItem Name="User" Activated="SaveSettings"  Order="Primary" Priority="0">
+        <ToolbarItem.Icon>
+          <OnPlatform x:TypeArguments="FileImageSource"
+                      Android="SaveWhite.png" />
+        </ToolbarItem.Icon>
       </ToolbarItem>
-
+      <!--<ToolbarItem Name="Innstillinger" Order="Primary" Priority="0">-->
+      <!--</ToolbarItem>-->
     </local:BaseContentPage.ToolbarItems>
     
     <ContentPage.Padding>
-      <OnPlatform x:TypeArguments="Thickness" iOS="15,15,15,0" Android="15,15,15,0" />
+      <OnPlatform x:TypeArguments="Thickness" iOS="15,5,15,0" Android="15,5,15,0" />
     </ContentPage.Padding>
 
-
     <StackLayout>
+      <!--SelectedItem="{Binding SelectedCourse}"-->
       <!--SeparatorVisibility="None"--> 
       <ListView x:Name="oppgaverSettings">
         <ListView.ItemTemplate>
           <DataTemplate>
             <local:CustomSwitchCell>
-               
             </local:CustomSwitchCell> 
           </DataTemplate>
         </ListView.ItemTemplate>
       </ListView>
-
-
     </StackLayout>
   </local:BaseContentPage>
 
+  <!--////////////////////////////////
+  FAGOMRÅDER/STUDYGROUPS PAGE (page x)
+  /////////////////////////////////-->
+  <!--
+  <local:BaseContentPage Padding="0,0,0,0">
+    <local:BaseContentPage.ToolbarItems>
+      <ToolbarItem Name="User" Activated="OnClick"  Order="Primary" Priority="1">
+        <ToolbarItem.Icon>
+          <OnPlatform x:TypeArguments="FileImageSource"
+                      Android="User.png" />
+        </ToolbarItem.Icon>
+      </ToolbarItem>
+      --><!--<ToolbarItem Name="Innstillinger" Order="Primary" Priority="0">--><!--
+      --><!--</ToolbarItem>--><!--
+    </local:BaseContentPage.ToolbarItems>
+
+    <ContentPage.Padding>
+      <OnPlatform x:TypeArguments="Thickness" iOS="15,5,15,0" Android="15,5,15,0" />
+    </ContentPage.Padding>
+
+    <StackLayout>
+      <ListView x:Name="OppgaverEmner">
+        <ListView.ItemTemplate>
+          <DataTemplate>
+            <TextCell
+                Text="{Binding name}"
+                >
+            </TextCell>
+          </DataTemplate>
+        </ListView.ItemTemplate>
+      </ListView>
+    </StackLayout>  
+  </local:BaseContentPage>-->
+  
+  
+  
+  
+  
 </local:BaseCarouselPage>

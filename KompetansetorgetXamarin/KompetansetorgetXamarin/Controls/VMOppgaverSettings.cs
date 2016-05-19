@@ -5,19 +5,26 @@ using KompetansetorgetXamarin.Models;
 using KompetansetorgetXamarin.Controllers;
 using System.Linq;
 using KompetansetorgetXamarin.DAL;
+using Xamarin.Forms.Xaml;
+
 
 namespace KompetansetorgetXamarin.Controls
 {
+    //only set to inherit from basecontentpage because of GoToLogin(); 
+    //--- this is a fundamental design flaw on our part, as we're mixing two paradigms (MVVM and MVC).
+    //We're never going to use this as a page, but at least it works.
 
-    //in this class: 1. Get the filter lists from server. 2. Set the .Forms setting page to 2. Add all string names of the studyGroups fetched to a list. 3. 
-    class VMOppgaverSettings : BaseContentPage  //only set to inherit from basecontentpage because of GoToLogin(); --- this is a fundamental design flaw on our part, as we're mixing two paradigms (MVVM and MVC). We're never going to use this as a page, but at least it works.
+    class VMOppgaverSettings : BaseContentPage
     {
-        public ObservableCollection<fagområdeSetting> oppgaveSettings { get; set; }
-        //private List<StudyGroup> fagområderList = null;
-        private List<string> checkedStudyGroups = new List<string>();
-        public Dictionary<string, string> studyDict { private set; get; }
-        private List<StudyGroup> studyGroupsFilter = new List<StudyGroup>();
+        public ObservableCollection<fagområdeSetting> oppgaveSettings { get; set; } //items in GUI
+        public ObservableCollection<Location> locationsSettings = new ObservableCollection<Location>(); //items in GUI
+        public ObservableCollection<Course> coursesSettings = new ObservableCollection<Course>(); //items in GUI
 
+        private List<string> checkedStudyGroups = new List<string>();
+        private List<StudyGroup> studyGroupsFilter = new List<StudyGroup>(); //gets used when retreiving projects/oppgaver in CarouselOppgaver
+
+        public Dictionary<string, string> studyDict { private set; get; }
+        public Dictionary<string, string> coursesFilter = new Dictionary<string, string>();  //gets used when retreiving projects/oppgaver in CarouselOppgaver
 
 
 
@@ -31,9 +38,7 @@ namespace KompetansetorgetXamarin.Controls
             {
                 fagområdeSetting.OnToggled += ToggleSelection;
             }
-
         }
-
 
         public void ToggleSelection(object sender, EventArgs e)
         {
@@ -54,20 +59,16 @@ namespace KompetansetorgetXamarin.Controls
                     if (checkSwitch == true)
                     {
                         System.Diagnostics.Debug.WriteLine("setting.Name: " + setting.Name);
-                        checkedStudyGroups.Add(studyDict[setting.Name]);                
+                        checkedStudyGroups.Add(setting.Name);                
                     }
                 }
                 
             return checkedStudyGroups;
         }
 
-        //TODO
-        //Compare the full list from GetAllFilters and the smaller list from GetStudentFilter
-        //add to oppgaveSettings(name, true) for every name in the list created by GetStudentFilter
-        //add to oppgaveSettings(name, false) for every name not in the list created by GetStudentFilter
-        //TODO
-        public async void SetSettings() {
-            
+        public async void SetSettings()
+        {
+
             if (oppgaveSettings == null)
             {
                 oppgaveSettings = new ObservableCollection<fagområdeSetting> { };
@@ -75,30 +76,17 @@ namespace KompetansetorgetXamarin.Controls
                 foreach (var sg in studyGroupsFilter)
                 {
                     System.Diagnostics.Debug.WriteLine("string name in studyDict.Values: " + sg.name);
-                    oppgaveSettings.Add(new fagområdeSetting(sg.name, sg.filterChecked));
+                    oppgaveSettings.Add(new fagområdeSetting(sg.name, sg.filterChecked, sg.id));
                 }
             }
         }
 
-        //public async void SetSettings()
-        //{
-
-        //    if (oppgaveSettings == null)
-        //    {
-        //        oppgaveSettings = new ObservableCollection<fagområdeSetting> { };
-
-        //        foreach (string name in studyDict.Keys)
-        //        {
-        //            System.Diagnostics.Debug.WriteLine("string name in studyDict.Values: " + name);
-        //            oppgaveSettings.Add(new fagområdeSetting(name, true));
-        //        }
-        //    }
-        //}
-
-
         public void SaveSettings()
         {
+            //DbLocation lc = new DbLocation();
+            //DbCourse cc = new DbCourse();
             DbStudyGroup sgc = new DbStudyGroup();
+
             foreach (fagområdeSetting setting in oppgaveSettings)
             {
                 //gets the name and setting from 
@@ -118,29 +106,40 @@ namespace KompetansetorgetXamarin.Controls
             sgc.UpdateStudyGroups(studyGroupsFilter);
         }
 
-        //Get the studygroups of the student, put the names into a list
-        //specificList = studyGroupsFilter.Select(c => c.name).ToList();
+        
         public async void GetStudentFilters() {
             //TODO
         }
 
         public async void GetAllFilters()//object sender, EventArgs e
         {
-            DbLocation lc = new DbLocation();
-            DbCourse cc = new DbCourse();
+            //DbLocation lc = new DbLocation();
+            //DbCourse cc = new DbCourse();
             DbStudyGroup sgc = new DbStudyGroup();
-            DbJobType jtc = new DbJobType();
-            List<Location> locationsFilter = lc.GetAllLocations();
-            List<Course> coursesFilter = cc.GetAllCourses();
+            //DbJobType jtc = new DbJobType();
+            //List<Location> locationsGet = lc.GetAllLocations();
+            //List<Course> coursesGet = cc.GetAllCourses();
             studyGroupsFilter = sgc.GetAllStudyGroups();
-            List<JobType> jobTypesJobFilter = jtc.GetJobTypeFilterJob();
-            List<JobType> jobTypesProjectFilter = jtc.GetJobTypeFilterProject();
+            //List<JobType> jobTypesJobGet = jtc.GetJobTypeFilterJob();
+            //List<JobType> jobTypesProjectGet = jtc.GetJobTypeFilterProject();
 
-
-            foreach (var studygroup in studyGroupsFilter)
+            foreach (var studyGroup in studyGroupsFilter)
             {
-                studyDict.Add(studygroup.name, studygroup.id);
+                studyDict.Add(studyGroup.name, studyGroup.id);
             }
+
+            //locationsFilter.Add(new Location(TODO)); //add empty location for default "nothing selected"
+            //foreach (var location in locationsGet)
+            //{
+            //    locationsFilter.Add(location);
+            //}
+            //Course velgEmne = new Course();
+            //velgEmne.name = "Velg emne";
+            //coursesSettings.Add(velgEmne);
+            //foreach (var course in coursesGet)
+            //{
+            //    coursesSettings.Add(course);
+            //}
 
             // for jobs
             // DbLocation.UpdateLocations(List<Location>) sett max 1 til TRUE !
@@ -150,18 +149,6 @@ namespace KompetansetorgetXamarin.Controls
             // DbJobTypes.UpdateJobTypes(List<JobType> jobTypes) sett max 1 til TRUE !
             //
             // DbStudyGroup.UpdateStudyGroups(List<StudyGroup> studyGroups) 
-
-
-            //System.Diagnostics.Debug.WriteLine("GetAllFilters: locationsFilter.Count: " + locationsFilter.Count);
-            //System.Diagnostics.Debug.WriteLine("GetAllFilters: coursesFilter.Count: " + coursesFilter.Count);
-            //System.Diagnostics.Debug.WriteLine("GetAllFilters: studyGroupsFilter.Count: " + studyGroupsFilter.Count);
-            //System.Diagnostics.Debug.WriteLine("GetAllFilters: jobTypesJobFilter.Count: " + jobTypesJobFilter.Count);
-            //System.Diagnostics.Debug.WriteLine("GetAllFilters: jobTypesProjectFilter.Count: " + jobTypesProjectFilter.Count);
-            //foreach (string id in ids)
-            //{
-            //    System.Diagnostics.Debug.WriteLine(id);
-            //}
-
         }
 
 

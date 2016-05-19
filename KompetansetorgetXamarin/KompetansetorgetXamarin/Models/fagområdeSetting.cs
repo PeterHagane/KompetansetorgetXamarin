@@ -11,6 +11,7 @@ namespace KompetansetorgetXamarin.Models
     {
         public event EventHandler<EventArgs> OnToggled = delegate { };
         public string Name { get; set; }
+        public string id { get; set; }
         public bool IsSelected
         {
             get { return _isSelected.Value; }
@@ -30,10 +31,11 @@ namespace KompetansetorgetXamarin.Models
         }
         private bool? _isSelected = null;
 
-        public fagområdeSetting(string name, bool isSelected)
+        public fagområdeSetting(string name, bool isSelected, string id)
         {
             this.Name = name;
             this.IsSelected = isSelected;
+            this.id = id;
         }
 
 

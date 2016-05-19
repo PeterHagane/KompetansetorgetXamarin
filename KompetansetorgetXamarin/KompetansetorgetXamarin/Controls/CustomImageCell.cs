@@ -9,5 +9,6 @@ namespace KompetansetorgetXamarin.Controls
 {
     class CustomImageCell : ImageCell
     {
+        
     }
 }

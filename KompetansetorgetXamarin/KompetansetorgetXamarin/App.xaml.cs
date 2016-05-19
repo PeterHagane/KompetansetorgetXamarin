@@ -20,7 +20,7 @@ namespace KompetansetorgetXamarin
         {
             InitializeComponent();   //must be included in order to initialise global xaml styles   
         }
-        
+
         protected override void OnStart()
         {
             DbStudent dbStudent = new DbStudent();

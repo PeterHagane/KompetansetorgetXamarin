@@ -4,32 +4,39 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using KompetansetorgetXamarin.Models;
-
+using XLabs.Forms;
 using Xamarin.Forms;
 using System.Collections.ObjectModel;
 using KompetansetorgetXamarin.Controls;
 using System.Windows.Input;
 using KompetansetorgetXamarin.Controllers;
+using Xamarin.Forms.Xaml;
+using System.Collections.Specialized;
 
 namespace KompetansetorgetXamarin.Views
 {
     public partial class CarouselOppgaver : BaseCarouselPage
     {
-        string defaultLogo = "http://kompetansetorget.uia.no/extension/kompetansetorget/design/kompetansetorget/images/logo-virksomhet.jpg";
-        string uiaLogo = "http://kompetansetorget.uia.no/var/kompetansetorget/storage/images/virksomheter-internt/universitetet-i-agder/18076-2-nor-NO/universitetet-i-agder_width-4.jpg";
         VMOppgaverSettings listInit = new VMOppgaverSettings();
         //ObservableCollection<Oppgave> oppgaver = new ObservableCollection<Oppgave>();
         ObservableCollection<Project> oppgaver = new ObservableCollection<Project>();
-        ObservableCollection<fagområdeSetting> fagområder;
-        int currentPage = 0;
+        /*Dictionary<string, string> filter = new Dictionary<string, string>();*/ //used in AddData;
         ICommand refreshCommand;
+        int currentPage = 0;
+        string p0title = "Finn oppgaveforslag";
+        string p1title = "Velg fagområder";
+        //string p2title = "Velg fagområder";
+        //string p3title = "Velg emne";
 
         public CarouselOppgaver()
         {
             InitializeComponent();
+            this.Title = p0title;
             AddData();
+
             OppgaveList.ItemsSource = oppgaver;   // oppgave.companies[0].name  .logo
             oppgaverSettings.ItemsSource = listInit.oppgaveSettings;
+            //OppgaverEmner.ItemsSource = listInit.coursesSettings;
             OppgaveList.IsPullToRefreshEnabled = true;
             OppgaveList.IsRefreshing = false;
             OppgaveList.RefreshCommand = RefreshCommand;
@@ -37,83 +44,198 @@ namespace KompetansetorgetXamarin.Views
             //oppgaverSettings.ItemsSource = fagområder;
         }
 
-        public void getList()
-        {
-            ObservableCollection<fagområdeSetting> fagområder = listInit.oppgaveSettings;
-        }
-
         void OnClick(object sender, EventArgs e)
         {
-            listInit.GetAllFilters();
             this.DisplayAlert("Selected!", "Fagområder get", "OK");
         }
 
-        private ICommand RefreshCommand {
-            get { return refreshCommand ?? (refreshCommand = new Command(async () => await ExcecuteRefreshCommand())); }
+        void Sorter_OnTapped(object sender, EventArgs e)
+        {
+            this.DisplayAlert("Selected!", "Fagområder get", "OK");
+            bool alphabeticallyFirst = false;
+            Sort();
+        }
+
+        void Sort() {
+
+        }
+
+        void SaveSettings(object sender, EventArgs e)
+        {
+            listInit.SaveSettings();
+            this.DisplayAlert("Innstillinger lagret!", "Forfrisk for å få en ny liste.", "OK");
         }
 
 
-        async Task ExcecuteRefreshCommand() {
-            oppgaver.Clear();
-            OppgaveList.ItemsSource = null;
-            AddData();
-            OppgaveList.ItemsSource = oppgaver;
-            OppgaveList.IsRefreshing = false;
-        }
+        //void VelgEmneButton_OnTapped(object sender, EventArgs e)
+        //{
+        //    this.CurrentPage = this.Children[3];
+        //}
+
+        //void VelgFagområdeButton_OnTapped(object sender, EventArgs e)
+        //{
+        //        this.CurrentPage = this.Children[2];
+        //}
 
         void SwipeRight(object sender, EventArgs e)
         {
             ToolbarItem tbi = (ToolbarItem)sender;
             Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
             {
-                if (currentPage != 1)
+                if (CurrentPage == this.Children[0])
                 {
-                    currentPage = 1;
+                    this.CurrentPage = this.Children[1];
                 }
-
-                this.CurrentPage = this.Children[currentPage];
-
+                else if (CurrentPage == this.Children[1])
+                {
+                    this.CurrentPage = this.Children[2];
+                }
+                else if (CurrentPage == this.Children[2])
+                {
+                    this.CurrentPage = this.Children[3];
+                }
             });
         }
+
+        void SwipeLeft(object sender, EventArgs e)
+        {
+            ToolbarItem tbi = (ToolbarItem)sender;
+            Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
+            {
+                if (CurrentPage == this.Children[3])
+                {
+                    this.CurrentPage = this.Children[2];
+                }
+                else if (CurrentPage == this.Children[2])
+                {
+                    this.CurrentPage = this.Children[1];
+                }
+                else if (CurrentPage == this.Children[1])
+                {
+                    this.CurrentPage = this.Children[0];
+                }
+            });
+        }
+
+
+        /// <summary>
+        /// Handles refresh behaviour on button click
+        /// </summary>
+        void Refresh_OnTapped(object sender, EventArgs e)
+        {
+            ExcecuteRefreshCommand();
+        }
+
+        private ICommand RefreshCommand {
+            get { return refreshCommand ?? (refreshCommand = new Command(async () => await ExcecuteRefreshCommand())); }
+        }
+
+        /// <summary>
+        /// Refreshes the list
+        /// </summary>
+        async Task ExcecuteRefreshCommand() {
+            listInit.SaveSettings();
+            //oppgaver.Clear();
+            OppgaveList.ItemsSource = null;
+            AddData();
+            OppgaveList.ItemsSource = oppgaver;
+            OppgaveList.IsRefreshing = false;
+        }
+        
+        //Alters title on carouselpage by contentpage
+        public new event EventHandler CurrentPageChanged;
+        protected override void OnCurrentPageChanged()
+        {
+            int prevPage = 0;
+            EventHandler changed = CurrentPageChanged;
+            if (changed != null)
+                changed(this, EventArgs.Empty);
+            if (CurrentPage == this.Children[0]) {
+                this.Title = p0title;
+            } else if (CurrentPage == this.Children[1]) {
+                this.Title = p1title;
+            }
+            //add in case of more pages
+            //else if (CurrentPage == this.Children[2]) {
+            //    this.Title = p2title;
+            //} else if (CurrentPage == this.Children[3]) {
+            //    this.Title = p3title;
+            //}
+        }
+
 
         protected override void OnDisappearing()
         {
             listInit.SaveSettings(); //saves the settings when pressing the up button/leaving the page
         }
 
-        protected override bool OnBackButtonPressed()
+        protected override bool OnBackButtonPressed() //behaviour of HARDWARE back button, not the up button.
         {
-            listInit.SaveSettings(); //saves the settings when pressing hardware back button
-            var p0 = this.Children[0];
-            var p1 = this.Children[1];
+            //var p0 = this.Children[0];
+            //var p1 = this.Children[1];
 
             if (CurrentPage.SendBackButtonPressed()) return true;
 
-            if (CurrentPage == p1)
-            {
-                this.CurrentPage = p0;
-            }
-            else if (CurrentPage == p0)
-            {
-                return false;
-            }
+            //if (CurrentPage == p1)
+            //{
+            //    this.CurrentPage = p0;
+            //    listInit.SaveSettings();
+            //}
+            //else if (CurrentPage == p0)
+            //{
+            //    return false;
+            //}
+            //listInit.SaveSettings();
             return true;
         }
 
-        private async void AddData()
+        public void getFilter()
+        { }
+
+        //public Dictionary<string, string> GetCourse()
+        //{
+        //    foreach (Course course in listInit.coursesSettings)
+        //    {
+        //        object itemname = OppgaverEmner.SelectedItem;
+        //        string i = itemname.ToString();
+
+
+
+        //        if (course.name == i) {
+        //            listInit.coursesFilter.Add("courses", course.id);
+        //            System.Diagnostics.Debug.WriteLine("ITEMNAME TOSTRING DOES NOT WORK::::: " + i);
+        //        }
+        //        else
+        //        {
+        //            System.Diagnostics.Debug.WriteLine("ITEMNAME TOSTRING PRODUCES STRING::::: " + i);
+        //        }
+
+
+        //    }
+        //    return listInit.coursesFilter;
+        //}
+
+
+    //void OnSelection(object sender, SelectedItemChangedEventArgs e)
+    //{
+    //    if (e.SelectedItem == null)
+    //    {
+    //        return; //ItemSelected is called on deselection, which results in SelectedItem being set to null
+    //    }
+    //    DisplayAlert("Item Selected", e.SelectedItem.ToString(), "Ok");
+    //    //((ListView)sender).SelectedItem = null; //uncomment line if you want to disable the visual selection state.
+    //}
+
+    private async void AddData()
         {
-            //checkedstudygroups must be uuid
-            List<string> checkedStudyGroups = listInit.GetSettings();
-            
-            //LEGG FAGOMRÅDER TIL AKTIVT FILTER HER MED EN SWITCH ELLER LIGNENDE
-
-
-            Dictionary<string, string> filter = new Dictionary<string, string>();
+            //Dictionary<string, string> filter = new Dictionary<string, string>(); //contains only one item from each group
             //filter.Add("courses", "DAT-304");
             //filter.Add("types", "virksomhet");
+            
 
             ProjectsController jc = new ProjectsController();
-            IEnumerable<Project> projects = await jc.GetProjectsBasedOnFilter(checkedStudyGroups, null, null);
+            
+            IEnumerable<Project> projects = await jc.GetProjectsBasedOnFilter(listInit.GetSettings(), null, null);
             foreach(Project p in projects)
             {
                 oppgaver.Clear();
@@ -128,49 +250,8 @@ namespace KompetansetorgetXamarin.Views
             {
                 System.Diagnostics.Debug.WriteLine("GetProjectsBasedOnFilter: projects.Count(): " +
                                                    projects.Count());
-                foreach (var project in projects)
-                {
-                    System.Diagnostics.Debug.WriteLine("Companies is not null: " + project.companies[0].id);
-                    System.Diagnostics.Debug.WriteLine("Companies is not null: " + project.companies[0].name);
-                    System.Diagnostics.Debug.WriteLine("Companies is not null: " + project.companies[0].logo);
-                }
             }
         }
-
-        //oppgaver.Add(new Oppgave("UiA", "Lag en app for kompetansetorget!", uiaLogo));
-        //oppgaver.Add(new Oppgave("UiA", "Lag en kalenderfunksjon til UiAs studenter", uiaLogo));
-        //oppgaver.Add(new Oppgave("UiA", "Morseffekter på eggstørrelse hos hummer", uiaLogo));
-        //oppgaver.Add(new Oppgave("Agder Energi", "Fullstendig interaktiv 3D visualisering av Kraftstasjon (Tungefoss) med innlagte e-læringsressurser og dokumentasjon", "http://kompetansetorget.uia.no/var/kompetansetorget/storage/images/virksomheter/agder-energi/10593-1-nor-NO/agder-energi_width-12.jpg"));
-        //oppgaver.Add(new Oppgave("abnc", "Konstruksjon av demo-handelsplattform", defaultLogo));
-        //oppgaver.Add(new Oppgave("abnc", "Utarbeiding av derivater for internett-handelsplattform", defaultLogo));
-        //oppgaver.Add(new Oppgave("UiA", "Lag en app for kompetansetorget!", uiaLogo));
-        //oppgaver.Add(new Oppgave("UiA", "Lag en kalenderfunksjon til UiAs studenter", uiaLogo));
-        //oppgaver.Add(new Oppgave("UiA", "Morseffekter på eggstørrelse hos hummer", uiaLogo));
-        //oppgaver.Add(new Oppgave("Agder Energi", "Fullstendig interaktiv 3D visualisering av Kraftstasjon (Tungefoss) med innlagte e-læringsressurser og dokumentasjon", "http://kompetansetorget.uia.no/var/kompetansetorget/storage/images/virksomheter/agder-energi/10593-1-nor-NO/agder-energi_width-12.jpg"));
-        //oppgaver.Add(new Oppgave("abnc", "Konstruksjon av demo-handelsplattform", defaultLogo));
-        //oppgaver.Add(new Oppgave("abnc", "Utarbeiding av derivater for internett-handelsplattform", defaultLogo));
-
-
-
-
-        //Xamarin.Forms.Device.BeginInvokeOnMainThread(async() =>
-        //    {
-
-
-        //        if (CurrentPage == p1)
-        //        {
-        //            this.CurrentPage = p0;
-        //        }
-        //        else {
-
-        //        }
-        //        return base.OnBackButtonPressed();
-        //    });
-
-        //if (result) await this.Navigation.PopAsync();
-        //CurrentPage.Navigation.InsertPageBefore(this.Children[0], CurrentPage.Navigation.NavigationStack.First());
-        //var result = await this.DisplayAlert("Alert!", "Do you really want to exit?", "Yes", "No");
-
     }
 }
 

@@ -2,7 +2,8 @@
 <local:BaseContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:KompetansetorgetXamarin.Controls;assembly=KompetansetorgetXamarin"
-             x:Class="KompetansetorgetXamarin.Views.MainPage">
+             x:Class="KompetansetorgetXamarin.Views.MainPage"
+             Title="Kompetansetorget">
   <ContentPage.Content>
     <!--<StackLayout>
       <Image Source="{local:ImageResource KTbanner.jpg}"/>

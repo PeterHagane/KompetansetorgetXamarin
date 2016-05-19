@@ -252,6 +252,10 @@
     <AndroidResource Include="Resources\drawable-hdpi\UserBlack.png" />
     <AndroidResource Include="Resources\drawable-hdpi\RoundedRectangle.xml" />
     <AndroidResource Include="Resources\drawable-hdpi\logo_virksomhet.jpg" />
+    <AndroidResource Include="Resources\drawable-hdpi\Sort.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\SortSort.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\Reload.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\SaveWhite.png" />
     <Content Include="Resources\drawable-xhdpi\KTbanner.jpg" />
     <AndroidResource Include="Resources\drawable-xhdpi\icon.png" />
     <AndroidResource Include="Resources\drawable-xxhdpi\ArrowBlackLeft.png" />
@@ -262,6 +266,10 @@
     <AndroidResource Include="Resources\drawable-xhdpi\UserBlack.png" />
     <AndroidResource Include="Resources\drawable-xhdpi\RoundedRectangle.xml" />
     <AndroidResource Include="Resources\drawable-xhdpi\logo_virksomhet.jpg" />
+    <AndroidResource Include="Resources\drawable-xhdpi\Sort.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\SortSort.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\Reload.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\SaveWhite.png" />
     <Content Include="Resources\drawable-xxhdpi\KTbanner.jpg" />
     <AndroidResource Include="Resources\drawable-xxhdpi\icon.png" />
     <AndroidResource Include="Resources\drawable\ArrowBlackLeft.png" />
@@ -272,12 +280,20 @@
     <AndroidResource Include="Resources\drawable-xxhdpi\UserBlack.png" />
     <AndroidResource Include="Resources\drawable-xxhdpi\RoundedRectangle.xml" />
     <AndroidResource Include="Resources\drawable-xxhdpi\logo_virksomhet.jpg" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\Sort.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\SortSort.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\Reload.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\SaveWhite.png" />
     <Content Include="Resources\drawable\KTbanner.jpg" />
     <AndroidResource Include="Resources\drawable\icon.png" />
     <AndroidResource Include="Resources\drawable\User.png" />
     <AndroidResource Include="Resources\drawable\UserBlack.png" />
     <AndroidResource Include="Resources\drawable\RoundedRectangle.xml" />
     <AndroidResource Include="Resources\drawable\logo_virksomhet.jpg" />
+    <AndroidResource Include="Resources\drawable\Sort.png" />
+    <AndroidResource Include="Resources\drawable\SortSort.png" />
+    <AndroidResource Include="Resources\drawable\Reload.png" />
+    <AndroidResource Include="Resources\drawable\SaveWhite.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\KompetansetorgetXamarin\KompetansetorgetXamarin.csproj">
