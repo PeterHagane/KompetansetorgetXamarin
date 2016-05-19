@@ -28,8 +28,9 @@ namespace KompetansetorgetXamarin.Utility
         /// <returns></returns>
         public static string Base64Decode(string base64EncodedData)
         {
-            var base64EncodedBytes = System.Convert.FromBase64String(base64EncodedData);
-            return System.Text.Encoding.UTF8.GetString(base64EncodedBytes, 0, base64EncodedBytes.Length);
+            //var base64EncodedBytes = System.Convert.FromBase64String(base64EncodedData);
+            //return System.Text.Encoding.UTF8.GetString(base64EncodedBytes, 0, base64EncodedBytes.Length);
+            return Encoding.UTF8.GetString(Convert.FromBase64String(base64EncodedData), 0, Convert.FromBase64String(base64EncodedData).Length);
         }
 
         /// <summary>

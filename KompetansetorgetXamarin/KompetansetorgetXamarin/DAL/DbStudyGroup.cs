@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using KompetansetorgetXamarin.Models;
+using KompetansetorgetXamarin.Utility;
 
 namespace KompetansetorgetXamarin.DAL
 {
@@ -119,7 +120,7 @@ namespace KompetansetorgetXamarin.DAL
         {
             System.Diagnostics.Debug.WriteLine("StudyGroupJob created");
             StudyGroupJob sgj = new StudyGroupJob();
-            sgj.StudyGroupId = studygroupId;
+            sgj.StudyGroupId = Hasher.Base64Encode(studygroupId);
             sgj.JobUuid = jobUuid;
             System.Diagnostics.Debug.WriteLine("StudyGroupJob before insert");
 
@@ -144,7 +145,7 @@ namespace KompetansetorgetXamarin.DAL
         {
             System.Diagnostics.Debug.WriteLine("StudyGroupProject created");
             StudyGroupProject sgp = new StudyGroupProject();
-            sgp.StudyGroupId = studygroupId;
+            sgp.StudyGroupId = Hasher.Base64Encode(studygroupId);
             sgp.ProjectUuid = projectUuid;
             System.Diagnostics.Debug.WriteLine("StudyGroupProject before insert");
 
