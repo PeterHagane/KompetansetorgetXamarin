@@ -235,7 +235,7 @@ namespace KompetansetorgetXamarin.Views
 
             ProjectsController jc = new ProjectsController();
             
-            IEnumerable<Project> projects = await jc.GetProjectsBasedOnFilter(listInit.GetSettings(), null, null);
+            IEnumerable<Project> projects = await jc.GetProjectsBasedOnFilter(listInit.GetSettings(), null);
             foreach(Project p in projects)
             {
                 oppgaver.Clear();

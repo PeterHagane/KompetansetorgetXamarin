@@ -28,7 +28,11 @@ namespace KompetansetorgetXamarin.Controllers
         }
 
         /// <summary>
-        /// Returns true if there are any new or modified projects.
+        /// Can return 3 different values:
+        /// 1. "exists": No new project on the server. 
+        /// 2. "incorrectCache": If the cache indicates that local database got data that the server doesnt have. 
+        /// 3. "newData": There are new projects available on the server.
+        /// 4. null: Check if Authenticater.Authorized has been set to false, if not the app could most likely not reach the server.
         /// </summary>
         /// <returns></returns>
         private async Task<String> CheckServerForNewData(List<string> studyGroups = null, Dictionary<string, string> filter = null)
@@ -136,6 +140,9 @@ namespace KompetansetorgetXamarin.Controllers
             return null;
         }
 
+        /// <summary>
+        /// Creates the query parameters used in url to extract wanted data
+        /// </summary>
         private string CreateQueryParams(List<string> studyGroups = null,
             string sortBy = "", Dictionary<string, string> filter = null)
         {
@@ -212,11 +219,10 @@ namespace KompetansetorgetXamarin.Controllers
         ///                      Supports only 1 key at this current implementation!</param>
         /// <returns></returns>
         public async Task<IEnumerable<Project>> GetProjectsBasedOnFilter(List<string> studyGroups = null,
-            string sortBy = "", Dictionary<string, string> filter = null)
+            Dictionary<string, string> filter = null)
         {
             DbProject db = new DbProject();
             //string adress = "http://kompetansetorgetserver1.azurewebsites.net/api/v1/projects";
-            string queryParams = CreateQueryParams(studyGroups, sortBy, filter);
 
             string instructions = await CheckServerForNewData(studyGroups, filter);
             if (!Authenticater.Authorized)
@@ -234,9 +240,6 @@ namespace KompetansetorgetXamarin.Controllers
                 }
             }
 
-            Uri url = new Uri(Adress + queryParams);
-            System.Diagnostics.Debug.WriteLine("GetProjectsBasedOnFilter - url: " + url.ToString());
-
             DbStudent dbStudent = new DbStudent();
 
             string accessToken = dbStudent.GetStudentAccessToken();
@@ -246,7 +249,10 @@ namespace KompetansetorgetXamarin.Controllers
                 Authenticater.Authorized = false;
                 return null;
             }
-
+            string sortBy = "-publish";
+            string queryParams = CreateQueryParams(studyGroups, sortBy, filter);
+            Uri url = new Uri(Adress + queryParams);
+            System.Diagnostics.Debug.WriteLine("GetProjectsBasedOnFilter - url: " + url.ToString());
 
             var client = new HttpClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", accessToken);
@@ -271,7 +277,7 @@ namespace KompetansetorgetXamarin.Controllers
                     {
                         var cachedProjects = db.GetProjectsFromDbBasedOnFilter(studyGroups, filter);
                         projects = DeserializeMany(jsonString);
-                        // Get all jobs from that local dataset that was not in the data set provided by the server
+                        // Get all jobs from that local dataset that was not in the dataset provided by the server
                         // These are manually deleted projects and have to be cleared from cache.
                         // linear search is ok because of small data set
                         var manuallyDeletedProjects = cachedProjects.Where(p => !projects.Any(cp2 => cp2.uuid == p.uuid));
