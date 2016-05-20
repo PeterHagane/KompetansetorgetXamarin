@@ -27,8 +27,12 @@ namespace KompetansetorgetXamarin.Controllers
         }
 
         /// <summary>
-        /// Returns true if there are any new or modified jobs.
-        /// //TODO Way to complicated logic, simplify this method if theres time
+        /// Can return 3 different values:
+        /// 1. "exists": No new jobs on the server. 
+        /// 2. "incorrectCache": If the cache indicates that local database got data that the server doesnt have. 
+        /// 3. "newData": There are new jobs available on the server.
+        /// 4. null: Check if Authenticater.Authorized has been set to false, if not the app could most likely not reach the server.
+        /// TODO Way to complicated logic, simplify this method if theres time
         /// </summary>
         /// <returns></returns>
         private async Task<string> CheckServerForNewData(List<string> studyGroups = null, Dictionary<string, string> filter = null)
@@ -182,7 +186,9 @@ namespace KompetansetorgetXamarin.Controllers
             Deserialize(jsonString);
         }
 
-
+        /// <summary>
+        /// Creates the query parameters used in url to get filtered and sorted data
+        /// </summary>
         private string CreateQueryParams(List<string> studyGroups = null,
             string sortBy = "", Dictionary<string, string> filter = null)
         {
@@ -248,21 +254,17 @@ namespace KompetansetorgetXamarin.Controllers
         /// Gets a job based on optional filters.
         /// </summary>
         /// <param name="studyGroups">studyGroups can be a list of numerous studygroups ex: helse, idrettsfag, datateknologi </param>
-        /// <param name="sortBy">published - oldest to newest
-        ///                      -published - newest to oldest
-        ///                      expirydate - descending order
-        ///                      -expirydate - ascending order
         /// </param>
         /// <param name="filter">A dictionary where key can be: titles (values:title of the job), types (values: deltid, heltid, etc...),
         ///                      locations (values: vestagder, austagder), . 
         ///                      Supports only 1 key at this current implementation!</param>
         /// <returns></returns>
         public async Task<IEnumerable<Job>> GetJobsBasedOnFilter(List<string> studyGroups = null,
-            string sortBy = "", Dictionary<string, string> filter = null)
+             Dictionary<string, string> filter = null)
         {
+
             DbJob db = new DbJob();
             //string adress = "http://kompetansetorgetserver1.azurewebsites.net/api/v1/jobs";
-            string queryParams = CreateQueryParams(studyGroups, sortBy, filter);
             string instructions = await CheckServerForNewData(studyGroups, filter);
             if (!Authenticater.Authorized)
             {
@@ -279,9 +281,6 @@ namespace KompetansetorgetXamarin.Controllers
                 }
             }
 
-            Uri url = new Uri(Adress + queryParams);
-            System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter - url: " + url.ToString());
-
             DbStudent dbStudent = new DbStudent();
             
             string accessToken = dbStudent.GetStudentAccessToken();
@@ -292,6 +291,10 @@ namespace KompetansetorgetXamarin.Controllers
                 return null;
             }
 
+            string sortBy = "-publish";
+            string queryParams = CreateQueryParams(studyGroups, sortBy, filter);
+            Uri url = new Uri(Adress + queryParams);
+            System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter - url: " + url.ToString());
             var client = new HttpClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", accessToken);
 

@@ -185,7 +185,7 @@ namespace KompetansetorgetXamarin.Views
 
             JobsController jc = new JobsController();
 
-            IEnumerable<Job> jobs = await jc.GetJobsBasedOnFilter(LISTINIT.GetSettings(), null, null);
+            IEnumerable<Job> jobs = await jc.GetJobsBasedOnFilter(LISTINIT.GetSettings(), null);
             
             foreach (Job p in jobs)
             {

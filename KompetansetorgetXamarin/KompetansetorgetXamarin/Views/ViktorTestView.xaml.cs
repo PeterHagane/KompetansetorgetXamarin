@@ -214,7 +214,7 @@ namespace KompetansetorgetXamarin.Views
             filter.Add("types", heltid);
 
             JobsController jc = new JobsController();
-            IEnumerable<Job> jobs = await jc.GetJobsBasedOnFilter(studyGroups, "-publish", filter);
+            IEnumerable<Job> jobs = await jc.GetJobsBasedOnFilter(studyGroups, filter);
 
             if (!Authenticater.Authorized)
             {
@@ -400,7 +400,7 @@ namespace KompetansetorgetXamarin.Views
             filter.Add("types", virksomhet);
 
             ProjectsController jc = new ProjectsController();
-            IEnumerable<Project> projects = await jc.GetProjectsBasedOnFilter(studyGroups, "-publish", filter);
+            IEnumerable<Project> projects = await jc.GetProjectsBasedOnFilter(studyGroups, filter);
 
             if (!Authenticater.Authorized)
             {
