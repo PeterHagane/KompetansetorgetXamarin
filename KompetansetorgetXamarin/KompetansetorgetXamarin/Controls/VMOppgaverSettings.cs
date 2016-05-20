@@ -48,10 +48,11 @@ namespace KompetansetorgetXamarin.Controls
 
         public List<string> GetSettings()
         {
+            checkedStudyGroups.Clear();
             if (oppgaveSettings == null)
             {
                 SetSettings();
-                return null;
+                return checkedStudyGroups;
             }
             else
                 foreach(fagområdeSetting setting in oppgaveSettings) {
@@ -65,7 +66,6 @@ namespace KompetansetorgetXamarin.Controls
                 
             return checkedStudyGroups;
         }
-
         public async void SetSettings()
         {
 
@@ -83,6 +83,7 @@ namespace KompetansetorgetXamarin.Controls
 
         public void SaveSettings()
         {
+
             //DbLocation lc = new DbLocation();
             //DbCourse cc = new DbCourse();
             DbStudyGroup sgc = new DbStudyGroup();

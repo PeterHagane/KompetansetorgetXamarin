@@ -135,7 +135,7 @@ namespace KompetansetorgetXamarin.Views
         /// </summary>
         async Task ExcecuteRefreshCommand() {
             listInit.SaveSettings();
-            //oppgaver.Clear();
+            oppgaver.Clear();
             OppgaveList.ItemsSource = null;
             AddData();
             OppgaveList.ItemsSource = oppgaver;
@@ -238,7 +238,7 @@ namespace KompetansetorgetXamarin.Views
             IEnumerable<Project> projects = await jc.GetProjectsBasedOnFilter(listInit.GetSettings(), null);
             foreach(Project p in projects)
             {
-                oppgaver.Clear();
+                //oppgaver.Clear();
                 oppgaver.Add(p);
             }
 

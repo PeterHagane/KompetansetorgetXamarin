@@ -166,6 +166,7 @@
     </ContentPage.Padding>
 
     <StackLayout>
+      <Picker x:Name="CoursePicker" SelectedIndex="{Binding CourseIndex}" />
       <!--SelectedItem="{Binding SelectedCourse}"-->
       <!--SeparatorVisibility="None"--> 
       <ListView x:Name="oppgaverSettings">
