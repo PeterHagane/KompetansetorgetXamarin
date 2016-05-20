@@ -58,8 +58,8 @@ namespace KompetansetorgetXamarin.Controls
                     bool checkSwitch = setting.IsSelected;
                     if (checkSwitch == true)
                     {
-                        System.Diagnostics.Debug.WriteLine("setting.Name: " + setting.Name);
-                        checkedStudyGroups.Add(setting.Name);                
+                        System.Diagnostics.Debug.WriteLine("setting.Name: " + setting.Name + ", id passed: " + setting.id);
+                        checkedStudyGroups.Add(setting.id);                
                     }
                 }
                 
