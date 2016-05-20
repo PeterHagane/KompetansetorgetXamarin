@@ -24,9 +24,9 @@ namespace KompetansetorgetXamarin.Views
 
         public CarouselStillinger()
         {
-            System.Diagnostics.Debug.WriteLine("FØR INITIALIZECOMPONENT ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
+            System.Diagnostics.Debug.WriteLine("");
             InitializeComponent();
-            System.Diagnostics.Debug.WriteLine(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: ETTER INITIALIZECOMPONENT");
+            System.Diagnostics.Debug.WriteLine("");
             AddData();
             this.Title = p0title;
             StillingList.ItemsSource = JOBS;   // oppgave.companies[0].name  .logo

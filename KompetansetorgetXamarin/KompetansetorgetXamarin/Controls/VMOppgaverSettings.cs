@@ -55,15 +55,16 @@ namespace KompetansetorgetXamarin.Controls
                 return checkedStudyGroups;
             }
             else
-                foreach(fagområdeSetting setting in oppgaveSettings) {
+                foreach (fagområdeSetting setting in oppgaveSettings)
+                {
                     bool checkSwitch = setting.IsSelected;
                     if (checkSwitch == true)
                     {
                         System.Diagnostics.Debug.WriteLine("setting.Name: " + setting.Name + ", id passed: " + setting.id);
-                        checkedStudyGroups.Add(setting.id);                
+                        checkedStudyGroups.Add(setting.id);
                     }
                 }
-                
+
             return checkedStudyGroups;
         }
         public async void SetSettings()
@@ -83,7 +84,6 @@ namespace KompetansetorgetXamarin.Controls
 
         public void SaveSettings()
         {
-
             //DbLocation lc = new DbLocation();
             //DbCourse cc = new DbCourse();
             DbStudyGroup sgc = new DbStudyGroup();

@@ -44,10 +44,11 @@ namespace KompetansetorgetXamarin.Controls
 
         public List<string> GetSettings()
         {
+            checkedStudyGroups.Clear();
             if (stillingerSettings == null)
             {
                 SetSettings();
-                return null;
+                return checkedStudyGroups; 
             }
             else
                 foreach (fagområdeSetting setting in stillingerSettings)
@@ -59,7 +60,6 @@ namespace KompetansetorgetXamarin.Controls
                         checkedStudyGroups.Add(setting.id);
                     }
                 }
-
             return checkedStudyGroups;
         }
 
@@ -102,15 +102,11 @@ namespace KompetansetorgetXamarin.Controls
             }
             sgc.UpdateStudyGroups(studyGroupsFilter);
         }
-
         public async void GetAllFilters()
         {
-
             DbStudyGroup sgc = new DbStudyGroup();
-
             studyGroupsFilter = sgc.GetAllStudyGroups();
-
-
+            
             foreach (var studyGroup in studyGroupsFilter)
             {
                 studyDict.Add(studyGroup.name, studyGroup.id);
