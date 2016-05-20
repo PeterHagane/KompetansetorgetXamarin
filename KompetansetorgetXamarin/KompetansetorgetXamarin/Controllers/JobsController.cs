@@ -254,10 +254,6 @@ namespace KompetansetorgetXamarin.Controllers
         /// Gets a job based on optional filters.
         /// </summary>
         /// <param name="studyGroups">studyGroups can be a list of numerous studygroups ex: helse, idrettsfag, datateknologi </param>
-        /// <param name="sortBy">published - oldest to newest
-        ///                      -published - newest to oldest
-        ///                      expirydate - descending order
-        ///                      -expirydate - ascending order
         /// </param>
         /// <param name="filter">A dictionary where key can be: titles (values:title of the job), types (values: deltid, heltid, etc...),
         ///                      locations (values: vestagder, austagder), . 
@@ -266,10 +262,9 @@ namespace KompetansetorgetXamarin.Controllers
         public async Task<IEnumerable<Job>> GetJobsBasedOnFilter(List<string> studyGroups = null,
              Dictionary<string, string> filter = null)
         {
-            string sortBy = "-publish";
+
             DbJob db = new DbJob();
             //string adress = "http://kompetansetorgetserver1.azurewebsites.net/api/v1/jobs";
-            string queryParams = CreateQueryParams(studyGroups, sortBy, filter);
             string instructions = await CheckServerForNewData(studyGroups, filter);
             if (!Authenticater.Authorized)
             {
@@ -286,9 +281,6 @@ namespace KompetansetorgetXamarin.Controllers
                 }
             }
 
-            Uri url = new Uri(Adress + queryParams);
-            System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter - url: " + url.ToString());
-
             DbStudent dbStudent = new DbStudent();
             
             string accessToken = dbStudent.GetStudentAccessToken();
@@ -299,6 +291,10 @@ namespace KompetansetorgetXamarin.Controllers
                 return null;
             }
 
+            string sortBy = "-publish";
+            string queryParams = CreateQueryParams(studyGroups, sortBy, filter);
+            Uri url = new Uri(Adress + queryParams);
+            System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter - url: " + url.ToString());
             var client = new HttpClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", accessToken);
 

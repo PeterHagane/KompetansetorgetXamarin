@@ -141,7 +141,7 @@ namespace KompetansetorgetXamarin.Controllers
         }
 
         /// <summary>
-        /// Creates the query parameters used in url to extract wanted data
+        /// Creates the query parameters used in url to get filtered and sorted data
         /// </summary>
         private string CreateQueryParams(List<string> studyGroups = null,
             string sortBy = "", Dictionary<string, string> filter = null)
