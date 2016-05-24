@@ -65,6 +65,8 @@
     <Compile Include="Controls\ButtonStack.cs" />
     <Compile Include="Controls\CustomImageCell.cs" />
     <Compile Include="Controls\CustomSwitchCell.cs" />
+    <Compile Include="Controls\SearchOppgaverListView.cs" />
+    <Compile Include="Controls\SearchStillingerListView.cs" />
     <Compile Include="Controls\VMStillingerSettings.cs" />
     <Compile Include="Controls\VMVarselSettings.cs" />
     <Compile Include="Controls\XLabsExtendedButton.cs" />

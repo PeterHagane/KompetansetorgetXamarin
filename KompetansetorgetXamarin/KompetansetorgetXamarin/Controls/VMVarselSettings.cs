@@ -21,6 +21,7 @@ namespace KompetansetorgetXamarin.Controls
         public Dictionary<string, string> studyDict { private set; get; }
         public Dictionary<string, string> coursesFilter = new Dictionary<string, string>();
 
+        public static bool cs = false; //changed setting bool to detect when to save settings
 
         public VMVarselSettings()
         {
@@ -44,6 +45,7 @@ namespace KompetansetorgetXamarin.Controls
 
         public List<string> GetSettings()
         {
+            checkedStudyGroups.Clear();
             if (varslerSettings == null)
             {
                 SetSettings();
@@ -82,25 +84,29 @@ namespace KompetansetorgetXamarin.Controls
         {
             //DbLocation lc = new DbLocation();
             //DbCourse cc = new DbCourse();
-            DbStudyGroup sgc = new DbStudyGroup();
-
-            foreach (fagområdeSetting setting in varslerSettings)
+            if (cs == true)
             {
-                //gets the name and setting from 
-                string setName = setting.Name;
-                bool setSwitch = setting.IsSelected;
+                DbStudyGroup sgc = new DbStudyGroup();
 
-                foreach (StudyGroup studygroup in studyGroupsFilter)
+                foreach (fagområdeSetting setting in varslerSettings)
                 {
-                    if (studygroup.name == setName)
+                    //gets the name and setting from 
+                    string setName = setting.Name;
+                    bool setSwitch = setting.IsSelected;
+
+                    foreach (StudyGroup studygroup in studyGroupsFilter)
                     {
-                        studygroup.name = setName;
-                        studygroup.filterChecked = setSwitch;
-                        break;
+                        if (studygroup.name == setName)
+                        {
+                            studygroup.name = setName;
+                            studygroup.filterChecked = setSwitch;
+                            break;
+                        }
                     }
                 }
+                sgc.UpdateStudyGroups(studyGroupsFilter);
+                cs = false;
             }
-            sgc.UpdateStudyGroups(studyGroupsFilter);
         }
 
         public async void GetAllFilters()

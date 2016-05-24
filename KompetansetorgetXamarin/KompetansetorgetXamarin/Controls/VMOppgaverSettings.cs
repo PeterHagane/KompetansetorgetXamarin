@@ -6,7 +6,7 @@ using KompetansetorgetXamarin.Controllers;
 using System.Linq;
 using KompetansetorgetXamarin.DAL;
 using Xamarin.Forms.Xaml;
-
+using KompetansetorgetXamarin.Views;
 
 namespace KompetansetorgetXamarin.Controls
 {
@@ -26,6 +26,9 @@ namespace KompetansetorgetXamarin.Controls
         public Dictionary<string, string> studyDict { private set; get; }
         public Dictionary<string, string> coursesFilter = new Dictionary<string, string>();  //gets used when retreiving projects/oppgaver in CarouselOppgaver
 
+        public static bool cs = false; //changed setting bool to detect when to save settings
+
+
 
 
         public VMOppgaverSettings() {
@@ -44,6 +47,7 @@ namespace KompetansetorgetXamarin.Controls
         {
             var fagområdeSetting = sender as fagområdeSetting;
             System.Diagnostics.Debug.WriteLine("{0} has been toggled to {1}", fagområdeSetting.Name, fagområdeSetting.IsSelected);
+            cs = true; //set changed setting to true when setting is changed
         }
 
         public List<string> GetSettings()
@@ -86,28 +90,33 @@ namespace KompetansetorgetXamarin.Controls
         {
             //DbLocation lc = new DbLocation();
             //DbCourse cc = new DbCourse();
-            DbStudyGroup sgc = new DbStudyGroup();
-
-            foreach (fagområdeSetting setting in oppgaveSettings)
+            if (cs == true)
             {
-                //gets the name and setting from 
-                string setName = setting.Name;
-                bool setSwitch = setting.IsSelected;
+                DbStudyGroup sgc = new DbStudyGroup();
 
-                foreach (var studygroup in studyGroupsFilter)
+                foreach (fagområdeSetting setting in oppgaveSettings)
                 {
-                    if (studygroup.name == setName)
+                    //gets the name and setting from 
+                    string setName = setting.Name;
+                    bool setSwitch = setting.IsSelected;
+
+                    foreach (var studygroup in studyGroupsFilter)
                     {
-                        studygroup.name = setName;
-                        studygroup.filterChecked = setSwitch;
-                        break;
+                        if (studygroup.name == setName)
+                        {
+                            studygroup.name = setName;
+                            studygroup.filterChecked = setSwitch;
+                            break;
+                        }
                     }
                 }
+                sgc.UpdateStudyGroups(studyGroupsFilter);
+                cs = false; //set changedsetting to false after saving
+                CarouselOppgaver.pullList = true; //set pullList to true, meaning that any refresh action will reload the list according to new settings
             }
-            sgc.UpdateStudyGroups(studyGroupsFilter);
         }
 
-        
+
         public async void GetStudentFilters() {
             //TODO
         }
