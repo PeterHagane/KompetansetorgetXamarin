@@ -4,9 +4,9 @@
              x:Class="KompetansetorgetXamarin.Views.WebPage"
              xmlns:local="clr-namespace:KompetansetorgetXamarin.Controls;assembly=KompetansetorgetXamarin">
 
-  <HybridWebView x:Name="hybridWebView" >
+  <!--<HybridWebView x:Name="hybridWebView" >
     
-  </HybridWebView>
+  </HybridWebView>-->
   
   
 </local:BaseContentPage>
