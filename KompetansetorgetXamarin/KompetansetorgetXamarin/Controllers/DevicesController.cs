@@ -25,7 +25,7 @@ namespace KompetansetorgetXamarin.Controllers
 
 
         /// <summary>
-        /// 
+        /// Inserts or update the device with the given fields.
         /// </summary>
         /// <param name="gcmToken"></param>
         /// <param name="deviceId"></param>

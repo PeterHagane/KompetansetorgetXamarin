@@ -116,6 +116,8 @@ namespace KompetansetorgetXamarin.Views
         {
             if (pullList == false)
             {
+                VarselList.IsRefreshing = false;
+
             }
             else if (pullList == true)
             {
@@ -180,7 +182,7 @@ namespace KompetansetorgetXamarin.Views
         { }
 
 
-        public async void AddData()
+        public void AddData()
         {
             if (pullList == false)
             {

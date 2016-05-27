@@ -367,7 +367,7 @@ namespace KompetansetorgetXamarin.DAL
 
                     if (filterType == "titles")
                     {
-                        prepValue = filter[filterType];
+                        prepValue = "%" + filter[filterType] + "%";
 
                         if (string.IsNullOrWhiteSpace(whereAnd.ToString()))
                         {

@@ -262,7 +262,6 @@ namespace KompetansetorgetXamarin.Controllers
         public async Task<IEnumerable<Job>> GetJobsBasedOnFilter(List<string> studyGroups = null,
              Dictionary<string, string> filter = null)
         {
-
             DbJob db = new DbJob();
             //string adress = "http://kompetansetorgetserver1.azurewebsites.net/api/v1/jobs";
             string instructions = await CheckServerForNewData(studyGroups, filter);
