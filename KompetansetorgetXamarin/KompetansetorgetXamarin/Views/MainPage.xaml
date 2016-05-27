@@ -5,9 +5,8 @@
              x:Class="KompetansetorgetXamarin.Views.MainPage"
              Title="Kompetansetorget">
   <ContentPage.Content>
-    <!--<StackLayout>
-      <Image Source="{local:ImageResource KTbanner.jpg}"/>
-    </StackLayout>-->
+
+    <!--<Image Source="KTbanner.jpg"/>-->
     
     <StackLayout VerticalOptions="FillAndExpand"
                  Orientation="Vertical"

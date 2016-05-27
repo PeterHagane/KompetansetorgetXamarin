@@ -8,19 +8,11 @@ namespace KompetansetorgetXamarin.Models
 {
     class Varsel
     {
-        public Varsel(string newtype, string bedrift, string expiry, string image)
+        public Varsel(string varselText, string published, string logo)
         {
-            if (newtype == "Stilling")
-            {
-                this.Text = "Ny stilling fra " + bedrift + "!";
-            }
-            else if (newtype == "Oppgave")
-            {
-                this.Text = "Ny oppgave fra " + bedrift + "!";
-            }
-
-            this.Detail = "Frist: " + expiry;
-            this.Image = image;
+            this.Text = varselText;
+            this.Detail = published;
+            this.Image = logo;
         }
 
         public string Text { private set; get; }

@@ -18,10 +18,9 @@ namespace KompetansetorgetXamarin.Controls
                     return;
                 var selected = (Project)e.SelectedItem;
                 SelectedItem = null;
-                //Navigation.PushAsync (new CampusLocationPage (selected));
+                //Navigation.PushAsync (new thispage (selected));
             };
         }
-
 
         public void FilterOppgaver(string filter)
         {
@@ -34,7 +33,7 @@ namespace KompetansetorgetXamarin.Controls
             }
             else {
                 this.ItemsSource = CarouselOppgaver.oppgaver
-                        //.Where(x => x.companies[0].name.ToLower() :::: have to choose between one or the other with current linq statement -- how combine two wheres? Needs to be OR 
+                        //.Where(x => x.companies[0].name.ToLower() //have to choose between one or the other with current linq statement -- how combine two wheres? Needs to be OR 
                         .Where(x => x.title.ToLower()
                         .Contains(filter.ToLower())
                         );

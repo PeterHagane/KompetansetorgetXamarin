@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
+using KompetansetorgetXamarin.Utility;
 
 namespace KompetansetorgetXamarin.Views
 {
@@ -17,7 +18,7 @@ namespace KompetansetorgetXamarin.Views
     {
         string defaultLogo = "http://kompetansetorget.uia.no/extension/kompetansetorget/design/kompetansetorget/images/logo-virksomhet.jpg";
         VMStillingerSettings LISTINIT = new VMStillingerSettings();
-        ObservableCollection<object> varsler = new ObservableCollection<object>();
+        ObservableCollection<Varsel> varsler = new ObservableCollection<Varsel>();
         ICommand refreshCommand;
         string p0title = "Dine varsler";
         string p1title = "Velg fagområder";
@@ -186,29 +187,74 @@ namespace KompetansetorgetXamarin.Views
             }
             else if (pullList == true)
             {
-                NotificationsController jc = new NotificationsController();
+                System.Diagnostics.Debug.WriteLine("ViktorTestView - NotificationsFromDb_OnClicked: Initiated");
+                NotificationsController nc = new NotificationsController();
+                List<Advert> notifications = nc.GetNotificationList();
 
-                List<object> nots = jc.GetNotificationList();
+                System.Diagnostics.Debug.WriteLine(
+                    "ViktorTestView - NotificationsFromDb_OnClicked: notifications.Count = " + notifications.Count);
 
-                foreach (var n in nots)
+
+
+                foreach (var n in notifications)
                 {
-                    //JOBS.Clear();
-                    varsler.Add(n);
+                    if (n is Job)
+                    {
+                        Job job = (Job)n;
+
+                        if (job.companies != null && job.companies[0].logo != null)
+                        {
+                            string logo = job.companies[0].logo;
+                            string varselText = "Ny stilling fra " + job.companies[0].name + "!";
+                            string published = "Publisert " + DateTimeHandler.MakeDateTimeString(job.published);
+                            varsler.Add(new Varsel(varselText, published, logo));
+                            // DO spesific Job code
+                            //long date = job.expiryDate; // Will work
+                            System.Diagnostics.Debug.WriteLine("job.title = " + job.title);
+                            System.Diagnostics.Debug.WriteLine("job.companies.logo = " + job.companies[0].logo);
+                        }
+                        else
+                        {
+                            System.Diagnostics.Debug.WriteLine("job.companies = null");
+                        }
+                        System.Diagnostics.Debug.WriteLine("job.expiryDate = " + job.expiryDate);
+
+                    }
+                    else if (n is Project)
+                    {
+                        // Do spesific Project  code.
+                        Project project = (Project)n;
+                        if (project.companies != null && project.companies[0].logo != null)
+                        {
+                            string logo = project.companies[0].logo;
+                            string varselText = "Ny oppgave fra " + project.companies[0].name + "!";
+                            string published = DateTimeHandler.MakeDateTimeString(project.published);
+                            varsler.Add(new Varsel(varselText, published, logo));
+
+                            System.Diagnostics.Debug.WriteLine("project.title = " + project.title);
+
+                            System.Diagnostics.Debug.WriteLine("project.companies.logo = " + project.companies[0].logo);
+                        }
+                        else
+                        {
+                            System.Diagnostics.Debug.WriteLine("project.companies = null");
+                        }
+                        System.Diagnostics.Debug.WriteLine("project.companies.logo = " + project.companies[0].logo);
+                        System.Diagnostics.Debug.WriteLine("project.published = " + project.published);
+                    }
+                    if (!Authenticater.Authorized)
+                    {
+                        GoToLogin();
+                    }
+                    if (varsler != null)
+                    {
+                        System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter: jobs.Count(): " +
+                                                          notifications.Count());
+                    }
+                    pullList = false;
                 }
 
-                if (!Authenticater.Authorized)
-                {
-                    GoToLogin();
-                }
-                if (varsler != null)
-                {
-                    System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter: jobs.Count(): " +
-                                                        nots.Count());
-                }
-                pullList = false;
             }
-
-
         }
     }
 }
