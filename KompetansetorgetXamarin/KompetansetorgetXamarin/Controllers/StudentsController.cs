@@ -93,7 +93,7 @@ namespace KompetansetorgetXamarin.Controllers
         /// Posts the Students StudyGroups used for push notifications to the server.
         /// </summary>
         /// <returns></returns>
-        public async Task<bool> PostStudentsStudyGroupToServer(List<StudyGroup> studyGroups)
+        public async Task<bool> PostStudentsStudyGroupToServer(List<string> studyGroups)
         {
             DbStudent db = new DbStudent();
             Student student = db.GetStudent();
@@ -106,7 +106,7 @@ namespace KompetansetorgetXamarin.Controllers
             string jsonString = "";
             foreach (var studyGroup in studyGroups)
             {
-                string id = Hasher.Base64Decode(studyGroup.id);
+                string id = Hasher.Base64Decode(studyGroup);
                 if (string.IsNullOrWhiteSpace(jsonString))
                 {
                     jsonString = "{\"StudyGroup\":[{\"id\":\"" + id + "\"}";

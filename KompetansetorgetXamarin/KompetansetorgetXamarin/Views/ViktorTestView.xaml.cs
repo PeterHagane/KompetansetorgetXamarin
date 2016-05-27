@@ -543,24 +543,17 @@ namespace KompetansetorgetXamarin.Views
 
         private async void TestPostStudentsStudyGroupToServer(object sender, EventArgs e)
         {
-            List<StudyGroup> studyGroups = new List<StudyGroup>();
-            StudyGroup idrettsfag = new StudyGroup();
+            List<string> studyGroups = new List<string>();
             string idrett = Hasher.Base64Encode("idrett");
-            idrettsfag.id = idrett;
-            StudyGroup datateknologi = new StudyGroup();
-            string datatekn = Hasher.Base64Encode("datateknologi");
-            datateknologi.id = datatekn;
-            studyGroups.Add(idrettsfag);
-            studyGroups.Add(datateknologi);
-            StudyGroup samfunnsfag = new StudyGroup();
+            string datateknologi = Hasher.Base64Encode("datateknologi");
+            string realfag = Hasher.Base64Encode("realfag");
             string samfunn = Hasher.Base64Encode("samfunnsfag");
 
-            samfunnsfag.id = samfunn;
-            StudyGroup realfag = new StudyGroup();
-            string realfa = Hasher.Base64Encode("realfag");
-            realfag.id = realfa;
+            studyGroups.Add(idrett);
+            studyGroups.Add(datateknologi);
             //studyGroups.Add(samfunnsfag);
             //studyGroups.Add(realfag);
+            StudyGroup samfunnsfag = new StudyGroup();
             StudentsController sc = new StudentsController();
             bool success = await sc.PostStudentsStudyGroupToServer(studyGroups);
 
