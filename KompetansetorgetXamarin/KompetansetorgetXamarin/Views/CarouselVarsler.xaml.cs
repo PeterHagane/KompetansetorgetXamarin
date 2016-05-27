@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using KompetansetorgetXamarin.DAL;
 using Xamarin.Forms;
 using KompetansetorgetXamarin.Utility;
 
@@ -28,6 +29,7 @@ namespace KompetansetorgetXamarin.Views
         public CarouselVarsler()
         {
             InitializeComponent();
+            GetStudentNotificationsPref();
             AddData();
             VarselList.ItemsSource = varsler;
             this.Title = p0title;
@@ -36,9 +38,9 @@ namespace KompetansetorgetXamarin.Views
             VarselList.IsPullToRefreshEnabled = true;
             VarselList.IsRefreshing = false;
             VarselList.RefreshCommand = RefreshCommand;
-            stillingSwitch.Toggled += stillingToggle;
-            oppgaveSwitch.Toggled += oppgaveToggle;
-            varselSwitch.Toggled += varselToggle;
+            //stillingSwitch.Toggled += stillingToggle;
+            //oppgaveSwitch.Toggled += oppgaveToggle;
+            //varselSwitch.Toggled += varselToggle;
 
         }
 
@@ -133,13 +135,13 @@ namespace KompetansetorgetXamarin.Views
             //}
             //else if (pullList == true)
             //{
-
-                LISTINIT.SaveSettings();
-                varsler.Clear();
-                VarselList.ItemsSource = null;
-                AddData();
-                VarselList.ItemsSource = varsler;
-                VarselList.IsRefreshing = false;
+            SaveToggle();
+            LISTINIT.SaveSettings();
+            varsler.Clear();
+            VarselList.ItemsSource = null;
+            AddData();
+            VarselList.ItemsSource = varsler;
+            VarselList.IsRefreshing = false;
             //}
         }
 
@@ -169,6 +171,7 @@ namespace KompetansetorgetXamarin.Views
         protected override void OnDisappearing()
         {
             LISTINIT.SaveSettings(); //saves the settings when pressing the up button/leaving the page
+            SaveToggle();
         }
 
         protected override bool OnBackButtonPressed() //behaviour of HARDWARE back button, not the up button.
@@ -191,19 +194,28 @@ namespace KompetansetorgetXamarin.Views
             return true;
         }
 
-        void varselToggle(object sender, ToggledEventArgs e)
+        void SwitchToggle(object sender, ToggledEventArgs e)
         {
-            this.DisplayAlert("Selected!", "fsdfs" + e.Value, "OK");
+            SaveToggle();
+
         }
 
-        void stillingToggle(object sender, ToggledEventArgs e)
+        void SaveToggle()
         {
-            this.DisplayAlert("Selected!", "fsdfs" + e.Value, "OK");
+            NotificationsController nc = new NotificationsController();
+            bool allNotifications = varselSwitch.IsToggled;
+            bool jobNotifications = stillingSwitch.IsToggled;
+            bool projectNotification = oppgaveSwitch.IsToggled;
+            nc.UpdateStudentsNotificationsPref(allNotifications, projectNotification, jobNotifications);
         }
 
-        void oppgaveToggle(object sender, ToggledEventArgs e)
+        void GetStudentNotificationsPref()
         {
-            this.DisplayAlert("Selected!", "fsdfs" + e.Value, "OK");
+            DbStudent dbStudent = new DbStudent();
+            Student student = dbStudent.GetStudent();
+            oppgaveSwitch.IsToggled = student.receiveProjectNotifications;
+            stillingSwitch.IsToggled = student.receiveJobNotifications;
+            varselSwitch.IsToggled = student.receiveNotifications;
         }
 
         public void getFilter()

@@ -122,7 +122,7 @@
               Grid.Row="0"
               Grid.Column="0"
               Grid.ColumnSpan="2"/>
-        <Switch x:Name="varselSwitch" IsToggled="{Binding varslerToggle}" Style="{DynamicResource switchStyle}"
+        <Switch x:Name="varselSwitch" IsToggled="{Binding SwitchToggle}" Style="{DynamicResource switchStyle}"
                      Grid.Row="0"
                      Grid.Column="2"
                      Grid.ColumnSpan="1"/>
@@ -131,7 +131,7 @@
                Grid.Row="1"
                Grid.Column="0"
                Grid.ColumnSpan="2"/>
-        <Switch x:Name="stillingSwitch" IsToggled="{Binding stillingToggle}" Style="{DynamicResource switchStyle}"
+        <Switch x:Name="stillingSwitch" IsToggled="{Binding SwitchToggle}" Style="{DynamicResource switchStyle}"
                      Grid.Row="1"
                      Grid.Column="2"
                      Grid.ColumnSpan="1"/>
@@ -140,7 +140,7 @@
                 Grid.Row="2"
                 Grid.Column="0"
                 Grid.ColumnSpan="2"/>
-        <Switch x:Name="oppgaveSwitch" IsToggled="{Binding oppgaveToggle}" Style="{DynamicResource switchStyle}"
+        <Switch x:Name="oppgaveSwitch" IsToggled="{Binding SwitchToggle}" Style="{DynamicResource switchStyle}"
                      Grid.Row="2"
                      Grid.Column="2"
                      Grid.ColumnSpan="1"/>
