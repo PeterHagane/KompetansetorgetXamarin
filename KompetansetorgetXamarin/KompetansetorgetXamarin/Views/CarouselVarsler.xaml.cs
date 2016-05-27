@@ -180,7 +180,7 @@ namespace KompetansetorgetXamarin.Views
         { }
 
 
-        public async void AddData()
+        public void AddData()
         {
             if (pullList == false)
             {
