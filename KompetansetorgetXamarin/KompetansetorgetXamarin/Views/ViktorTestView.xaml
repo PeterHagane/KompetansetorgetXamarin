@@ -14,16 +14,17 @@
       <local:BaseButton Clicked="DeviceIdButton_OnClicked"  x:Name="DeviceIdButton" Text="Hent device id fra fil" Style="{DynamicResource baseButtonStyle}" />
       <local:BaseButton Clicked="GetJobsFromServer_OnClicked"  x:Name="ServerJobsButton" Text="Hent jobbstillinger fra server" Style="{DynamicResource baseButtonStyle}" />
          -->
-      
+      <!--  
       <local:BaseButton Clicked="NotificationsFromDb_OnClicked"  x:Name="NotificationsFromDbButton" Text="Hent varsler fra database" Style="{DynamicResource baseButtonStyle}" />
-      <!--
+     
      
        <local:BaseButton Clicked="TestGetStudyGroupStudent_OnClicked"  x:Name="TestGetStudyGroupStudentButton" Text="Henter studentes registrerte fagområder" Style="{DynamicResource baseButtonStyle}" />
      
-      <local:BaseButton Clicked="TestProjectsFilterDb_OnClicked"  x:Name="TestProjectsFilterDbButton" Text="Querier Project i databasen utifra et bestemt filter" Style="{DynamicResource baseButtonStyle}" />
 
       <local:BaseButton Clicked="TestJobsFilterDb_OnClicked"  x:Name="TestJobsFilterDbButton" Text="Querier Job i databasen utifra et bestemt filter" Style="{DynamicResource baseButtonStyle}" />
- -->    
+ -->
+      <local:BaseButton Clicked="TestProjectsFilterDb_OnClicked"  x:Name="TestProjectsFilterDbButton" Text="Querier Project i databasen utifra et bestemt filter" Style="{DynamicResource baseButtonStyle}" />
+
       <local:BaseButton Clicked="TestProjectsFilter_OnClicked"  x:Name="TestProjectsFilterButton" Text="Henter projecter basert på hardkodet filter" Style="{DynamicResource baseButtonStyle}" />
       <local:BaseButton Clicked="TestJobsFilterWeb_OnClicked"  x:Name="TestJobsFilterWebButton" Text="Henter jobber basert på hardkodet filter" Style="{DynamicResource baseButtonStyle}" />
 

@@ -371,11 +371,11 @@ namespace KompetansetorgetXamarin.DAL
 
                         if (string.IsNullOrWhiteSpace(whereAnd.ToString()))
                         {
-                            whereAnd.Append(" WHERE Job.title = ?");
+                            whereAnd.Append(" WHERE Job.title LIKE ?");
                         }
                         else
                         {
-                            whereAnd.Append(" AND Job.title = ?");
+                            whereAnd.Append(" AND Job.title LIKE ?");
                         }
                     }
 
@@ -438,15 +438,15 @@ namespace KompetansetorgetXamarin.DAL
                 {
                     if (filterType == "titles")
                     {
-                        prepValue = filter[filterType];
+                        prepValue = "%" + filter[filterType] + "%";
 
                         if (string.IsNullOrWhiteSpace(whereAnd.ToString()))
                         {
-                            whereAnd.Append(" WHERE Job.title = ?");
+                            whereAnd.Append(" WHERE Job.title LIKE ?");
                         }
                         else
                         {
-                            whereAnd.Append(" AND Job.title = ?");
+                            whereAnd.Append(" AND Job.title LIKE ?");
                         }
                     }
 

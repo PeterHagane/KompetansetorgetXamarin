@@ -513,10 +513,12 @@ namespace KompetansetorgetXamarin.Views
             Dictionary<string, string> filter2 = new Dictionary<string, string>();
             //string titles = Hasher.Base64Encode("Strømavleser vha gammel mobil");
             filter2.Add("titles", "Strømavleser vha gammel mobil");
+            Dictionary<string, string> filter3 = new Dictionary<string, string>();
+            filter3.Add("titles", "vha");
 
             var projects4 = pc.GetProjectsFromDbBasedOnFilter(studyGroups, filter2);
-
-            if (projects4 == null)
+            var projects5 = pc.GetProjectsFromDbBasedOnFilter(null, filter3);
+            if (projects4 == null || projects5 == null)
             {
                 System.Diagnostics.Debug.WriteLine("TestProjectsFilterDb:  was null aka failed!");
             }
@@ -525,6 +527,8 @@ namespace KompetansetorgetXamarin.Views
                 System.Diagnostics.Debug.WriteLine("GetProjectsFromDbBasedOnFilter: projects4.Count(): " +
                                                    projects4.Count());
 
+                System.Diagnostics.Debug.WriteLine("GetProjectsFromDbBasedOnFilter: projects5.Count(): " +
+                                                   projects5.Count());
                 foreach (var project in projects4)
                 {
                     System.Diagnostics.Debug.WriteLine("projects4 title: " + project.title);

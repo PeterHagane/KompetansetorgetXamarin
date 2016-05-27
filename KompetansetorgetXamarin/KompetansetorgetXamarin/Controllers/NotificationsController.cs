@@ -128,48 +128,5 @@ namespace KompetansetorgetXamarin.Controllers
             student.receiveJobNotifications = receiveJobNotifications;
             db.UpdateStudent(student);
         }
-
-        /*
-            // 
-            // TESTING AT 'is' (instanceof) PÅ EN KLASSE AV OBJECT funker til notification list 
-
-            int j = 0;
-            int p = 0;
-            string jUuid = "";
-            foreach (var no in notificationList)
-            {
-
-                if (no is Job)
-                {
-                    j++;
-                    Job jo = (Job) no;
-                    System.Diagnostics.Debug.WriteLine("Number of jobs: " + j);
-                    System.Diagnostics.Debug.WriteLine(jo.uuid);
-                    jUuid = jo.uuid;
-
-                }
-
-                else if (no is Project)
-                {
-                    p++;
-                    Project pr = (Project) no;
-                    System.Diagnostics.Debug.WriteLine("Number of projects: " + p);
-                    System.Diagnostics.Debug.WriteLine(pr.uuid);
-
-
-                }
-            }
-            System.Diagnostics.Debug.WriteLine("Totalt amounts of notifications: " + Db.Table<Notification>().Count());
-            System.Diagnostics.Debug.WriteLine("Totalt amounts of jobs: " + Db.Table<Job>().Count());
-            DeleteNotificationBasedOnJob(jUuid);
-            System.Diagnostics.Debug.WriteLine("Totalt amounts of notifications: " + Db.Table<Notification>().Count());
-            System.Diagnostics.Debug.WriteLine("Totalt amounts of jobs: " + Db.Table<Job>().Count());
-
-
-            return notificationList;
-
-        
-        }
-        */
     }
 }
