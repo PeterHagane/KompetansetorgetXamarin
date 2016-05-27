@@ -142,19 +142,19 @@ namespace KompetansetorgetXamarin.Views
         /// </summary>
         async Task ExcecuteRefreshCommand()
         {
-            if (pullList == false)
-            {
-                OppgaveList.IsRefreshing = false;
-            }
-            else if (pullList == true)
-            {
+            //if (pullList == false)
+            //{
+            //    OppgaveList.IsRefreshing = false;
+            //}
+            //else if (pullList == true)
+            //{
                 listInit.SaveSettings();
                 oppgaver.Clear();
                 OppgaveList.ItemsSource = null;
                 AddData();
                 OppgaveList.ItemsSource = oppgaver;
                 OppgaveList.IsRefreshing = false;
-            }
+            //}
         }
 
         //Alters title on carouselpage by contentpage
@@ -250,11 +250,12 @@ namespace KompetansetorgetXamarin.Views
             //Dictionary<string, string> filter = new Dictionary<string, string>(); //contains only one item from each group
             //filter.Add("courses", "DAT-304");
             //filter.Add("types", "virksomhet");
-            if (pullList == false)
-            {
-            }
-            else if (pullList == true)
-            {
+
+            //if (pullList == false)
+            //{
+            //}
+            //else if (pullList == true)
+            //{
                 ProjectsController jc = new ProjectsController();
 
                 IEnumerable<Project> projects = await jc.GetProjectsBasedOnFilter(listInit.GetSettings(), null);
@@ -273,8 +274,8 @@ namespace KompetansetorgetXamarin.Views
                     System.Diagnostics.Debug.WriteLine("GetProjectsBasedOnFilter: projects.Count(): " +
                                                        projects.Count());
                 }
-                pullList = false;
-            }
+            //    pullList = false;
+            //}
         }
     }
 }

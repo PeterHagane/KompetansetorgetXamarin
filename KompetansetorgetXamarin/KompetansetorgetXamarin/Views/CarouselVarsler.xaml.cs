@@ -36,6 +36,7 @@ namespace KompetansetorgetXamarin.Views
             VarselList.IsPullToRefreshEnabled = true;
             VarselList.IsRefreshing = false;
             VarselList.RefreshCommand = RefreshCommand;
+            
         }
 
 
@@ -96,11 +97,16 @@ namespace KompetansetorgetXamarin.Views
                 }
             });
         }
+
+
+
+
         /// <summary>
         /// Handles refresh behaviour on button click
         /// </summary>
         void Refresh_OnTapped(object sender, EventArgs e)
         {
+            //pullList = true;
             ExcecuteRefreshCommand();
         }
 
@@ -109,25 +115,29 @@ namespace KompetansetorgetXamarin.Views
             get { return refreshCommand ?? (refreshCommand = new Command(async () => await ExcecuteRefreshCommand())); }
         }
 
+        //private ICommand RefreshNewCommand
+        //{
+        //    get { return refreshCommand ?? (refreshCommand = new Command(async () => await ExcecuteRefreshCommand())); }
+        //}
+
         /// <summary>
         /// Refreshes the list
         /// </summary>
         async Task ExcecuteRefreshCommand()
         {
-            if (pullList == false)
-            {
-                VarselList.IsRefreshing = false;
+            //if (pullList == false)
+            //{
+            //}
+            //else if (pullList == true)
+            //{
 
-            }
-            else if (pullList == true)
-            {
                 LISTINIT.SaveSettings();
                 varsler.Clear();
                 VarselList.ItemsSource = null;
                 AddData();
                 VarselList.ItemsSource = varsler;
                 VarselList.IsRefreshing = false;
-            }
+            //}
         }
 
         //Alters title on carouselpage by contentpage
@@ -184,11 +194,11 @@ namespace KompetansetorgetXamarin.Views
 
         public void AddData()
         {
-            if (pullList == false)
-            {
-            }
-            else if (pullList == true)
-            {
+            //if (pullList == false)
+            //{
+            //}
+            //else if (pullList == true)
+            //{
                 System.Diagnostics.Debug.WriteLine("ViktorTestView - NotificationsFromDb_OnClicked: Initiated");
                 NotificationsController nc = new NotificationsController();
                 List<Advert> notifications = nc.GetNotificationList();
@@ -253,9 +263,8 @@ namespace KompetansetorgetXamarin.Views
                         System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter: jobs.Count(): " +
                                                           notifications.Count());
                     }
-                    pullList = false;
-                }
-
+                //    pullList = false;
+                //}
             }
         }
     }

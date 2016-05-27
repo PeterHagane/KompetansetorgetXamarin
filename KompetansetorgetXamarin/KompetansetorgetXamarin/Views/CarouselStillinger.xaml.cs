@@ -119,19 +119,19 @@ namespace KompetansetorgetXamarin.Views
         /// </summary>
         async Task ExcecuteRefreshCommand()
         {
-            if (pullList == false)
-            {
-                StillingList.IsRefreshing = false;
-            }
-            else if (pullList == true)
-            {
+            //if (pullList == false)
+            //{
+            //    StillingList.IsRefreshing = false;
+            //}
+            //else if (pullList == true)
+            //{
                 LISTINIT.SaveSettings();
                 JOBS.Clear();
                 StillingList.ItemsSource = null;
                 AddData();
                 StillingList.ItemsSource = JOBS;
                 StillingList.IsRefreshing = false;
-            }
+            //}
         }
 
         //Alters title on carouselpage by contentpage
@@ -195,11 +195,11 @@ namespace KompetansetorgetXamarin.Views
             //filter.Add("courses", "DAT-304");
             //filter.Add("types", "virksomhet");
 
-            if (pullList == false)
-            {
-            }
-            else if (pullList == true)
-            {
+            //if (pullList == false)
+            //{
+            //}
+            //else if (pullList == true)
+            //{
                 JobsController jc = new JobsController();
 
                 IEnumerable<Job> jobs = await jc.GetJobsBasedOnFilter(LISTINIT.GetSettings(), null);
@@ -219,8 +219,8 @@ namespace KompetansetorgetXamarin.Views
                     System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter: jobs.Count(): " +
                                                        jobs.Count());
                 }
-                pullList = false;
-            }
+            //    pullList = false;
+            //}
         }
     }
 }

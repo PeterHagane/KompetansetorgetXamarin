@@ -90,8 +90,8 @@ namespace KompetansetorgetXamarin.Controls
         {
             //DbLocation lc = new DbLocation();
             //DbCourse cc = new DbCourse();
-            if (cs == true)
-            {
+            //if (cs == true)
+            //{
                 DbStudyGroup sgc = new DbStudyGroup();
 
                 foreach (fagområdeSetting setting in oppgaveSettings)
@@ -111,9 +111,9 @@ namespace KompetansetorgetXamarin.Controls
                     }
                 }
                 sgc.UpdateStudyGroups(studyGroupsFilter);
-                cs = false; //set changedsetting to false after saving
-                CarouselOppgaver.pullList = true; //set pullList to true, meaning that any refresh action will reload the list according to new settings
-            }
+            //    cs = false; //set changedsetting to false after saving
+            //    CarouselOppgaver.pullList = true; //set pullList to true, meaning that any refresh action will reload the list according to new settings
+            //}
         }
 
 
