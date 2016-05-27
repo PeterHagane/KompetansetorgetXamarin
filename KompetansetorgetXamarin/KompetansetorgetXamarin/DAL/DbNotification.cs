@@ -18,8 +18,8 @@ namespace KompetansetorgetXamarin.DAL
         public IEnumerable<Notification> GetNotifications()
         {
             lock (DbContext.locker)
-            {
-                return (from i in Db.Table<Notification>() select i).ToList();
+            { // ORDER BY Job.published DESC
+              return (from i in Db.Table<Notification>() select i).ToList();
             }
         }
 

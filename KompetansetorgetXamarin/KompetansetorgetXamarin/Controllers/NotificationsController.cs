@@ -34,7 +34,7 @@ namespace KompetansetorgetXamarin.Controllers
         /// }
         /// </summary>
         /// <returns>A list of objects suitable for to be dislayed to the user as notifications</returns>
-        public List<object> GetNotificationList()
+        public List<Advert> GetNotificationList()
         {
             DbJob dbJob = new DbJob();
             DbNotification db = new DbNotification();
@@ -42,7 +42,7 @@ namespace KompetansetorgetXamarin.Controllers
             DbProject dbProject = new DbProject();
             IEnumerable<Notification> notifications = db.GetNotifications();
 
-            List<object> notificationList = new List<object>();
+            List<Advert> notificationList = new List<Advert>();
 
             foreach (var n in notifications)
             {
@@ -58,6 +58,51 @@ namespace KompetansetorgetXamarin.Controllers
                     notificationList.Add(job);
                 }
                 else
+                {
+                    Project project = dbProject.GetProjectByUuid(n.projectUuid);
+                    project.companies = dbProject.GetAllCompaniesRelatedToProject(project);
+                    notificationList.Add(project);
+                }
+            }
+            return notificationList;
+        }
+
+        public List<object> GetNotificationListJobOnly()
+        {
+            DbJob dbJob = new DbJob();
+            DbNotification db = new DbNotification();
+            IEnumerable<Notification> notifications = db.GetNotifications();
+
+            List<object> notificationList = new List<object>();
+
+            foreach (var n in notifications)
+            {
+                System.Diagnostics.Debug.WriteLine("GetNotificationList: var n.id = " + n.id);
+                System.Diagnostics.Debug.WriteLine("GetNotificationList: var n.jobUuid = " + n.jobUuid);
+                if (!string.IsNullOrWhiteSpace(n.jobUuid))
+                {
+
+                    Job job = dbJob.GetJobByUuid(n.jobUuid);
+                    job.companies = dbJob.GetAllCompaniesRelatedToJob(job);
+                    notificationList.Add(job);
+                }
+            }
+            return notificationList;
+        }
+
+        public List<object> GetNotificationListProjectOnly()
+        {
+            DbNotification db = new DbNotification();
+            DbProject dbProject = new DbProject();
+            IEnumerable<Notification> notifications = db.GetNotifications();
+            List<object> notificationList = new List<object>();
+            foreach (var n in notifications)
+            {
+                System.Diagnostics.Debug.WriteLine("GetNotificationList: var n.id = " + n.id);
+                System.Diagnostics.Debug.WriteLine("GetNotificationList: var n.jobUuid = " + n.jobUuid);
+                System.Diagnostics.Debug.WriteLine("GetNotificationList: var n.projectUuid = " + n.projectUuid);
+
+                if (!string.IsNullOrWhiteSpace(n.projectUuid))
                 {
                     Project project = dbProject.GetProjectByUuid(n.projectUuid);
                     project.companies = dbProject.GetAllCompaniesRelatedToProject(project);

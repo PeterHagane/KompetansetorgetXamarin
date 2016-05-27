@@ -31,7 +31,7 @@ namespace KompetansetorgetXamarin.Views
         {
             System.Diagnostics.Debug.WriteLine("ViktorTestView - NotificationsFromDb_OnClicked: Initiated");
             NotificationsController nc = new NotificationsController();
-            List<object> notifications = nc.GetNotificationList();
+            List<Advert> notifications = nc.GetNotificationList();
             System.Diagnostics.Debug.WriteLine(
                 "ViktorTestView - NotificationsFromDb_OnClicked: notifications.Count = " + notifications.Count);
 

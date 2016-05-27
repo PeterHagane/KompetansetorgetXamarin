@@ -6,7 +6,7 @@ using SQLiteNetExtensions.Attributes;
 namespace KompetansetorgetXamarin.Models
 {
     [Table("Job")]
-    public class Job
+    public class Job : Advert
     {
         public Job()
         {
@@ -19,25 +19,9 @@ namespace KompetansetorgetXamarin.Models
             */
         }
 
-        [PrimaryKey]
-        public string uuid { get; set; }
-
-        public string title { get; set; }
-        public string description { get; set; }
-        public string webpage { get; set; }
-        public string linkedInProfile { get; set; }
-
-        public string stepsToApply { get; set; }
-
         // The Date/Time stored is too big numbers to be supported by SQLite
         // String comparison should be enought
         public long expiryDate { get; set; }
-
-        public long created { get; set; }
-
-        public long published { get; set; }
-
-        public long modified { get; set; }
 
         [ManyToMany(typeof(CompanyJob))]
         public List<Company> companies { get; set; }
@@ -53,8 +37,5 @@ namespace KompetansetorgetXamarin.Models
 
         [ManyToMany(typeof(StudyGroupJob))]
         public List<StudyGroup> studyGroups { get; set; }
-
-        [OneToMany]
-        public List<Notification> notifications { get; set; }
     }
 }

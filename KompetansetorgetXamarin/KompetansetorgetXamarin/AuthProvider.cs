@@ -29,7 +29,7 @@ namespace KompetansetorgetXamarin
 
         // Set this property to the location the user will be redirected too after successfully authenticating
         public static string RedirectUrl = "http://kompetansetorgetserver1.azurewebsites.net/signin-google";//"https://httpbin.org/get";
-        public static string Image = "http://icons.iconarchive.com/icons/graphics-vibe/simple-rounded-social/128/google-icon.png";
+        //public static string Image = "http://icons.iconarchive.com/icons/graphics-vibe/simple-rounded-social/128/google-icon.png";
 
         public static string ApiRequests = "http://kompetansetorgetserver1.azurewebsites.net/api/v1/account/ObtainLocalAccessToken?provider=Google&externalAccessToken=";
         //"http://kompetansetorgetserver1.azurewebsites.net/api/v1/account/ObtainLocalAccessToken?provider=Google&externalAccessToken=";
