@@ -1,8 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<local:BaseCarouselPage xmlns="http://xamarin.com/schemas/2014/forms"
+<views:BaseCarouselPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="KompetansetorgetXamarin.Views.CarouselOppgaver"
-             xmlns:local="clr-namespace:KompetansetorgetXamarin.Controls;assembly=KompetansetorgetXamarin">
+             xmlns:local="clr-namespace:KompetansetorgetXamarin.Controls;assembly=KompetansetorgetXamarin"
+             xmlns:views="clr-namespace:KompetansetorgetXamarin.Views;assembly=KompetansetorgetXamarin">
 
 
   <!--////////////////////////////////
@@ -17,12 +18,12 @@
         </ToolbarItem.Icon>
       </ToolbarItem>
 
-      <ToolbarItem Name="User" Activated="OnClick"  Order="Primary" Priority="1">
+      <ToolbarItem Name="User" Activated="Logout"  Order="Primary" Priority="1">
         <ToolbarItem.Icon>
           <OnPlatform x:TypeArguments="FileImageSource"
                       Android="User.png" />
         </ToolbarItem.Icon>
-      </ToolbarItem>
+      </ToolbarItem>     
 
       <ToolbarItem Name="Innstillinger" Activated="SwipeRight"  Order="Primary" Priority="2">
         <ToolbarItem.Icon>
@@ -144,7 +145,7 @@
   /////////////////////////////////-->
   <local:BaseContentPage Padding="0,0,0,0">
     <local:BaseContentPage.ToolbarItems>
-      <ToolbarItem Name="User" Activated="OnClick"  Order="Primary" Priority="1">
+      <ToolbarItem Name="User" Activated="Logout"  Order="Primary" Priority="1">
         <ToolbarItem.Icon>
           <OnPlatform x:TypeArguments="FileImageSource"
                       Android="User.png" />
@@ -218,4 +219,4 @@
   
   
   
-</local:BaseCarouselPage>
+</views:BaseCarouselPage>

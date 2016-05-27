@@ -4,10 +4,17 @@
              xmlns:local="clr-namespace:KompetansetorgetXamarin.Controls;assembly=KompetansetorgetXamarin"
              x:Class="KompetansetorgetXamarin.Views.MainPage"
              Title="Kompetansetorget">
+  
+  <local:BaseContentPage.ToolbarItems>
+    <ToolbarItem Name="User" Activated="Logout"  Order="Primary" Priority="1">
+      <ToolbarItem.Icon>
+        <OnPlatform x:TypeArguments="FileImageSource"
+                    Android="User.png" />
+      </ToolbarItem.Icon>
+    </ToolbarItem>
+  </local:BaseContentPage.ToolbarItems>
   <ContentPage.Content>
-
     <!--<Image Source="KTbanner.jpg"/>-->
-    
     <StackLayout VerticalOptions="FillAndExpand"
                  Orientation="Vertical"
                  Spacing="15">
@@ -64,7 +71,7 @@
         </local:ButtonStack>
       </local:ButtonShadow>
 
-      <!--<local:ButtonShadow BorderRadius="17" Padding ="2,2,2,7" Style="{DynamicResource buttonShadowStyle}">
+      <local:ButtonShadow BorderRadius="17" Padding ="2,2,2,7" Style="{DynamicResource buttonShadowStyle}">
         <local:ButtonStack x:Name="ViktorButton" Style="{DynamicResource buttonStackStyle}">
           <local:ButtonStack.GestureRecognizers>
             <TapGestureRecognizer Tapped="ViktorButton_OnClicked">
@@ -73,7 +80,7 @@
           <Label Text="Viktorvindu" Style="{DynamicResource buttonLabelStyle}"/>
           <Image Source="ArrowBlackLeft.png"  Style="{DynamicResource buttonImageStyle}"/>
         </local:ButtonStack>
-      </local:ButtonShadow>-->
+      </local:ButtonShadow>
 
     </StackLayout>
   </ContentPage.Content>

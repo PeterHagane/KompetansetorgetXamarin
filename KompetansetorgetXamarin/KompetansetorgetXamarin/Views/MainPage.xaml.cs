@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using KompetansetorgetXamarin.Controls;
+using KompetansetorgetXamarin.DAL;
 using Xamarin.Forms;
 
 namespace KompetansetorgetXamarin.Views
@@ -18,6 +19,19 @@ namespace KompetansetorgetXamarin.Views
             }
             else { 
                 InitializeComponent();
+            }
+        }
+        /// <summary>
+        /// Active to logout.
+        /// </summary>
+        async void Logout(object sender, EventArgs e)
+        {
+            var logout = await DisplayAlert("Logg ut", "Ønsker du å logge ut?", "Ja", "Nei");
+            if (logout == true)
+            {
+                DbStudent dbStudent = new DbStudent();
+                dbStudent.DeleteAllStudents();
+                GoToLogin();
             }
         }
 
