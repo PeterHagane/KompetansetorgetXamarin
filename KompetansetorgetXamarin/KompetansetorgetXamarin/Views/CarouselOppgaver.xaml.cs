@@ -19,12 +19,12 @@ namespace KompetansetorgetXamarin.Views
     {
         VMOppgaverSettings listInit = new VMOppgaverSettings();
         //ObservableCollection<Oppgave> oppgaver = new ObservableCollection<Oppgave>();
-        ObservableCollection<Project> oppgaver = new ObservableCollection<Project>();
+        public static ObservableCollection<Project> oppgaver = new ObservableCollection<Project>();
         /*Dictionary<string, string> filter = new Dictionary<string, string>();*/ //used in AddData;
         ICommand refreshCommand;
-        int currentPage = 0;
         string p0title = "Finn oppgaveforslag";
         string p1title = "Velg fagområder";
+        static public bool pullList = true;
         //string p2title = "Velg fagområder";
         //string p3title = "Velg emne";
 
@@ -32,17 +32,22 @@ namespace KompetansetorgetXamarin.Views
         {
             InitializeComponent();
             this.Title = p0title;
+            OppgaveList.IsRefreshing = true;
             AddData();
-
+            OppgaveList.IsRefreshing = false;
             OppgaveList.ItemsSource = oppgaver;   // oppgave.companies[0].name  .logo
             oppgaverSettings.ItemsSource = listInit.oppgaveSettings;
             //OppgaverEmner.ItemsSource = listInit.coursesSettings;
             OppgaveList.IsPullToRefreshEnabled = true;
-            OppgaveList.IsRefreshing = false;
             OppgaveList.RefreshCommand = RefreshCommand;
-            //OnBackButtonPressed();
-            //oppgaverSettings.ItemsSource = fagområder;
+            søk.TextChanged += (sender, e) => OppgaveList.FilterOppgaver(søk.Text);
+            søk.SearchButtonPressed += (sender, e) =>
+            {
+                OppgaveList.FilterOppgaver(søk.Text);
+            };
         }
+
+
 
         void OnClick(object sender, EventArgs e)
         {
@@ -56,14 +61,15 @@ namespace KompetansetorgetXamarin.Views
             Sort();
         }
 
-        void Sort() {
+        void Sort()
+        {
 
         }
 
         void SaveSettings(object sender, EventArgs e)
         {
             listInit.SaveSettings();
-            this.DisplayAlert("Innstillinger lagret!", "Forfrisk for å få en ny liste.", "OK");
+            this.DisplayAlert("Innstillinger lagret!", "Oppdatér for å få en ny liste.", "OK");
         }
 
 
@@ -126,22 +132,31 @@ namespace KompetansetorgetXamarin.Views
             ExcecuteRefreshCommand();
         }
 
-        private ICommand RefreshCommand {
+
+        private ICommand RefreshCommand
+        {
             get { return refreshCommand ?? (refreshCommand = new Command(async () => await ExcecuteRefreshCommand())); }
         }
-
         /// <summary>
-        /// Refreshes the list
+        /// Custom refresh to pull new data from server. If pullList is false(set in SearchListView.cs), it won't download a new list but will instead just do a regular unmodified refresh.
         /// </summary>
-        async Task ExcecuteRefreshCommand() {
-            listInit.SaveSettings();
-            oppgaver.Clear();
-            OppgaveList.ItemsSource = null;
-            AddData();
-            OppgaveList.ItemsSource = oppgaver;
-            OppgaveList.IsRefreshing = false;
+        async Task ExcecuteRefreshCommand()
+        {
+            if (pullList == false)
+            {
+                OppgaveList.IsRefreshing = false;
+            }
+            else if (pullList == true)
+            {
+                listInit.SaveSettings();
+                oppgaver.Clear();
+                OppgaveList.ItemsSource = null;
+                AddData();
+                OppgaveList.ItemsSource = oppgaver;
+                OppgaveList.IsRefreshing = false;
+            }
         }
-        
+
         //Alters title on carouselpage by contentpage
         public new event EventHandler CurrentPageChanged;
         protected override void OnCurrentPageChanged()
@@ -150,9 +165,13 @@ namespace KompetansetorgetXamarin.Views
             EventHandler changed = CurrentPageChanged;
             if (changed != null)
                 changed(this, EventArgs.Empty);
-            if (CurrentPage == this.Children[0]) {
+            if (CurrentPage == this.Children[0])
+            {
                 this.Title = p0title;
-            } else if (CurrentPage == this.Children[1]) {
+                listInit.SaveSettings();  //saves settings when going to p0
+            }
+            else if (CurrentPage == this.Children[1])
+            {
                 this.Title = p1title;
             }
             //add in case of more pages
@@ -183,10 +202,10 @@ namespace KompetansetorgetXamarin.Views
             //}
             //else if (CurrentPage == p0)
             //{
-            //    return false;
+                return false;
             //}
             //listInit.SaveSettings();
-            return true;
+            //return true;
         }
 
         public void getFilter()
@@ -216,40 +235,45 @@ namespace KompetansetorgetXamarin.Views
         //}
 
 
-    //void OnSelection(object sender, SelectedItemChangedEventArgs e)
-    //{
-    //    if (e.SelectedItem == null)
-    //    {
-    //        return; //ItemSelected is called on deselection, which results in SelectedItem being set to null
-    //    }
-    //    DisplayAlert("Item Selected", e.SelectedItem.ToString(), "Ok");
-    //    //((ListView)sender).SelectedItem = null; //uncomment line if you want to disable the visual selection state.
-    //}
+        //void OnSelection(object sender, SelectedItemChangedEventArgs e)
+        //{
+        //    if (e.SelectedItem == null)
+        //    {
+        //        return; //ItemSelected is called on deselection, which results in SelectedItem being set to null
+        //    }
+        //    DisplayAlert("Item Selected", e.SelectedItem.ToString(), "Ok");
+        //    //((ListView)sender).SelectedItem = null; //uncomment line if you want to disable the visual selection state.
+        //}
 
-    private async void AddData()
+        private async void AddData()
         {
             //Dictionary<string, string> filter = new Dictionary<string, string>(); //contains only one item from each group
             //filter.Add("courses", "DAT-304");
             //filter.Add("types", "virksomhet");
-            
-
-            ProjectsController jc = new ProjectsController();
-            
-            IEnumerable<Project> projects = await jc.GetProjectsBasedOnFilter(listInit.GetSettings(), null);
-            foreach(Project p in projects)
+            if (pullList == false)
             {
-                //oppgaver.Clear();
-                oppgaver.Add(p);
             }
+            else if (pullList == true)
+            {
+                ProjectsController jc = new ProjectsController();
 
-            if (!Authenticater.Authorized)
-            {
-                GoToLogin();
-            }
-            if (projects != null)
-            {
-                System.Diagnostics.Debug.WriteLine("GetProjectsBasedOnFilter: projects.Count(): " +
-                                                   projects.Count());
+                IEnumerable<Project> projects = await jc.GetProjectsBasedOnFilter(listInit.GetSettings(), null);
+                foreach (Project p in projects)
+                {
+                    //oppgaver.Clear();
+                    oppgaver.Add(p);
+                }
+
+                if (!Authenticater.Authorized)
+                {
+                    GoToLogin();
+                }
+                if (projects != null)
+                {
+                    System.Diagnostics.Debug.WriteLine("GetProjectsBasedOnFilter: projects.Count(): " +
+                                                       projects.Count());
+                }
+                pullList = false;
             }
         }
     }

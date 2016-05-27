@@ -1,5 +1,6 @@
 ﻿using KompetansetorgetXamarin.DAL;
 using KompetansetorgetXamarin.Models;
+using KompetansetorgetXamarin.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -21,6 +22,7 @@ namespace KompetansetorgetXamarin.Controls
         public Dictionary<string, string> studyDict { private set; get; }
         public Dictionary<string, string> coursesFilter = new Dictionary<string, string>();
 
+        public static bool cs = false; //changed setting bool to detect when to save settings
 
         public VMStillingerSettings()
         {
@@ -40,14 +42,16 @@ namespace KompetansetorgetXamarin.Controls
         {
             var fagområdeSetting = sender as fagområdeSetting;
             System.Diagnostics.Debug.WriteLine("{0} has been toggled to {1}", fagområdeSetting.Name, fagområdeSetting.IsSelected);
+            cs = true;
         }
 
         public List<string> GetSettings()
         {
+            checkedStudyGroups.Clear();
             if (stillingerSettings == null)
             {
                 SetSettings();
-                return null;
+                return checkedStudyGroups; 
             }
             else
                 foreach (fagområdeSetting setting in stillingerSettings)
@@ -59,7 +63,6 @@ namespace KompetansetorgetXamarin.Controls
                         checkedStudyGroups.Add(setting.id);
                     }
                 }
-
             return checkedStudyGroups;
         }
 
@@ -82,35 +85,36 @@ namespace KompetansetorgetXamarin.Controls
         {
             //DbLocation lc = new DbLocation();
             //DbCourse cc = new DbCourse();
-            DbStudyGroup sgc = new DbStudyGroup();
-
-            foreach (fagområdeSetting setting in stillingerSettings)
+            if (cs == true)
             {
-                //gets the name and setting from 
-                string setName = setting.Name;
-                bool setSwitch = setting.IsSelected;
+                DbStudyGroup sgc = new DbStudyGroup();
 
-                foreach (StudyGroup studygroup in studyGroupsFilter)
+                foreach (fagområdeSetting setting in stillingerSettings)
                 {
-                    if (studygroup.name == setName)
+                    //gets the name and setting from 
+                    string setName = setting.Name;
+                    bool setSwitch = setting.IsSelected;
+
+                    foreach (StudyGroup studygroup in studyGroupsFilter)
                     {
-                        studygroup.name = setName;
-                        studygroup.filterChecked = setSwitch;
-                        break;
+                        if (studygroup.name == setName)
+                        {
+                            studygroup.name = setName;
+                            studygroup.filterChecked = setSwitch;
+                            break;
+                        }
                     }
                 }
+                sgc.UpdateStudyGroups(studyGroupsFilter);
+                cs = false; //set changedsetting to false after saving
+                CarouselStillinger.pullList = true; //set pullList to true, meaning that any refresh action will reload the list according to new settings
             }
-            sgc.UpdateStudyGroups(studyGroupsFilter);
         }
-
         public async void GetAllFilters()
         {
-
             DbStudyGroup sgc = new DbStudyGroup();
-
             studyGroupsFilter = sgc.GetAllStudyGroups();
-
-
+            
             foreach (var studyGroup in studyGroupsFilter)
             {
                 studyDict.Add(studyGroup.name, studyGroup.id);

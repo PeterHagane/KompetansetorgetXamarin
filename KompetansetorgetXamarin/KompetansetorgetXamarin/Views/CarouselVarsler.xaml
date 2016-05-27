@@ -1,8 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<CarouselPage xmlns="http://xamarin.com/schemas/2014/forms"
+<local:BaseCarouselPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="KompetansetorgetXamarin.Views.CarouselVarsler"
              xmlns:local="clr-namespace:KompetansetorgetXamarin.Controls;assembly=KompetansetorgetXamarin">
+  
+  <!--////////////////////////////////
+  STILLINGLISTE PAGE (page 1)
+  /////////////////////////////////-->
 
   <local:BaseContentPage Padding="0,0,0,0">
     <local:BaseContentPage.ToolbarItems>
@@ -19,9 +23,6 @@
                       Android="ArrowWhiteRight.png" />
         </ToolbarItem.Icon>
       </ToolbarItem>
-
-      <ToolbarItem Name="Mine varsler" Order="Primary" Priority="0">
-      </ToolbarItem>
     </local:BaseContentPage.ToolbarItems>
 
     <ContentPage.Padding>
@@ -29,8 +30,33 @@
     </ContentPage.Padding>
 
     <StackLayout VerticalOptions="FillAndExpand">
+      <Grid>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="45" />
+        </Grid.RowDefinitions>
 
-      <Entry x:Name="søk" Placeholder="Sok" Style="{DynamicResource entryStyle}"/>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="Auto" />
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="45" />
+        </Grid.ColumnDefinitions>
+
+        <SearchBar x:Name="søk" Placeholder="Søk" HeightRequest="35"
+               Grid.Row="0"
+               Grid.Column="0"
+               Grid.ColumnSpan="2"/>
+
+        <StackLayout x:Name="Sorter"
+                     Grid.Row="0"
+                     Grid.Column="2"
+                     Grid.ColumnSpan="1">
+          <StackLayout.GestureRecognizers>
+            <TapGestureRecognizer Tapped="Sorter_OnTapped">
+            </TapGestureRecognizer>
+          </StackLayout.GestureRecognizers>
+          <Image Source="SortSort.png" HeightRequest="45" WidthRequest="45"/>
+        </StackLayout>
+      </Grid>
 
       <ListView x:Name="VarselList" RowHeight="75">
         <!--ItemTapped="OnOppgaveSelected"-->
@@ -49,7 +75,9 @@
 
   </local:BaseContentPage>
 
-
+  <!--////////////////////////////////
+  FAGOMRÅDER/STUDYGROUPS PAGE (page 2)
+  /////////////////////////////////-->
 
   <local:BaseContentPage Padding="0,0,0,0">
     <local:BaseContentPage.ToolbarItems>
@@ -59,20 +87,27 @@
                       Android="User.png" />
         </ToolbarItem.Icon>
       </ToolbarItem>
-
-      <ToolbarItem Name="Innstillinger" Order="Primary" Priority="0">
-      </ToolbarItem>
-
+      <!--<ToolbarItem Name="Innstillinger" Order="Primary" Priority="0">-->
+      <!--</ToolbarItem>-->
     </local:BaseContentPage.ToolbarItems>
 
     <ContentPage.Padding>
-      <OnPlatform x:TypeArguments="Thickness" iOS="15,15,15,0" Android="15,15,15,0" />
+      <OnPlatform x:TypeArguments="Thickness" iOS="15,5,15,0" Android="15,5,15,0" />
     </ContentPage.Padding>
+
     <StackLayout>
-
-
+      <!--SelectedItem="{Binding SelectedCourse}"-->
+      <!--SeparatorVisibility="None"-->
+      <ListView x:Name="StillingerSettings">
+        <ListView.ItemTemplate>
+          <DataTemplate>
+            <local:CustomSwitchCell>
+            </local:CustomSwitchCell>
+          </DataTemplate>
+        </ListView.ItemTemplate>
+      </ListView>
     </StackLayout>
   </local:BaseContentPage>
   
   
-</CarouselPage>
+</local:BaseCarouselPage>

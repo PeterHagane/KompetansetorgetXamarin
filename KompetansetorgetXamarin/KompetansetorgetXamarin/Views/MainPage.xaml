@@ -65,7 +65,7 @@
         </local:ButtonStack>
       </local:ButtonShadow>
 
-      <local:ButtonShadow BorderRadius="17" Padding ="2,2,2,7" Style="{DynamicResource buttonShadowStyle}">
+      <!--<local:ButtonShadow BorderRadius="17" Padding ="2,2,2,7" Style="{DynamicResource buttonShadowStyle}">
         <local:ButtonStack x:Name="ViktorButton" Style="{DynamicResource buttonStackStyle}">
           <local:ButtonStack.GestureRecognizers>
             <TapGestureRecognizer Tapped="ViktorButton_OnClicked">
@@ -74,7 +74,7 @@
           <Label Text="Viktorvindu" Style="{DynamicResource buttonLabelStyle}"/>
           <Image Source="ArrowBlackLeft.png"  Style="{DynamicResource buttonImageStyle}"/>
         </local:ButtonStack>
-      </local:ButtonShadow>
+      </local:ButtonShadow>-->
 
     </StackLayout>
   </ContentPage.Content>

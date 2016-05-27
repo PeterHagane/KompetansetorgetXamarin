@@ -39,7 +39,7 @@
     </local:BaseContentPage.ToolbarItems>
 
     <ContentPage.Padding>
-      <OnPlatform x:TypeArguments="Thickness" iOS="15,0,15,0" Android="15,0,15,0" />
+      <OnPlatform x:TypeArguments="Thickness" iOS="5,0,5,0" Android="5,0,5,0" />
     </ContentPage.Padding>
 
     <StackLayout VerticalOptions="FillAndExpand">
@@ -55,7 +55,7 @@
           <ColumnDefinition Width="45" />
         </Grid.ColumnDefinitions>
 
-        <Entry x:Name="søk" Placeholder="Sok" Style="{DynamicResource entryStyle}" HeightRequest="35"
+        <SearchBar x:Name="søk" Placeholder="Søk" HeightRequest="35"
                Grid.Row="0"
                Grid.Column="0"
                Grid.ColumnSpan="2"/>
@@ -74,7 +74,7 @@
       </Grid>
 
 <!--RowHeight="100"-->
-      <ListView x:Name="OppgaveList">
+      <local:SearchOppgaverListView x:Name="OppgaveList">
         <ListView.ItemTemplate>
           <DataTemplate>
             <ImageCell
@@ -86,7 +86,7 @@
             </ImageCell>
           </DataTemplate>
         </ListView.ItemTemplate>
-      </ListView>
+      </local:SearchOppgaverListView>
     </StackLayout>
   </local:BaseContentPage>
 

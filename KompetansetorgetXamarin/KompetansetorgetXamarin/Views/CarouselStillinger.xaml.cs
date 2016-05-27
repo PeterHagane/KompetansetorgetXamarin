@@ -16,26 +16,31 @@ namespace KompetansetorgetXamarin.Views
     public partial class CarouselStillinger : BaseCarouselPage
     {
         VMStillingerSettings LISTINIT = new VMStillingerSettings();
-        ObservableCollection<Job> JOBS = new ObservableCollection<Job>();
+        public static ObservableCollection<Job> JOBS = new ObservableCollection<Job>();
         ICommand refreshCommand;
         int currentPage = 0;
         string p0title = "Finn stillinger";
         string p1title = "Velg fagområder";
+        public static bool pullList = true;
 
         public CarouselStillinger()
         {
-            System.Diagnostics.Debug.WriteLine("FØR INITIALIZECOMPONENT ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
             InitializeComponent();
-            System.Diagnostics.Debug.WriteLine(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: ETTER INITIALIZECOMPONENT");
-            AddData();
+            StillingList.IsRefreshing = true;
+            AddData();  //sandwiched between IsRefreshing in order to display loading icon when fetching list for the first time
+            StillingList.IsRefreshing = false;
             this.Title = p0title;
             StillingList.ItemsSource = JOBS;   // oppgave.companies[0].name  .logo
             StillingerSettings.ItemsSource = LISTINIT.stillingerSettings;
             //OppgaverEmner.ItemsSource = LISTINIT.coursesSettings;
             StillingList.IsPullToRefreshEnabled = true;
-            StillingList.IsRefreshing = false;
-            StillingList.RefreshCommand = RefreshCommand;
             
+            StillingList.RefreshCommand = RefreshCommand;
+            søk.TextChanged += (sender, e) => StillingList.FilterOppgaver(søk.Text);
+            søk.SearchButtonPressed += (sender, e) => {
+                StillingList.FilterOppgaver(søk.Text);
+            };
+
         }
 
         void OnClick(object sender, EventArgs e)
@@ -114,12 +119,19 @@ namespace KompetansetorgetXamarin.Views
         /// </summary>
         async Task ExcecuteRefreshCommand()
         {
-            LISTINIT.SaveSettings();
-            JOBS.Clear();
-            StillingList.ItemsSource = null;
-            AddData();
-            StillingList.ItemsSource = JOBS;
-            StillingList.IsRefreshing = false;
+            if (pullList == false)
+            {
+                StillingList.IsRefreshing = false;
+            }
+            else if (pullList == true)
+            {
+                LISTINIT.SaveSettings();
+                JOBS.Clear();
+                StillingList.ItemsSource = null;
+                AddData();
+                StillingList.ItemsSource = JOBS;
+                StillingList.IsRefreshing = false;
+            }
         }
 
         //Alters title on carouselpage by contentpage
@@ -133,6 +145,7 @@ namespace KompetansetorgetXamarin.Views
             if (CurrentPage == this.Children[0])
             {
                 this.Title = p0title;
+                LISTINIT.SaveSettings();
             }
             else if (CurrentPage == this.Children[1])
             {
@@ -182,25 +195,31 @@ namespace KompetansetorgetXamarin.Views
             //filter.Add("courses", "DAT-304");
             //filter.Add("types", "virksomhet");
 
-
-            JobsController jc = new JobsController();
-
-            IEnumerable<Job> jobs = await jc.GetJobsBasedOnFilter(LISTINIT.GetSettings(), null);
-            
-            foreach (Job p in jobs)
+            if (pullList == false)
             {
-                //JOBS.Clear();
-                JOBS.Add(p);
             }
+            else if (pullList == true)
+            {
+                JobsController jc = new JobsController();
 
-            if (!Authenticater.Authorized)
-            {
-                GoToLogin();
-            }
-            if (jobs != null)
-            {
-                System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter: jobs.Count(): " +
-                                                   jobs.Count());
+                IEnumerable<Job> jobs = await jc.GetJobsBasedOnFilter(LISTINIT.GetSettings(), null);
+
+                foreach (Job p in jobs)
+                {
+                    //JOBS.Clear();
+                    JOBS.Add(p);
+                }
+
+                if (!Authenticater.Authorized)
+                {
+                    GoToLogin();
+                }
+                if (jobs != null)
+                {
+                    System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter: jobs.Count(): " +
+                                                       jobs.Count());
+                }
+                pullList = false;
             }
         }
     }
