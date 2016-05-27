@@ -118,25 +118,14 @@ namespace KompetansetorgetXamarin.Controllers
         /// <param name="receiveNotifications"></param>
         /// <param name="receiveProjectNotifications"></param>
         /// <param name="receiveJobNotifications"></param>
-        public void UpdateStudentsNotificationsPref(bool? receiveNotifications,
-            bool? receiveProjectNotifications, bool? receiveJobNotifications)
+        public void UpdateStudentsNotificationsPref(bool receiveNotifications,
+            bool receiveProjectNotifications, bool receiveJobNotifications)
         {
             DbStudent db = new DbStudent();
             Student student = db.GetStudent();
-            if (receiveNotifications != null)
-            {
-                student.receiveNotifications = (bool)receiveNotifications;
-            }
-
-            if (receiveProjectNotifications != null)
-            {
-                student.receiveProjectNotifications = (bool)receiveProjectNotifications;
-            }
-
-            if (receiveJobNotifications != null)
-            {
-                student.receiveJobNotifications = (bool)receiveJobNotifications;
-            }
+            student.receiveNotifications = receiveNotifications;
+            student.receiveProjectNotifications = receiveProjectNotifications;
+            student.receiveJobNotifications = receiveJobNotifications;
             db.UpdateStudent(student);
         }
 
