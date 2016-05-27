@@ -42,7 +42,7 @@ namespace KompetansetorgetXamarin.Controls
         {
             var fagområdeSetting = sender as fagområdeSetting;
             System.Diagnostics.Debug.WriteLine("{0} has been toggled to {1}", fagområdeSetting.Name, fagområdeSetting.IsSelected);
-            cs = true;
+            //cs = true;
         }
 
         public List<string> GetSettings()
@@ -85,8 +85,8 @@ namespace KompetansetorgetXamarin.Controls
         {
             //DbLocation lc = new DbLocation();
             //DbCourse cc = new DbCourse();
-            if (cs == true)
-            {
+            //if (cs == true)
+            //{
                 DbStudyGroup sgc = new DbStudyGroup();
 
                 foreach (fagområdeSetting setting in stillingerSettings)
@@ -106,9 +106,9 @@ namespace KompetansetorgetXamarin.Controls
                     }
                 }
                 sgc.UpdateStudyGroups(studyGroupsFilter);
-                cs = false; //set changedsetting to false after saving
-                CarouselStillinger.pullList = true; //set pullList to true, meaning that any refresh action will reload the list according to new settings
-            }
+                //cs = false; //set changedsetting to false after saving
+                //CarouselStillinger.pullList = true; //set pullList to true, meaning that any refresh action will reload the list according to new settings
+            //}
         }
         public async void GetAllFilters()
         {

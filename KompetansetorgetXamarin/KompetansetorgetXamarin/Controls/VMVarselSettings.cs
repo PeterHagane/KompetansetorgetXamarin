@@ -84,8 +84,8 @@ namespace KompetansetorgetXamarin.Controls
         {
             //DbLocation lc = new DbLocation();
             //DbCourse cc = new DbCourse();
-            if (cs == true)
-            {
+            //if (cs == true)
+            //{
                 DbStudyGroup sgc = new DbStudyGroup();
 
                 foreach (fagområdeSetting setting in varslerSettings)
@@ -105,8 +105,8 @@ namespace KompetansetorgetXamarin.Controls
                     }
                 }
                 sgc.UpdateStudyGroups(studyGroupsFilter);
-                cs = false;
-            }
+                //cs = false;
+            //}
         }
 
         public async void GetAllFilters()
