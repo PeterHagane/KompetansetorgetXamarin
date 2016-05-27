@@ -44,20 +44,32 @@
       <Style x:Key="stackLayoutStyle" TargetType="StackLayout">
         <Setter Property="Padding" Value="35,35,35,35"/>
       </Style>
-      
-      
+
+
+      <Style x:Key="switchStackStyle" TargetType="StackLayout">
+        <Setter Property="HeightRequest" Value="22"/>
+        <Setter Property="Padding" Value="10,0,10,0"/>
+      </Style>
+      <Style x:Key="switchLabelStyle" TargetType="Label">
+        <Setter Property="HorizontalOptions" Value="StartAndExpand"/>
+        <Setter Property="VerticalOptions" Value="CenterAndExpand"/>
+        <Setter Property="FontSize" Value="14"/>
+      </Style>
+      <Style x:Key="switchStyle" TargetType="Switch">
+        <Setter Property="HorizontalOptions" Value="EndAndExpand"/>
+        <Setter Property="VerticalOptions" Value="CenterAndExpand"/>
+      </Style>
+
 
       <Style x:Key="buttonLabelStyle" TargetType="Label">
         <Setter Property="HorizontalOptions" Value="StartAndExpand"/>
         <Setter Property="VerticalOptions" Value="CenterAndExpand"/>
         <Setter Property="FontSize" Value="18"/>
       </Style>
-
       <Style x:Key="buttonStackStyle" TargetType="StackLayout">
         <Setter Property="HeightRequest" Value="48"/>
         <Setter Property="Padding" Value="10,0,10,0"/>
       </Style>
-
       <Style x:Key="buttonImageStyle" TargetType="Image">
         <Setter Property="HorizontalOptions" Value="EndAndExpand"/>
         <Setter Property="VerticalOptions" Value="CenterAndExpand"/>

@@ -36,7 +36,10 @@ namespace KompetansetorgetXamarin.Views
             VarselList.IsPullToRefreshEnabled = true;
             VarselList.IsRefreshing = false;
             VarselList.RefreshCommand = RefreshCommand;
-            
+            stillingSwitch.Toggled += stillingToggle;
+            oppgaveSwitch.Toggled += oppgaveToggle;
+            varselSwitch.Toggled += varselToggle;
+
         }
 
 
@@ -186,6 +189,21 @@ namespace KompetansetorgetXamarin.Views
             //}
             //listInit.SaveSettings();
             return true;
+        }
+
+        void varselToggle(object sender, ToggledEventArgs e)
+        {
+            this.DisplayAlert("Selected!", "fsdfs" + e.Value, "OK");
+        }
+
+        void stillingToggle(object sender, ToggledEventArgs e)
+        {
+            this.DisplayAlert("Selected!", "fsdfs" + e.Value, "OK");
+        }
+
+        void oppgaveToggle(object sender, ToggledEventArgs e)
+        {
+            this.DisplayAlert("Selected!", "fsdfs" + e.Value, "OK");
         }
 
         public void getFilter()

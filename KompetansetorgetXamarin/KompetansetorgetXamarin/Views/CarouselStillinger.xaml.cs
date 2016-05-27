@@ -188,6 +188,10 @@ namespace KompetansetorgetXamarin.Views
         public void getFilter()
         { }
 
+        void stillingToggle(object sender, ToggledEventArgs e)
+        {
+            this.DisplayAlert("Selected!", "Stilling = " + e.Value, "OK");
+        }
 
         private async void AddData()
         {

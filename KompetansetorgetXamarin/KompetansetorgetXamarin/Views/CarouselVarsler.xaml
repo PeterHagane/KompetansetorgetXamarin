@@ -95,7 +95,56 @@
       <OnPlatform x:TypeArguments="Thickness" iOS="15,5,15,0" Android="15,5,15,0" />
     </ContentPage.Padding>
 
-    <StackLayout>
+    
+    
+    <StackLayout Padding="0,0,0,0">
+      
+      <!--<StackLayout Style="{DynamicResource switchStackStyle}">
+        <Label Text="Varsler for oppgaver" Style="{DynamicResource switchLabelStyle}"/>
+        <Switch x:Name="oppgaverSwitch" IsToggled="{Binding stillingToggle}" Style="{DynamicResource switchStyle}"/>
+      </StackLayout>-->
+
+      <Grid Padding="10,5,10,5">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="25"/>
+          <RowDefinition Height="25"/>
+          <RowDefinition Height="25"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="Auto" />
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="100" />
+        </Grid.ColumnDefinitions>
+
+        <Label Text="Aktiver varsler" HeightRequest="25" Style="{DynamicResource switchLabelStyle}"
+              Grid.Row="0"
+              Grid.Column="0"
+              Grid.ColumnSpan="2"/>
+        <Switch x:Name="varselSwitch" IsToggled="{Binding varslerToggle}" Style="{DynamicResource switchStyle}"
+                     Grid.Row="0"
+                     Grid.Column="2"
+                     Grid.ColumnSpan="1"/>
+        
+        <Label Text="Motta varsler for stillinger" HeightRequest="25" Style="{DynamicResource switchLabelStyle}"
+               Grid.Row="1"
+               Grid.Column="0"
+               Grid.ColumnSpan="2"/>
+        <Switch x:Name="stillingSwitch" IsToggled="{Binding stillingToggle}" Style="{DynamicResource switchStyle}"
+                     Grid.Row="1"
+                     Grid.Column="2"
+                     Grid.ColumnSpan="1"/>
+
+        <Label Text="Motta varsler for oppgaver" HeightRequest="25" Style="{DynamicResource switchLabelStyle}"
+                Grid.Row="2"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"/>
+        <Switch x:Name="oppgaveSwitch" IsToggled="{Binding oppgaveToggle}" Style="{DynamicResource switchStyle}"
+                     Grid.Row="2"
+                     Grid.Column="2"
+                     Grid.ColumnSpan="1"/>
+      </Grid>
+      
       <!--SelectedItem="{Binding SelectedCourse}"-->
       <!--SeparatorVisibility="None"-->
       <ListView x:Name="StillingerSettings">
