@@ -710,20 +710,20 @@ namespace KompetansetorgetXamarin.Views
 
         private async void TestTurnOffNotifications(object sender, EventArgs e)
         {
-            StudentsController sc = new StudentsController();
-            sc.UpdateStudentsNotificationsPref(false, true, true);
+            NotificationsController nc = new NotificationsController();
+            nc.UpdateStudentsNotificationsPref(false, true, true);
         }
 
         private async void TestTurnOffProjectNotification(object sender, EventArgs e)
         {
-            StudentsController sc = new StudentsController();
-            sc.UpdateStudentsNotificationsPref(true, false, true);
+            NotificationsController nc = new NotificationsController();
+            nc.UpdateStudentsNotificationsPref(true, false, true);
         }
 
         private async void TestTurnOffJobNotification(object sender, EventArgs e)
         {
-            StudentsController sc = new StudentsController();
-            sc.UpdateStudentsNotificationsPref(true, true, false);
+            NotificationsController nc = new NotificationsController();
+            nc.UpdateStudentsNotificationsPref(true, true, false);
         }
 
         private async void TestInsertJob(object sender, EventArgs e)

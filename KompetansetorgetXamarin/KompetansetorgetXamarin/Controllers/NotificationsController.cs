@@ -112,6 +112,34 @@ namespace KompetansetorgetXamarin.Controllers
             return notificationList;
         }
 
+        /// <summary>
+        /// Updates the students notification preferances.
+        /// </summary>
+        /// <param name="receiveNotifications"></param>
+        /// <param name="receiveProjectNotifications"></param>
+        /// <param name="receiveJobNotifications"></param>
+        public void UpdateStudentsNotificationsPref(bool? receiveNotifications,
+            bool? receiveProjectNotifications, bool? receiveJobNotifications)
+        {
+            DbStudent db = new DbStudent();
+            Student student = db.GetStudent();
+            if (receiveNotifications != null)
+            {
+                student.receiveNotifications = (bool)receiveNotifications;
+            }
+
+            if (receiveProjectNotifications != null)
+            {
+                student.receiveProjectNotifications = (bool)receiveProjectNotifications;
+            }
+
+            if (receiveJobNotifications != null)
+            {
+                student.receiveJobNotifications = (bool)receiveJobNotifications;
+            }
+            db.UpdateStudent(student);
+        }
+
         /*
             // 
             // TESTING AT 'is' (instanceof) PÅ EN KLASSE AV OBJECT funker til notification list 

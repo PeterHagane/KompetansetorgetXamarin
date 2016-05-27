@@ -29,34 +29,6 @@ namespace KompetansetorgetXamarin.Controllers
 
 
         /// <summary>
-        /// Update the students studygroup.
-        /// </summary>
-        /// <param name="receiveNotifications"></param>
-        /// <param name="receiveProjectNotifications"></param>
-        /// <param name="receiveJobNotifications"></param>
-        public void UpdateStudentsNotificationsPref(bool? receiveNotifications,
-            bool? receiveProjectNotifications, bool? receiveJobNotifications)
-        {
-            DbStudent db = new DbStudent();
-            Student student = db.GetStudent();
-            if (receiveNotifications != null)
-            {
-                student.receiveNotifications = (bool)receiveNotifications;
-            }
-
-            if (receiveProjectNotifications != null)
-            {
-                student.receiveProjectNotifications = (bool)receiveProjectNotifications;
-            }
-
-            if (receiveJobNotifications != null)
-            {
-                student.receiveJobNotifications = (bool)receiveJobNotifications;
-            }
-            db.UpdateStudent(student);
-        }
-
-        /// <summary>
         /// Gets the Students StudyGroups used for push notifications from the server.
         /// </summary>
         /// <returns></returns>
