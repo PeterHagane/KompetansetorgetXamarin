@@ -1,4 +1,5 @@
-﻿using KompetansetorgetXamarin.DAL;
+﻿using KompetansetorgetXamarin.Controllers;
+using KompetansetorgetXamarin.DAL;
 using KompetansetorgetXamarin.Models;
 using System;
 using System.Collections.Generic;
@@ -77,6 +78,17 @@ namespace KompetansetorgetXamarin.Controls
                     System.Diagnostics.Debug.WriteLine("string name in studyDict.Values: " + sg.name);
                     varslerSettings.Add(new fagområdeSetting(sg.name, sg.filterChecked, sg.id));
                 }
+            }
+        }
+
+        public async void PostToServer()
+        {
+            StudentsController sc = new StudentsController();
+            await sc.PostStudentsStudyGroupToServer(GetSettings());
+
+            if (!Authenticater.Authorized)
+            {
+                GoToLogin();
             }
         }
 

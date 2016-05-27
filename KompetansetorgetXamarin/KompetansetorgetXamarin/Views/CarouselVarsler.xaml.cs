@@ -18,7 +18,7 @@ namespace KompetansetorgetXamarin.Views
     public partial class CarouselVarsler : BaseCarouselPage
     {
         string defaultLogo = "http://kompetansetorget.uia.no/extension/kompetansetorget/design/kompetansetorget/images/logo-virksomhet.jpg";
-        VMStillingerSettings LISTINIT = new VMStillingerSettings();
+        VMVarselSettings LISTINIT = new VMVarselSettings();
         ObservableCollection<Varsel> varsler = new ObservableCollection<Varsel>();
         ICommand refreshCommand;
         string p0title = "Dine varsler";
@@ -33,7 +33,7 @@ namespace KompetansetorgetXamarin.Views
             AddData();
             VarselList.ItemsSource = varsler;
             this.Title = p0title;
-            StillingerSettings.ItemsSource = LISTINIT.stillingerSettings;
+            StillingerSettings.ItemsSource = LISTINIT.varslerSettings;
             //OppgaverEmner.ItemsSource = LISTINIT.coursesSettings;
             VarselList.IsPullToRefreshEnabled = true;
             VarselList.IsRefreshing = false;
@@ -56,6 +56,15 @@ namespace KompetansetorgetXamarin.Views
             this.DisplayAlert("Selected!", "Fagområder get", "OK");
             bool alphabeticallyFirst = false;
             Sort();
+        }
+
+        void SaveSettings(object sender, EventArgs e)
+        {
+            SaveToggle();
+            LISTINIT.SaveSettings();
+            LISTINIT.PostToServer();
+
+            this.DisplayAlert("Innstillinger lagret!", "Oppdatér for å få en ny liste.", "OK");
         }
 
         void Sort()
@@ -137,6 +146,7 @@ namespace KompetansetorgetXamarin.Views
             //{
             SaveToggle();
             LISTINIT.SaveSettings();
+            LISTINIT.PostToServer();
             varsler.Clear();
             VarselList.ItemsSource = null;
             AddData();
@@ -149,15 +159,26 @@ namespace KompetansetorgetXamarin.Views
         public new event EventHandler CurrentPageChanged;
         protected override void OnCurrentPageChanged()
         {
+            int prevPage = 0;
             EventHandler changed = CurrentPageChanged;
             if (changed != null)
                 changed(this, EventArgs.Empty);
             if (CurrentPage == this.Children[0])
             {
                 this.Title = p0title;
+
+                if (prevPage == 1)
+                {
+                    LISTINIT.SaveSettings();
+                    LISTINIT.PostToServer();
+                    SaveToggle();
+                }
+                prevPage = 0;
+
             }
             else if (CurrentPage == this.Children[1])
             {
+                prevPage = 1;
                 this.Title = p1title;
             }
             //add in case of more pages
@@ -171,6 +192,7 @@ namespace KompetansetorgetXamarin.Views
         protected override void OnDisappearing()
         {
             LISTINIT.SaveSettings(); //saves the settings when pressing the up button/leaving the page
+            LISTINIT.PostToServer();
             SaveToggle();
         }
 
@@ -197,7 +219,6 @@ namespace KompetansetorgetXamarin.Views
         void SwitchToggle(object sender, ToggledEventArgs e)
         {
             SaveToggle();
-
         }
 
         void SaveToggle()
@@ -213,9 +234,17 @@ namespace KompetansetorgetXamarin.Views
         {
             DbStudent dbStudent = new DbStudent();
             Student student = dbStudent.GetStudent();
-            oppgaveSwitch.IsToggled = student.receiveProjectNotifications;
-            stillingSwitch.IsToggled = student.receiveJobNotifications;
-            varselSwitch.IsToggled = student.receiveNotifications;
+            if (student != null)
+            {
+                oppgaveSwitch.IsToggled = student.receiveProjectNotifications;
+                stillingSwitch.IsToggled = student.receiveJobNotifications;
+                varselSwitch.IsToggled = student.receiveNotifications;
+            }
+            else {
+                oppgaveSwitch.IsToggled = false;
+                stillingSwitch.IsToggled = false;
+                varselSwitch.IsToggled = false;
+            }
         }
 
         public void getFilter()

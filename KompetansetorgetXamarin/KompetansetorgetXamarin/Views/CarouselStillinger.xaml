@@ -10,7 +10,7 @@
   /////////////////////////////////-->
   <local:BaseContentPage Padding="0,0,0,0">
     <local:BaseContentPage.ToolbarItems>
-      <ToolbarItem Name="Refresh" Activated="Refresh_OnTapped"  Order="Primary" Priority="0">
+      <ToolbarItem Name="Refresh" Activated="Refresh_OnTapped" Order="Primary" Priority="0">
         <ToolbarItem.Icon>
           <OnPlatform x:TypeArguments="FileImageSource"
                       Android="Reload.png" />

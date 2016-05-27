@@ -11,12 +11,7 @@
   /////////////////////////////////-->  
   <local:BaseContentPage Padding="0,0,0,0">
     <local:BaseContentPage.ToolbarItems>
-      <ToolbarItem Name="Refresh" Activated="Refresh_OnTapped"  Order="Primary" Priority="0">
-        <ToolbarItem.Icon>
-          <OnPlatform x:TypeArguments="FileImageSource"
-                      Android="Reload.png" />
-        </ToolbarItem.Icon>
-      </ToolbarItem>
+
 
       <ToolbarItem Name="User" Activated="Logout"  Order="Primary" Priority="1">
         <ToolbarItem.Icon>
