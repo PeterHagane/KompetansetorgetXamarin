@@ -4,10 +4,17 @@
              xmlns:local="clr-namespace:KompetansetorgetXamarin.Controls;assembly=KompetansetorgetXamarin"
              x:Class="KompetansetorgetXamarin.Views.MainPage"
              Title="Kompetansetorget">
+  
+  <local:BaseContentPage.ToolbarItems>
+    <ToolbarItem Name="User" Activated="Logout"  Order="Primary" Priority="1">
+      <ToolbarItem.Icon>
+        <OnPlatform x:TypeArguments="FileImageSource"
+                    Android="User.png" />
+      </ToolbarItem.Icon>
+    </ToolbarItem>
+  </local:BaseContentPage.ToolbarItems>
   <ContentPage.Content>
-
     <!--<Image Source="KTbanner.jpg"/>-->
-    
     <StackLayout VerticalOptions="FillAndExpand"
                  Orientation="Vertical"
                  Spacing="15">

@@ -61,7 +61,7 @@
     <Compile Include="Controllers\ProjectsController.cs" />
     <Compile Include="Controllers\StudentsController.cs" />
     <Compile Include="Controllers\StudyGroupsController.cs" />
-    <Compile Include="Controls\BaseCarouselPage.cs" />
+    <Compile Include="Views\BaseCarouselPage.cs" />
     <Compile Include="Controls\ButtonShadow.cs" />
     <Compile Include="Controls\ButtonStack.cs" />
     <Compile Include="Controls\CustomImageCell.cs" />
@@ -119,9 +119,6 @@
     </Compile>
     <Compile Include="Views\CarouselStillinger.xaml.cs">
       <DependentUpon>CarouselStillinger.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\LoginPage.xaml.cs">
-      <DependentUpon>LoginPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
@@ -242,12 +239,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Views\MainPage.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Views\LoginPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>

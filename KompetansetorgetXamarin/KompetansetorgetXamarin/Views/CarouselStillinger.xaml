@@ -1,8 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<local:BaseCarouselPage xmlns="http://xamarin.com/schemas/2014/forms"
+<views:BaseCarouselPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="KompetansetorgetXamarin.Views.CarouselStillinger"
-             xmlns:local="clr-namespace:KompetansetorgetXamarin.Controls;assembly=KompetansetorgetXamarin">
+             xmlns:local="clr-namespace:KompetansetorgetXamarin.Controls;assembly=KompetansetorgetXamarin"
+             xmlns:views="clr-namespace:KompetansetorgetXamarin.Views;assembly=KompetansetorgetXamarin">
 
   <!--////////////////////////////////
   STILLINGLISTE PAGE (page 1)
@@ -16,7 +17,7 @@
         </ToolbarItem.Icon>
       </ToolbarItem>
 
-      <ToolbarItem Name="User" Activated="OnClick"  Order="Primary" Priority="1">
+      <ToolbarItem Name="User" Activated="Logout"  Order="Primary" Priority="1">
         <ToolbarItem.Icon>
           <OnPlatform x:TypeArguments="FileImageSource"
                       Android="User.png" />
@@ -94,7 +95,7 @@
   /////////////////////////////////-->
   <local:BaseContentPage Padding="0,0,0,0">
     <local:BaseContentPage.ToolbarItems>
-      <ToolbarItem Name="User" Activated="OnClick"  Order="Primary" Priority="1">
+      <ToolbarItem Name="User" Activated="Logout"  Order="Primary" Priority="1">
         <ToolbarItem.Icon>
           <OnPlatform x:TypeArguments="FileImageSource"
                       Android="User.png" />
@@ -122,4 +123,4 @@
     </StackLayout>
   </local:BaseContentPage>
 
-</local:BaseCarouselPage>
+</views:BaseCarouselPage>

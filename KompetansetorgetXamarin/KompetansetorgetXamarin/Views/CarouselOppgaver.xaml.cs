@@ -12,6 +12,7 @@ using System.Windows.Input;
 using KompetansetorgetXamarin.Controllers;
 using Xamarin.Forms.Xaml;
 using System.Collections.Specialized;
+using KompetansetorgetXamarin.DAL;
 
 namespace KompetansetorgetXamarin.Views
 {
@@ -45,13 +46,6 @@ namespace KompetansetorgetXamarin.Views
             {
                 OppgaveList.FilterOppgaver(søk.Text);
             };
-        }
-
-
-
-        void OnClick(object sender, EventArgs e)
-        {
-            this.DisplayAlert("Selected!", "Fagområder get", "OK");
         }
 
         void Sorter_OnTapped(object sender, EventArgs e)
