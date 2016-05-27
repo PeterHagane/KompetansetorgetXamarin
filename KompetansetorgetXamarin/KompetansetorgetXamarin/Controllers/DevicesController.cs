@@ -19,8 +19,8 @@ namespace KompetansetorgetXamarin.Controllers
         private string studentAdress;
         public DevicesController()
         {
-            deviceAdress = Adress + "v1/devices";
-            studentAdress = Adress + "v1/students";
+            deviceAdress = Adress + "/devices";
+            studentAdress = Adress + "/students";
         }
 
 

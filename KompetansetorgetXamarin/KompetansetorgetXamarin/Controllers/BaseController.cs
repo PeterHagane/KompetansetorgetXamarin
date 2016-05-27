@@ -11,8 +11,7 @@ namespace KompetansetorgetXamarin.Controllers
 {
     public abstract class BaseController
     {
-        // Change this to http://kompetansetorget.uia.no/api/
-        protected string Adress = "http://kompetansetorgetserver1.azurewebsites.net/api/";
+        protected string Adress = BackendAdresses.apiUri + BackendAdresses.apiVersion;
 
     }
 }

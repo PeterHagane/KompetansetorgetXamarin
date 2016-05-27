@@ -18,7 +18,7 @@ namespace KompetansetorgetXamarin.Controllers
     {
         public LocationsController()
         {
-            Adress += "v1/locations";
+            Adress += "/locations";
         }
 
         public async Task CompareServerHash()

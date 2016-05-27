@@ -6,6 +6,13 @@ using System.Threading.Tasks;
 
 namespace KompetansetorgetXamarin
 {
+    /// <summary>
+    /// This class contains some information that should not be easily accessible if the app is to be released.
+    /// The values of ClientId and ClientSecret should by the very least not be in a file that is 
+    /// tracked by the version control system if the repository is opensource. 
+    /// Preferably ClientId and ClientSecret should both be provided by outside means, e.g by injecting environment variables:
+    /// https://developer.xamarin.com/guides/cross-platform/ci/jenkins_walkthrough/
+    /// </summary>
     public static class AuthProvider
     {
         // OAuth

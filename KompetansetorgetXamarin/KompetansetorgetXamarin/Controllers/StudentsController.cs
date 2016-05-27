@@ -24,7 +24,7 @@ namespace KompetansetorgetXamarin.Controllers
     {
         public StudentsController()
         {
-            Adress += "v1/students";
+            Adress += "/students";
         }
 
 

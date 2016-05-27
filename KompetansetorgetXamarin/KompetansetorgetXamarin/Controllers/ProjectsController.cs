@@ -24,7 +24,7 @@ namespace KompetansetorgetXamarin.Controllers
 
         public ProjectsController()
         {
-            Adress += "v1/projects";
+            Adress += "/projects";
         }
 
         /// <summary>
@@ -208,12 +208,7 @@ namespace KompetansetorgetXamarin.Controllers
         /// <summary>
         /// Gets a project based on optional filters.
         /// </summary>
-        /// <param name="studyGroups">studyGroups can be a list of numerous studygroups ex: helse, idrettsfag, datateknologi </param>
-        /// <param name="sortBy">publish - oldest to newest
-        ///                      -publish - newest to oldest
-        ///                      expirydate - descending order
-        ///                      -expirydate - ascending order
-        /// </param>
+        /// <param name="studyGroups">studyGroups can be a list of numerous studygroups ex: helse, idrettsfag, datateknologi </param>>
         /// <param name="filter">A dictionary where key can be: titles (values:title of the project), types (values: virksomhet, faglærer, etc...),
         ///                      courses (values: "IS-304" "DAT-304" osv). 
         ///                      Supports only 1 key at this current implementation!</param>
@@ -372,14 +367,8 @@ namespace KompetansetorgetXamarin.Controllers
         private IEnumerable<Project> DeserializeMany(string jsonString)
         {
             System.Diagnostics.Debug.WriteLine("ProjectController - DeserializeMany Initialized");
-
             List<object> serializedProjects =
                 JsonConvert.DeserializeObject<List<object>>(jsonString);
-            //System.Diagnostics.Debug.WriteLine("ProjectController - jsonString: " + jsonString);
-             
-            //List<string> serializedProjects =
-            //    JsonConvert.DeserializeObject<List<string>>(jsonString);
-
             System.Diagnostics.Debug.WriteLine("ProjectController - serializedProjects.Count(): " + serializedProjects.Count());
 
             List<Project> projects = new List<Project>();
@@ -391,8 +380,7 @@ namespace KompetansetorgetXamarin.Controllers
         }
 
         /// <summary>
-        /// Deserializes a singular Project with childrem. 
-        /// This method is not fully completed and should be used with caution.
+        /// Deserializes a singular Project with children objects. 
         /// </summary>
         /// <param name="jsonString">Serialized data contain information about project and its children</param>
         /// <returns>A deserialized Project object</returns>
@@ -424,10 +412,12 @@ namespace KompetansetorgetXamarin.Controllers
                     p.title = dict[key].ToString();
                 }
 
+                /*
                 if (key.Equals("description"))
                 {
                     p.description = dict[key].ToString();
                 }
+                */
 
                 if (key.Equals("webpage"))
                 {

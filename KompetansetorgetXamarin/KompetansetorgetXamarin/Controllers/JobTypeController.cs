@@ -18,7 +18,7 @@ namespace KompetansetorgetXamarin.Controllers
     {
         public JobTypesController()
         {
-            Adress += "v1/jobTypes";
+            Adress += "/jobTypes";
         }
 
         public async Task CompareServerHash()

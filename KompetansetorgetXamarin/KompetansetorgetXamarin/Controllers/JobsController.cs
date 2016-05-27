@@ -23,7 +23,7 @@ namespace KompetansetorgetXamarin.Controllers
     {
         public JobsController()
         {
-            Adress += "v1/jobs";
+            Adress += "/jobs";
         }
 
         /// <summary>

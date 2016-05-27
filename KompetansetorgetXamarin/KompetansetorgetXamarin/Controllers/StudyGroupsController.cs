@@ -20,7 +20,7 @@ namespace KompetansetorgetXamarin.Controllers
     {
         public StudyGroupsController()
         {
-            Adress += "v1/studygroups";
+            Adress += "/studygroups";
         }
 
         /// <summary>

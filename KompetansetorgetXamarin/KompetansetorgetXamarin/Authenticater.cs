@@ -91,7 +91,6 @@ namespace KompetansetorgetXamarin
             // and this else statement will be executed instead.
             //else
             //    PerformAuth2TestRequests(accounts[0]);
-            // TODO: implement error handling. If error is caused by expired token, renew token.
         }
 
 
