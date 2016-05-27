@@ -247,6 +247,7 @@ namespace KompetansetorgetXamarin.Views
 
         private async void AddData()
         {
+            oppgaver.Clear();
             //Dictionary<string, string> filter = new Dictionary<string, string>(); //contains only one item from each group
             //filter.Add("courses", "DAT-304");
             //filter.Add("types", "virksomhet");
@@ -256,7 +257,7 @@ namespace KompetansetorgetXamarin.Views
             //}
             //else if (pullList == true)
             //{
-                ProjectsController jc = new ProjectsController();
+            ProjectsController jc = new ProjectsController();
 
                 IEnumerable<Project> projects = await jc.GetProjectsBasedOnFilter(listInit.GetSettings(), null);
                 foreach (Project p in projects)

@@ -191,6 +191,7 @@ namespace KompetansetorgetXamarin.Views
 
         private async void AddData()
         {
+            JOBS.Clear();
             //Dictionary<string, string> filter = new Dictionary<string, string>(); //contains only one item from each group
             //filter.Add("courses", "DAT-304");
             //filter.Add("types", "virksomhet");
@@ -200,7 +201,7 @@ namespace KompetansetorgetXamarin.Views
             //}
             //else if (pullList == true)
             //{
-                JobsController jc = new JobsController();
+            JobsController jc = new JobsController();
 
                 IEnumerable<Job> jobs = await jc.GetJobsBasedOnFilter(LISTINIT.GetSettings(), null);
 
