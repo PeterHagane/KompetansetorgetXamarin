@@ -64,7 +64,7 @@ namespace KompetansetorgetXamarin.Controllers
                     notificationList.Add(project);
                 }
             }
-            return notificationList;
+            return notificationList.OrderByDescending(a => a.published).ToList();
         }
 
         public List<object> GetNotificationListJobOnly()

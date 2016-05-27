@@ -190,7 +190,7 @@ namespace KompetansetorgetXamarin.Views
                 System.Diagnostics.Debug.WriteLine("ViktorTestView - NotificationsFromDb_OnClicked: Initiated");
                 NotificationsController nc = new NotificationsController();
                 List<Advert> notifications = nc.GetNotificationList();
-
+                
                 System.Diagnostics.Debug.WriteLine(
                     "ViktorTestView - NotificationsFromDb_OnClicked: notifications.Count = " + notifications.Count);
 
@@ -228,7 +228,7 @@ namespace KompetansetorgetXamarin.Views
                         {
                             string logo = project.companies[0].logo;
                             string varselText = "Ny oppgave fra " + project.companies[0].name + "!";
-                            string published = DateTimeHandler.MakeDateTimeString(project.published);
+                            string published = "Publisert " + DateTimeHandler.MakeDateTimeString(project.published);
                             varsler.Add(new Varsel(varselText, published, logo));
 
                             System.Diagnostics.Debug.WriteLine("project.title = " + project.title);
