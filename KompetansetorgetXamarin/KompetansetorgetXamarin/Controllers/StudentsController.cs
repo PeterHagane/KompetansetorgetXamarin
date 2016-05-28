@@ -104,6 +104,11 @@ namespace KompetansetorgetXamarin.Controllers
                 return false;
             }           
             string jsonString = "";
+            if (studyGroups.Count == 0)
+            {
+                string id = Hasher.Base64Encode("none");
+                studyGroups.Add(id);
+            }
             foreach (var studyGroup in studyGroups)
             {
                 string id = Hasher.Base64Decode(studyGroup);
