@@ -63,11 +63,11 @@
         <!--ItemTapped="OnOppgaveSelected"-->
         <ListView.ItemTemplate>
           <DataTemplate>
-            <ImageCell
+            <local:CustomImageCell
                 ImageSource="{Binding Image}"
                 Text="{Binding Text}"
                 Detail="{Binding Detail}">
-            </ImageCell>
+            </local:CustomImageCell>
           </DataTemplate>
         </ListView.ItemTemplate>
       </ListView>

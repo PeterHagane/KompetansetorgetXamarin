@@ -188,6 +188,18 @@ namespace KompetansetorgetXamarin.Views
         public void getFilter()
         { }
 
+        public void OnMore(object sender, EventArgs e)
+        {
+            var mi = ((MenuItem)sender);
+            DisplayAlert("More Context Action", mi.CommandParameter + " more context action", "OK");
+        }
+
+        public void OnDelete(object sender, EventArgs e)
+        {
+            var mi = ((MenuItem)sender);
+            DisplayAlert("Delete Context Action", mi.CommandParameter + " delete context action", "OK");
+        }
+
         void stillingToggle(object sender, ToggledEventArgs e)
         {
             this.DisplayAlert("Selected!", "Stilling = " + e.Value, "OK");
