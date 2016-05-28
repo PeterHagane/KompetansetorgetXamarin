@@ -13,14 +13,14 @@ namespace KompetansetorgetXamarin.Controls
         public CustomImageCell() {
             var moreAction = new MenuItem { Text = "More" };
             moreAction.SetBinding(MenuItem.CommandParameterProperty, new Binding("."));
-            moreAction.Clicked += async (sender, e) => {
+            moreAction.Clicked += (sender, e) => {
                 var mi = ((MenuItem)sender);
                 Debug.WriteLine("More Context Action clicked: " + mi.CommandParameter);
             };
 
             var deleteAction = new MenuItem { Text = "Delete", IsDestructive = true }; // red background
             deleteAction.SetBinding(MenuItem.CommandParameterProperty, new Binding("."));
-            deleteAction.Clicked += async (sender, e) => {
+            deleteAction.Clicked += (sender, e) => { //async
                 var mi = ((MenuItem)sender);
                 Debug.WriteLine("Delete Context Action clicked: " + mi.CommandParameter);
             };

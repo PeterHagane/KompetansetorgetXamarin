@@ -53,7 +53,7 @@
       <Style x:Key="switchLabelStyle" TargetType="Label">
         <Setter Property="HorizontalOptions" Value="StartAndExpand"/>
         <Setter Property="VerticalOptions" Value="CenterAndExpand"/>
-        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontSize" Value="15"/>
       </Style>
       <Style x:Key="switchStyle" TargetType="Switch">
         <Setter Property="HorizontalOptions" Value="EndAndExpand"/>

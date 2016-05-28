@@ -20,7 +20,7 @@ namespace KompetansetorgetXamarin.Controls
             var stack = new StackLayout()
             {
                 Orientation = StackOrientation.Horizontal,
-                Padding = new Thickness(10, 5, 10, 5),
+                Padding = new Thickness(30, 0, 30, 5),
                 Spacing = 0
             };
 
@@ -30,6 +30,7 @@ namespace KompetansetorgetXamarin.Controls
             NameLabel.LineBreakMode = LineBreakMode.NoWrap;
             NameLabel.TextColor = Color.Black;
             NameLabel.SetBinding(Label.TextProperty, "Name");
+
             stack.Children.Add(NameLabel);
 
             var ToggleSwitch = new Switch();
