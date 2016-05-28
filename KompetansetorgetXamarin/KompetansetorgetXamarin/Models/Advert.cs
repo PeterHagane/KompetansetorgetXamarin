@@ -28,5 +28,23 @@ namespace KompetansetorgetXamarin.Models
 
         [OneToMany]
         public List<Notification> notifications { get; set; }
+
+        protected bool Equals(Advert other)
+        {
+            return string.Equals(uuid, other.uuid);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((Advert) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return (uuid != null ? uuid.GetHashCode() : 0);
+        }
     }
 }

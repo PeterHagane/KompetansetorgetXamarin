@@ -34,7 +34,7 @@ namespace KompetansetorgetXamarin.Views
             InitializeComponent();
             this.Title = p0title;
             OppgaveList.IsRefreshing = true;
-            AddData();
+            //AddData();
             OppgaveList.IsRefreshing = false;
             OppgaveList.ItemsSource = oppgaver;   // oppgave.companies[0].name  .logo
             oppgaverSettings.ItemsSource = listInit.oppgaveSettings;
@@ -129,7 +129,11 @@ namespace KompetansetorgetXamarin.Views
 
         private ICommand RefreshCommand
         {
-            get { return refreshCommand ?? (refreshCommand = new Command(async () => await ExcecuteRefreshCommand())); }
+            get
+            {
+                System.Diagnostics.Debug.WriteLine("CarouselOppgaver - RefreshCommand - before refreshCommand ??");
+                return refreshCommand ?? (refreshCommand = new Command(async () => await ExcecuteRefreshCommand()));
+            }
         }
         /// <summary>
         /// Custom refresh to pull new data from server. If pullList is false(set in SearchListView.cs), it won't download a new list but will instead just do a regular unmodified refresh.
@@ -142,12 +146,18 @@ namespace KompetansetorgetXamarin.Views
             //}
             //else if (pullList == true)
             //{
-                listInit.SaveSettings();
-                oppgaver.Clear();
-                OppgaveList.ItemsSource = null;
-                AddData();
-                OppgaveList.ItemsSource = oppgaver;
-                OppgaveList.IsRefreshing = false;
+            System.Diagnostics.Debug.WriteLine("CarouselOppgaver - ExcecuteRefreshCommand - before listInit.SaveSettings()");
+            listInit.SaveSettings();
+            System.Diagnostics.Debug.WriteLine("CarouselOppgaver - ExcecuteRefreshCommand - before OppgaveList.ItemsSource = null;");
+            OppgaveList.ItemsSource = null;
+            System.Diagnostics.Debug.WriteLine("CarouselOppgaver - ExcecuteRefreshCommand - before oppgaver.Clear()");
+          //  oppgaver.Clear();
+            System.Diagnostics.Debug.WriteLine("CarouselOppgaver - ExcecuteRefreshCommand - before AddData()");
+            AddData();
+            System.Diagnostics.Debug.WriteLine("CarouselOppgaver - ExcecuteRefreshCommand - before OppgaveList.ItemsSource = oppgaver");
+            OppgaveList.ItemsSource = oppgaver;
+            System.Diagnostics.Debug.WriteLine("CarouselOppgaver - ExcecuteRefreshCommand - before OppgaveList.IsRefreshing = false");
+            OppgaveList.IsRefreshing = false;
             //}
         }
 
@@ -253,7 +263,6 @@ namespace KompetansetorgetXamarin.Views
 
         private async void AddData()
         {
-            oppgaver.Clear();
             //Dictionary<string, string> filter = new Dictionary<string, string>(); //contains only one item from each group
             //filter.Add("courses", "DAT-304");
             //filter.Add("types", "virksomhet");
@@ -265,22 +274,26 @@ namespace KompetansetorgetXamarin.Views
             //{
             ProjectsController jc = new ProjectsController();
 
-                IEnumerable<Project> projects = await jc.GetProjectsBasedOnFilter(listInit.GetSettings(), null);
-                foreach (Project p in projects)
-                {
-                    //oppgaver.Clear();
-                    oppgaver.Add(p);
-                }
+            
+            IEnumerable<Project> projects = await jc.GetProjectsBasedOnFilter(listInit.GetSettings(), null);
+            HashSet<Project> newProjects = new HashSet<Project>(projects);
+            HashSet<Project> oldProjects = new HashSet<Project>(oppgaver);
+            bool sameProjects = newProjects.SetEquals(oldProjects);
 
-                if (!Authenticater.Authorized)
+            if (!sameProjects)
+            { 
+                oppgaver.Clear();
+                foreach (Project project in projects)
                 {
-                    GoToLogin();
+                    System.Diagnostics.Debug.WriteLine("project.title: " + project.title);
+                    oppgaver.Add(project);
                 }
-                if (projects != null)
-                {
-                    System.Diagnostics.Debug.WriteLine("GetProjectsBasedOnFilter: projects.Count(): " +
-                                                       projects.Count());
-                }
+            }
+            if (!Authenticater.Authorized)
+            {
+                GoToLogin();
+            }
+
             //    pullList = false;
             //}
         }

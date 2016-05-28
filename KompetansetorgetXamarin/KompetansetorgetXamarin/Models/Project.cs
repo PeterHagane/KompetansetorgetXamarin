@@ -43,5 +43,8 @@ namespace KompetansetorgetXamarin.Models
 
         [ManyToMany(typeof(StudyGroupProject))]
         public List<StudyGroup> studyGroups { get; set; }
+
+
+
     }
 }

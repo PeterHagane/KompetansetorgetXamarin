@@ -27,7 +27,7 @@ namespace KompetansetorgetXamarin.Views
         {
             InitializeComponent();
             StillingList.IsRefreshing = true;
-            AddData();  //sandwiched between IsRefreshing in order to display loading icon when fetching list for the first time
+            //AddData();  
             StillingList.IsRefreshing = false;
             this.Title = p0title;
             StillingList.ItemsSource = JOBS;   // oppgave.companies[0].name  .logo
@@ -125,12 +125,11 @@ namespace KompetansetorgetXamarin.Views
             //}
             //else if (pullList == true)
             //{
-                LISTINIT.SaveSettings();
-                JOBS.Clear();
-                StillingList.ItemsSource = null;
-                AddData();
-                StillingList.ItemsSource = JOBS;
-                StillingList.IsRefreshing = false;
+            LISTINIT.SaveSettings();
+            StillingList.ItemsSource = null;
+            AddData();
+            StillingList.ItemsSource = JOBS;
+            StillingList.IsRefreshing = false;
             //}
         }
 
@@ -207,7 +206,6 @@ namespace KompetansetorgetXamarin.Views
 
         private async void AddData()
         {
-            JOBS.Clear();
             //Dictionary<string, string> filter = new Dictionary<string, string>(); //contains only one item from each group
             //filter.Add("courses", "DAT-304");
             //filter.Add("types", "virksomhet");
@@ -219,23 +217,26 @@ namespace KompetansetorgetXamarin.Views
             //{
             JobsController jc = new JobsController();
 
-                IEnumerable<Job> jobs = await jc.GetJobsBasedOnFilter(LISTINIT.GetSettings(), null);
+            IEnumerable<Job> jobs = await jc.GetJobsBasedOnFilter(LISTINIT.GetSettings(), null);
 
+            HashSet<Job> newJobs = new HashSet<Job>(jobs);
+            HashSet<Job> oldJobs = new HashSet<Job>(JOBS);
+            bool sameJobs = newJobs.SetEquals(oldJobs);
+
+            if (!sameJobs) { 
+                JOBS.Clear();
                 foreach (Job p in jobs)
                 {
                     //JOBS.Clear();
                     JOBS.Add(p);
                 }
+            }
 
-                if (!Authenticater.Authorized)
+            if (!Authenticater.Authorized)
                 {
                     GoToLogin();
                 }
-                if (jobs != null)
-                {
-                    System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter: jobs.Count(): " +
-                                                       jobs.Count());
-                }
+
             //    pullList = false;
             //}
         }

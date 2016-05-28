@@ -176,7 +176,7 @@ namespace KompetansetorgetXamarin
                 System.Diagnostics.Debug.WriteLine("PerformAuth2TestRequests before Setting AuthenticationHeaderValue");
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", localToken);
                 System.Diagnostics.Debug.WriteLine("PerformAuth2TestRequests after Setting AuthenticationHeaderValue");
-                System.Diagnostics.Debug.WriteLine(client.DefaultRequestHeaders.Authorization.Parameter);
+            System.Diagnostics.Debug.WriteLine(client.DefaultRequestHeaders.Authorization.Parameter);
                 
 
                 var response = await client.GetAsync(testAuthorize);
