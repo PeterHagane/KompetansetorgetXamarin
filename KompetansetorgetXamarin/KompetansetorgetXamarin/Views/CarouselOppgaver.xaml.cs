@@ -149,13 +149,13 @@ namespace KompetansetorgetXamarin.Views
             System.Diagnostics.Debug.WriteLine("CarouselOppgaver - ExcecuteRefreshCommand - before listInit.SaveSettings()");
             listInit.SaveSettings();
             System.Diagnostics.Debug.WriteLine("CarouselOppgaver - ExcecuteRefreshCommand - before OppgaveList.ItemsSource = null;");
-            OppgaveList.ItemsSource = null;
+            
             System.Diagnostics.Debug.WriteLine("CarouselOppgaver - ExcecuteRefreshCommand - before oppgaver.Clear()");
           //  oppgaver.Clear();
             System.Diagnostics.Debug.WriteLine("CarouselOppgaver - ExcecuteRefreshCommand - before AddData()");
             AddData();
             System.Diagnostics.Debug.WriteLine("CarouselOppgaver - ExcecuteRefreshCommand - before OppgaveList.ItemsSource = oppgaver");
-            OppgaveList.ItemsSource = oppgaver;
+
             System.Diagnostics.Debug.WriteLine("CarouselOppgaver - ExcecuteRefreshCommand - before OppgaveList.IsRefreshing = false");
             OppgaveList.IsRefreshing = false;
             //}
@@ -281,13 +281,15 @@ namespace KompetansetorgetXamarin.Views
             bool sameProjects = newProjects.SetEquals(oldProjects);
 
             if (!sameProjects)
-            { 
+            {
+                OppgaveList.ItemsSource = null;
                 oppgaver.Clear();
                 foreach (Project project in projects)
                 {
                     System.Diagnostics.Debug.WriteLine("project.title: " + project.title);
                     oppgaver.Add(project);
                 }
+                OppgaveList.ItemsSource = oppgaver;
             }
             if (!Authenticater.Authorized)
             {

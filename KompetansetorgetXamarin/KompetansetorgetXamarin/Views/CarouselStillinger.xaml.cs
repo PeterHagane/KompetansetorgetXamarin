@@ -126,9 +126,8 @@ namespace KompetansetorgetXamarin.Views
             //else if (pullList == true)
             //{
             LISTINIT.SaveSettings();
-            StillingList.ItemsSource = null;
             AddData();
-            StillingList.ItemsSource = JOBS;
+
             StillingList.IsRefreshing = false;
             //}
         }
@@ -223,13 +222,15 @@ namespace KompetansetorgetXamarin.Views
             HashSet<Job> oldJobs = new HashSet<Job>(JOBS);
             bool sameJobs = newJobs.SetEquals(oldJobs);
 
-            if (!sameJobs) { 
+            if (!sameJobs) {
+                StillingList.ItemsSource = null;
                 JOBS.Clear();
                 foreach (Job p in jobs)
                 {
                     //JOBS.Clear();
                     JOBS.Add(p);
-                }
+                }               
+                StillingList.ItemsSource = JOBS;
             }
 
             if (!Authenticater.Authorized)
