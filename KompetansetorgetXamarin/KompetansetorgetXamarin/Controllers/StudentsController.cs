@@ -194,7 +194,7 @@ namespace KompetansetorgetXamarin.Controllers
                             JsonConvert.DeserializeObject<Dictionary<string, object>>(studyGroup.ToString());
 
                         string id = studyGroupDict["id"].ToString();
-                        studyGroupList.Add(dbStudyGroup.GetStudygroup(id));
+                        studyGroupList.Add(dbStudyGroup.GetStudygroup(Hasher.Base64Encode(id)));
                     }
                     return studyGroupList;
                 }

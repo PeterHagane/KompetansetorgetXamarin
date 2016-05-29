@@ -17,6 +17,8 @@ namespace KompetansetorgetXamarin.Controls
         public ObservableCollection<Course> coursesSettings = new ObservableCollection<Course>(); //items in GUI
 
         private List<string> checkedStudyGroups = new List<string>();
+        
+
         private List<StudyGroup> studyGroupsFilter = new List<StudyGroup>(); //gets used when retreiving projects/oppgaver in CarouselOppgaver
 
         public Dictionary<string, string> studyDict { private set; get; }
@@ -27,8 +29,11 @@ namespace KompetansetorgetXamarin.Controls
         public VMVarselSettings()
         {
             studyDict = new Dictionary<string, string>();
+        }
 
-            GetAllFilters();
+        public async Task InitializeSettings()
+        {
+            await GetAllFilters();
             SetSettings();
 
             foreach (var fagområdeSetting in varslerSettings)
@@ -44,24 +49,24 @@ namespace KompetansetorgetXamarin.Controls
             System.Diagnostics.Debug.WriteLine("{0} has been toggled to {1}", fagområdeSetting.Name, fagområdeSetting.IsSelected);
         }
 
-        public List<string> GetSettings()
+        public List<string> GetCheckedStudyGroups()
         {
             checkedStudyGroups.Clear();
-            if (varslerSettings == null)
+            //if (varslerSettings == null)
+            //{
+            //    SetSettings();
+            //    return null;
+            //}
+            //else
+            foreach (fagområdeSetting setting in varslerSettings)
             {
-                SetSettings();
-                return null;
-            }
-            else
-                foreach (fagområdeSetting setting in varslerSettings)
+                bool checkSwitch = setting.IsSelected;
+                if (checkSwitch == true)
                 {
-                    bool checkSwitch = setting.IsSelected;
-                    if (checkSwitch == true)
-                    {
-                        System.Diagnostics.Debug.WriteLine("setting.Name: " + setting.Name);
-                        checkedStudyGroups.Add(setting.id);
-                    }
+                    System.Diagnostics.Debug.WriteLine("setting.Name: " + setting.Name);
+                    checkedStudyGroups.Add(setting.id);
                 }
+            }
 
             return checkedStudyGroups;
         }
@@ -81,10 +86,10 @@ namespace KompetansetorgetXamarin.Controls
             }
         }
 
-        public async void PostToServer()
+        public async Task PostToServer()
         {
             StudentsController sc = new StudentsController();
-            await sc.PostStudentsStudyGroupToServer(GetSettings());
+            await sc.PostStudentsStudyGroupToServer(GetCheckedStudyGroups());
 
             if (!Authenticater.Authorized)
             {
@@ -121,20 +126,34 @@ namespace KompetansetorgetXamarin.Controls
             //}
         }
 
-        public async void GetAllFilters()
+        public async Task GetAllFilters()
         {
 
             DbStudyGroup sgc = new DbStudyGroup();
+            StudentsController sc = new StudentsController();
 
-            studyGroupsFilter = sgc.GetAllStudyGroups();
+            studyGroupsFilter = sgc.GetAllStudyGroups(); //set checked to false
+            List<StudyGroup> checkedStudyGroups = await sc.GetStudentsStudyGroupFromServer(); // use these to check some to true
 
+            System.Diagnostics.Debug.WriteLine("studyGroupsFilter.Count: " + studyGroupsFilter.Count); 
+            foreach (var sg in studyGroupsFilter)
+            {
+                if (checkedStudyGroups.Contains(sg))
+                {
+                    sg.filterChecked = true;
+                }
 
+                else
+                {
+                     sg.filterChecked = false;
+                }
+                //studyGroupsFilter.Add(sg);
+            }
+            System.Diagnostics.Debug.WriteLine("Another studyGroupsFilter.Count: " + studyGroupsFilter.Count);
             foreach (var studyGroup in studyGroupsFilter)
             {
                 studyDict.Add(studyGroup.name, studyGroup.id);
             }
         }
-
-
     }
 }

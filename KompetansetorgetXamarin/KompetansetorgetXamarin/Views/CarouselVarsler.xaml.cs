@@ -33,7 +33,6 @@ namespace KompetansetorgetXamarin.Views
             AddData();
             VarselList.ItemsSource = varsler;
             this.Title = p0title;
-            StillingerSettings.ItemsSource = LISTINIT.varslerSettings;
             //OppgaverEmner.ItemsSource = LISTINIT.coursesSettings;
             VarselList.IsPullToRefreshEnabled = true;
             VarselList.IsRefreshing = false;
@@ -44,7 +43,13 @@ namespace KompetansetorgetXamarin.Views
             //varsler.Add(new Varsel("TEST", "TEST", "http://adila.prosjekt.uia.no/files/2015/02/UiA1.png","asd","asd","www.google.com"));
 
             PopupMenu();
+            InitializeSettings();
+        }
 
+        async Task InitializeSettings()
+        {
+            await LISTINIT.InitializeSettings();
+            StillingerSettings.ItemsSource = LISTINIT.varslerSettings;
         }
 
         void PopupMenu() {
@@ -54,16 +59,15 @@ namespace KompetansetorgetXamarin.Views
                 var action = DisplayAlert(d.Text, "", "Slett varsel", "Se annonse");
                 if (action != null)
                 {
-                    Test(action, d);
+                    DeleteOrOpen(action, d);
                 }
-                
             };
         }
 
-        async void Test(Task<bool> action, Varsel varsel)
+        async Task DeleteOrOpen(Task<bool> action, Varsel varsel)
         {
-            bool action2 = await action;
-            if (action2)
+            bool isDelete = await action;
+            if (isDelete)
             {
                 DeleteNotification(varsel);
             }
@@ -109,7 +113,7 @@ namespace KompetansetorgetXamarin.Views
         void SaveSettings(object sender, EventArgs e)
         {
             SaveToggle();
-            LISTINIT.SaveSettings();
+           // LISTINIT.SaveSettings();
             LISTINIT.PostToServer();
 
             this.DisplayAlert("Innstillinger lagret!", "Oppdatér for å få en ny liste.", "OK");
@@ -193,7 +197,7 @@ namespace KompetansetorgetXamarin.Views
             //else if (pullList == true)
             //{
             SaveToggle();
-            LISTINIT.SaveSettings();
+          //  LISTINIT.SaveSettings();
             LISTINIT.PostToServer();
             varsler.Clear();
             VarselList.ItemsSource = null;
@@ -217,7 +221,7 @@ namespace KompetansetorgetXamarin.Views
 
                 if (prevPage == 1)
                 {
-                    LISTINIT.SaveSettings();
+                   // LISTINIT.SaveSettings();
                     LISTINIT.PostToServer();
                     SaveToggle();
                 }
@@ -239,7 +243,7 @@ namespace KompetansetorgetXamarin.Views
 
         protected override void OnDisappearing()
         {
-            LISTINIT.SaveSettings(); //saves the settings when pressing the up button/leaving the page
+         ///   LISTINIT.SaveSettings(); //saves the settings when pressing the up button/leaving the page
             LISTINIT.PostToServer();
             SaveToggle();
         }
@@ -297,37 +301,6 @@ namespace KompetansetorgetXamarin.Views
 
         public void getFilter()
         { }
-
-        public void OnMore(object sender, EventArgs e)
-        {
-            var mi = ((MenuItem)sender);
-            DisplayAlert("ListView Item select", mi.Text + " Selected", "Ok");
-
-            DisplayAlert("More Context Action", mi.CommandParameter + " more context action", "OK");
-            // varsel.Webpage
-        }
-
-        public void OnDelete(object sender, EventArgs e)
-        {
-            var mi = ((MenuItem)sender);
-            DisplayAlert("Delete Context Action", mi.CommandParameter + " delete context action", "OK");
-
-            if (true)
-            {
-
-                //varsler.Remove(varsel);
-                DbNotification dbNotification = new DbNotification();
-                if ("varsel.Type" == "job")
-                {
-                    dbNotification.DeleteNotificationBasedOnJob("varsel.uuid");
-                }
-                else
-                {
-                    dbNotification.DeleteNotificationBasedOnProject("varsel.Uuid");
-                }
-            }
-        }
-
 
         public void AddData()
         {
