@@ -34,18 +34,25 @@ namespace KompetansetorgetXamarin.Views
             InitializeComponent();
             this.Title = p0title;
             OppgaveList.SetCarouselOppgaver(this);
-            //OppgaveList.IsRefreshing = false;
-
-            OppgaveList.ItemsSource = oppgaver;   // oppgave.companies[0].name  .logo
-            oppgaverSettings.ItemsSource = listInit.oppgaveSettings;
-            //OppgaverEmner.ItemsSource = listInit.coursesSettings;
-            OppgaveList.IsPullToRefreshEnabled = true;
+            UpdateItemSource();
             OppgaveList.RefreshCommand = RefreshCommand;
+            OppgaveList.IsPullToRefreshEnabled = true;
             søk.TextChanged += (sender, e) => OppgaveList.FilterOppgaver(søk.Text);
             søk.SearchButtonPressed += (sender, e) =>
             {
                 OppgaveList.FilterOppgaver(søk.Text);
             };
+        }
+
+        private void UpdateItemSource() 
+        {
+            //OppgaveList.IsRefreshing = false;
+
+            OppgaveList.ItemsSource = oppgaver;   // oppgave.companies[0].name  .logo
+            oppgaverSettings.ItemsSource = listInit.oppgaveSettings;
+            //OppgaverEmner.ItemsSource = listInit.coursesSettings;
+            
+            
         }
 
         public ObservableCollection<Project> GetProjects()
@@ -55,13 +62,10 @@ namespace KompetansetorgetXamarin.Views
 
         void Sorter_OnTapped(object sender, EventArgs e)
         {
-            bool alphabeticallyFirst = false;
-            Sort();
-        }
-
-        void Sort()
-        {
             oppgaver.Reverse<Project>();
+            var tmp = oppgaver.Reverse<Project>();
+            oppgaver = new ObservableCollection<Project>(tmp);
+            UpdateItemSource();
         }
 
         void SaveSettings(object sender, EventArgs e)
