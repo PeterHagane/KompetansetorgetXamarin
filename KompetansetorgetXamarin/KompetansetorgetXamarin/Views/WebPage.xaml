@@ -1,12 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<local:BaseContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="KompetansetorgetXamarin.Views.WebPage"
              xmlns:local="clr-namespace:KompetansetorgetXamarin.Controls;assembly=KompetansetorgetXamarin">
 
-  <!--<HybridWebView x:Name="hybridWebView" >
-    
-  </HybridWebView>-->
+  <!--<local:BaseContentPage.ToolbarItems>
+    <ToolbarItem Name="User" Activated="Logout"  Order="Primary" Priority="1">
+      <ToolbarItem.Icon>
+        <OnPlatform x:TypeArguments="FileImageSource"
+                    Android="User.png" />
+      </ToolbarItem.Icon>
+    </ToolbarItem>
+  </local:BaseContentPage.ToolbarItems>-->
   
-  
-</local:BaseContentPage>
+  <local:BaseContentPage.Content>
+    <StackLayout>
+      <WebView x:Name="webview" Source="http://www.xamarin.com/"
+          HeightRequest="1000"
+          WidthRequest="1000" />
+    </StackLayout>
+  </local:BaseContentPage.Content>
+
+
+</ContentPage>

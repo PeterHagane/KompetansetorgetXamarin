@@ -9,20 +9,32 @@ using KompetansetorgetXamarin.Controls;
 
 namespace KompetansetorgetXamarin.Views
 {
-    public partial class WebPage : BaseContentPage
+    public partial class WebPage : ContentPage
     {
         public WebPage()
         {
             InitializeComponent();
+
+            this.Title = "Stilling";
+
+
             //https://github.com/XLabs/Xamarin-Forms-Labs/wiki/HybridWebView
             //https://github.com/XLabs/Xamarin-Forms-Labs/wiki/IOC
-            
+
             //TODO
             //register IJsonSerializer as type of ServiceStack JSON serializer
             //.Register<IJsonSerializer, Services.Serialization.ServiceStackV3.JsonSerializer>()
-            
+
             //load web view from the web
             //this.hybridWebView.Uri = new Uri("https://github.com/XLabs/Xamarin-Forms-Labs/wiki/HybridWebView/");
+
+            //Permissions:
+            //In order for WebView to work, you must make sure that permissions are set for each platform. Note that on some platforms, WebView will work in debug mode, but not when built for release.That is because some permissions, like those for internet access on Android, are set by default by Xamarin Studio when in debug mode.
+
+            //Windows Phone 8.0 – requires ID_CAP_WEBBROWSERCOMPONENT for the control and ID_CAP_NETWORKING for internet access.
+            //Windows Phone 8.1 – requires the Internet(Client & Server) capability when displaying network content.
+            //Android – requires INTERNET only when displaying content from the network.Local content requires no special permissions.
+            //iOS – requires no special permissions.
         }
     }
 }

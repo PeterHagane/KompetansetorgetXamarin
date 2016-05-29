@@ -40,7 +40,7 @@ namespace KompetansetorgetXamarin.Views
             //stillingSwitch.Toggled += stillingToggle;
             //oppgaveSwitch.Toggled += oppgaveToggle;
             //varselSwitch.Toggled += varselToggle;
-            //varsler.Add(new Varsel("TEST", "TEST", "http://adila.prosjekt.uia.no/files/2015/02/UiA1.png","asd","asd","www.google.com"));
+            varsler.Add(new Varsel("TEST", "TEST", "http://adila.prosjekt.uia.no/files/2015/02/UiA1.png","asd","asd","www.google.com"));
 
             PopupMenu();
             InitializeSettings();
@@ -71,15 +71,16 @@ namespace KompetansetorgetXamarin.Views
             {
                 DeleteNotification(varsel);
             }
-
             else
             {
                 OpenAdvert(varsel);
             }
         }
-        private void OpenAdvert(Varsel varsel)
+
+        private async void OpenAdvert(Varsel varsel)
         {
-            // varsel.Webpage;
+            var WebPage = new WebPage();
+            await Navigation.PushAsync(WebPage);
         }
 
         private void DeleteNotification(Varsel varsel)
