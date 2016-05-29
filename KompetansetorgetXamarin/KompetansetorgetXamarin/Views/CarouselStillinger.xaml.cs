@@ -79,7 +79,7 @@ namespace KompetansetorgetXamarin.Views
 
         async void Sorter_OnTapped(object sender, EventArgs e)
         {
-            var action = await DisplayActionSheet("Sorter stillinger", "Avbryt", null, "Nyeste", "Eldste", "Søknadsfrist - Nærmest", "Søknadsfrist - Fjerntliggende");
+            var action = await DisplayActionSheet("Sorter etter:", "Avbryt", null, "Nyeste", "Eldste", "Nærmeste søknadsfrist", "Seneste søknadsfrist");
             if (action != null) { 
                 Sort(action);
             }
@@ -87,13 +87,13 @@ namespace KompetansetorgetXamarin.Views
 
         void Sort(string action)
         {
-            if (action == "Søknadsfrist - Nærmest")
+            if (action == "Nærmeste søknadsfrist")
             {
                 StillingList.ItemsSource = JOBS
                     .OrderByDescending(x => x.expiryDate);
 
             }
-            else if (action == "Søknadsfrist - Fjerntliggende")
+            else if (action == "Seneste søknadsfrist")
             {
                 StillingList.ItemsSource = JOBS
                     .OrderBy(x => x.expiryDate);
