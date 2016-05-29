@@ -41,15 +41,18 @@ namespace KompetansetorgetXamarin.Views
             //stillingSwitch.Toggled += stillingToggle;
             //oppgaveSwitch.Toggled += oppgaveToggle;
             //varselSwitch.Toggled += varselToggle;
-            varsler.Add(new Varsel("TEST", "TEST", "http://adila.prosjekt.uia.no/files/2015/02/UiA1.png"));
+            varsler.Add(new Varsel("TEST", "TEST", "http://adila.prosjekt.uia.no/files/2015/02/UiA1.png","asd","asd","www.google.com"));
 
+            PopupMenu();
+
+        }
+
+        void PopupMenu() {
             VarselList.ItemSelected += (sender, e) =>
             {
                 Varsel d = (Varsel)e.SelectedItem;
-                DisplayAlert("ListView Item select", d.Text + " Selected", "Ok");
-
+                DisplayAlert("ListView Item select", d.Text + d.Uuid + d.Webpage + " Selected", "Ok");
             };
-
         }
 
 
@@ -261,6 +264,8 @@ namespace KompetansetorgetXamarin.Views
         public void OnMore(object sender, EventArgs e)
         {
             var mi = ((MenuItem)sender);
+            DisplayAlert("ListView Item select", mi.Text + " Selected", "Ok");
+
             DisplayAlert("More Context Action", mi.CommandParameter + " more context action", "OK");
             // varsel.Webpage
         }
@@ -272,6 +277,8 @@ namespace KompetansetorgetXamarin.Views
 
             if (true)
             {
+
+                //varsler.Remove(varsel);
                 DbNotification dbNotification = new DbNotification();
                 if ("varsel.Type" == "job")
                 {
