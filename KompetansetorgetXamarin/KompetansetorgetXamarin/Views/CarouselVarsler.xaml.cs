@@ -262,12 +262,26 @@ namespace KompetansetorgetXamarin.Views
         {
             var mi = ((MenuItem)sender);
             DisplayAlert("More Context Action", mi.CommandParameter + " more context action", "OK");
+            // varsel.Webpage
         }
 
         public void OnDelete(object sender, EventArgs e)
         {
             var mi = ((MenuItem)sender);
             DisplayAlert("Delete Context Action", mi.CommandParameter + " delete context action", "OK");
+
+            if (true)
+            {
+                DbNotification dbNotification = new DbNotification();
+                if ("varsel.Type" == "job")
+                {
+                    dbNotification.DeleteNotificationBasedOnJob("varsel.uuid");
+                }
+                else
+                {
+                    dbNotification.DeleteNotificationBasedOnProject("varsel.Uuid");
+                }
+            }
         }
 
 
@@ -298,7 +312,7 @@ namespace KompetansetorgetXamarin.Views
                             string logo = job.companies[0].logo;
                             string varselText = "Ny stilling fra " + job.companies[0].name + "!";
                             string published = "Publisert " + DateTimeHandler.MakeDateTimeString(job.published);
-                            varsler.Add(new Varsel(varselText, published, logo));
+                            varsler.Add(new Varsel(varselText, published, logo, job.uuid, "job", job.webpage));
                             // DO spesific Job code
                             //long date = job.expiryDate; // Will work
                             System.Diagnostics.Debug.WriteLine("job.title = " + job.title);
@@ -320,7 +334,7 @@ namespace KompetansetorgetXamarin.Views
                             string logo = project.companies[0].logo;
                             string varselText = "Ny oppgave fra " + project.companies[0].name + "!";
                             string published = "Publisert " + DateTimeHandler.MakeDateTimeString(project.published);
-                            varsler.Add(new Varsel(varselText, published, logo));
+                            varsler.Add(new Varsel(varselText, published, logo, project.uuid, "project", project.webpage));
 
                             System.Diagnostics.Debug.WriteLine("project.title = " + project.title);
 
