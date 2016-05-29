@@ -31,7 +31,7 @@ namespace KompetansetorgetXamarin.Views
             InitializeComponent();
             GetStudentNotificationsPref();
             AddData();
-            VarselList.ItemsSource = varsler;
+            UpdateItemSource();
             this.Title = p0title;
             //OppgaverEmner.ItemsSource = LISTINIT.coursesSettings;
             VarselList.IsPullToRefreshEnabled = true;
@@ -45,6 +45,11 @@ namespace KompetansetorgetXamarin.Views
 
             PopupMenu();
             InitializeSettings();
+        }
+
+        void UpdateItemSource()
+        {
+            VarselList.ItemsSource = varsler;
         }
 
         async Task InitializeSettings()
@@ -110,9 +115,9 @@ namespace KompetansetorgetXamarin.Views
 
         void Sorter_OnTapped(object sender, EventArgs e)
         {
-            this.DisplayAlert("Selected!", "Fagområder get", "OK");
-            bool alphabeticallyFirst = false;
-            Sort();
+            var tmp = varsler.Reverse<Varsel>();
+            varsler = new ObservableCollection<Varsel>(tmp);
+            UpdateItemSource();
         }
 
         void SaveSettings(object sender, EventArgs e)
@@ -124,10 +129,6 @@ namespace KompetansetorgetXamarin.Views
             this.DisplayAlert("Innstillinger lagret!", "Oppdatér for å få en ny liste.", "OK");
         }
 
-        void Sort()
-        {
-
-        }
 
         void SwipeRight(object sender, EventArgs e)
         {
