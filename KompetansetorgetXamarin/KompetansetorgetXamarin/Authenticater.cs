@@ -101,6 +101,9 @@ namespace KompetansetorgetXamarin
         /// <param name="account"></param>
         async void PerformAuth2TestRequests(Account account)
         {
+            Authorized = true;
+            App.SuccessfulLoginAction();
+
             try
             {
 
@@ -121,11 +124,11 @@ namespace KompetansetorgetXamarin
                 System.Diagnostics.Debug.WriteLine("Requesting local token");
                 OAuth2Request request1 = new OAuth2Request("GET", requestLocalToken, null, account);
                 //OAuth2Request request1 = new OAuth2Request("GET", requestLocalToken, null, null);
-                 
+
                 IResponse response1 = await request1.GetResponseAsync();
                 System.Diagnostics.Debug.WriteLine("After Response");
 
-                
+
                 Dictionary<string, string> responseDict = JsonConvert.DeserializeObject<Dictionary<string, string>>(response1.GetResponseText());
 
 
@@ -178,7 +181,7 @@ namespace KompetansetorgetXamarin
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", localToken);
                 System.Diagnostics.Debug.WriteLine("PerformAuth2TestRequests after Setting AuthenticationHeaderValue");
             System.Diagnostics.Debug.WriteLine(client.DefaultRequestHeaders.Authorization.Parameter);
-                
+
 
                 var response = await client.GetAsync(testAuthorize);
 
@@ -187,7 +190,7 @@ namespace KompetansetorgetXamarin
                                                  // + " ResponseUri:" + response.ResponseUri);
                 //System.Diagnostics.Debug.WriteLine("PerformAuth2TestRequests: Headers:");
 
-                
+
                 foreach (KeyValuePair<string, string> h in response.Headers)
                 {
                     System.Diagnostics.Debug.WriteLine("Header: Key:" + h.Key + " Value:" + h.Value);
@@ -206,9 +209,10 @@ namespace KompetansetorgetXamarin
                 System.Diagnostics.Debug.WriteLine("Exception: PerformAuth2TestRequests: Message:" + ex.Message);
                 foreach (KeyValuePair<string, string> p in account.Properties)
                 {
-                        System.Diagnostics.Debug.WriteLine("Key:" + p.Key + " Value:" + p.Value);
+                    System.Diagnostics.Debug.WriteLine("Key:" + p.Key + " Value:" + p.Value);
                 }
             }
+
         }
     }
 }   

@@ -40,7 +40,7 @@ namespace KompetansetorgetXamarin.Views
             //stillingSwitch.Toggled += stillingToggle;
             //oppgaveSwitch.Toggled += oppgaveToggle;
             //varselSwitch.Toggled += varselToggle;
-            varsler.Add(new Varsel("TEST", "TEST", "http://adila.prosjekt.uia.no/files/2015/02/UiA1.png","asd","asd","www.google.com"));
+            //varsler.Add(new Varsel("TEST", "TEST", "http://adila.prosjekt.uia.no/files/2015/02/UiA1.png","asd","asd","www.google.com"));
 
             PopupMenu();
             InitializeSettings();
@@ -53,10 +53,12 @@ namespace KompetansetorgetXamarin.Views
         }
 
         void PopupMenu() {
-            VarselList.ItemSelected += (sender, e) =>
+            VarselList.ItemSelected += async (sender, e) =>
             {
                 Varsel d = (Varsel)e.SelectedItem;
-                var action = DisplayAlert(d.Text, "", "Slett varsel", "Se annonse");
+                //var action = DisplayAlert(d.Text, d.JobTitle, "Slett varsel", "Se annonse");
+                var action = await DisplayActionSheet(d.JobTitle, "Avbryt", null, "Slett varsel", "Se annonse");
+
                 if (action != null)
                 {
                     DeleteOrOpen(action, d);
@@ -64,14 +66,13 @@ namespace KompetansetorgetXamarin.Views
             };
         }
 
-        async Task DeleteOrOpen(Task<bool> action, Varsel varsel)
-        {
-            bool isDelete = await action;
-            if (isDelete)
+        async Task DeleteOrOpen(string action, Varsel varsel)
+        {           
+            if (action == "Slett varsel")
             {
                 DeleteNotification(varsel);
             }
-            else
+            else if (action == "Se annonse")
             {
                 OpenAdvert(varsel);
             }
@@ -332,7 +333,7 @@ namespace KompetansetorgetXamarin.Views
                             string logo = job.companies[0].logo;
                             string varselText = "Ny stilling fra " + job.companies[0].name + "!";
                             string published = "Publisert " + DateTimeHandler.MakeDateTimeString(job.published);
-                            varsler.Add(new Varsel(varselText, published, logo, job.uuid, "job", job.webpage));
+                            varsler.Add(new Varsel(varselText, job.title, published, logo, job.uuid, "job", job.webpage));
                             // DO spesific Job code
                             //long date = job.expiryDate; // Will work
                             System.Diagnostics.Debug.WriteLine("job.title = " + job.title);
@@ -354,7 +355,7 @@ namespace KompetansetorgetXamarin.Views
                             string logo = project.companies[0].logo;
                             string varselText = "Ny oppgave fra " + project.companies[0].name + "!";
                             string published = "Publisert " + DateTimeHandler.MakeDateTimeString(project.published);
-                            varsler.Add(new Varsel(varselText, published, logo, project.uuid, "project", project.webpage));
+                            varsler.Add(new Varsel(varselText, project.title, published, logo, project.uuid, "project", project.webpage));
 
                             System.Diagnostics.Debug.WriteLine("project.title = " + project.title);
 

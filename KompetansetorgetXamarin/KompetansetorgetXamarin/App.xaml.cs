@@ -112,7 +112,7 @@ namespace KompetansetorgetXamarin
             CoursesController cc = new CoursesController();
             NavPage.Navigation.InsertPageBefore(new MainPage(), NavPage.Navigation.NavigationStack.First());
             NavPage.Navigation.PopToRootAsync();
-
+            
             if (dbLocation.GetAllLocations().Count != 0)
             {
                 lc.CompareServerHash();
@@ -127,6 +127,7 @@ namespace KompetansetorgetXamarin
                 sgc.UpdateStudyGroupsFromServer();
                 lc.UpdateLocationsFromServer();
             }
+            
         }
     }
 }
