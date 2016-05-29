@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using KompetansetorgetXamarin.Models;
 using KompetansetorgetXamarin.Controllers;
 using System.Linq;
+using System.Threading.Tasks;
 using KompetansetorgetXamarin.DAL;
 using Xamarin.Forms.Xaml;
 using KompetansetorgetXamarin.Views;
@@ -28,15 +29,17 @@ namespace KompetansetorgetXamarin.Controls
 
         public static bool cs = false; //changed setting bool to detect when to save settings
 
-
-
-
         public VMOppgaverSettings() {
             studyDict = new Dictionary<string, string>();
+            InitializeSettings();
 
+        }
+
+        private void InitializeSettings()
+        {
             GetAllFilters();
             SetSettings();
-            
+
             foreach (var fagområdeSetting in oppgaveSettings)
             {
                 fagområdeSetting.OnToggled += ToggleSelection;
@@ -71,7 +74,7 @@ namespace KompetansetorgetXamarin.Controls
 
             return checkedStudyGroups;
         }
-        public async void SetSettings()
+        public void SetSettings()
         {
 
             if (oppgaveSettings == null)
@@ -117,11 +120,11 @@ namespace KompetansetorgetXamarin.Controls
         }
 
 
-        public async void GetStudentFilters() {
+        public void GetStudentFilters() {
             //TODO
         }
 
-        public async void GetAllFilters()//object sender, EventArgs e
+        private void GetAllFilters()//object sender, EventArgs e
         {
             //DbLocation lc = new DbLocation();
             //DbCourse cc = new DbCourse();

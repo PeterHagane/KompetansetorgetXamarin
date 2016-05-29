@@ -2,6 +2,7 @@
 using KompetansetorgetXamarin.Views;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ namespace KompetansetorgetXamarin.Controls
 {
     class SearchStillingerListView : ListView
     {
+        private CarouselStillinger carouselStillinger;
         public SearchStillingerListView()
         {
             ItemSelected += (s, e) => {
@@ -22,18 +24,22 @@ namespace KompetansetorgetXamarin.Controls
             };
         }
 
+        public void SetCarouselStillinger(CarouselStillinger carouselStillinger)
+        {
+            this.carouselStillinger = carouselStillinger;
+        }
 
         public void FilterOppgaver(string filter)
         {
-            CarouselStillinger.pullList = false; //don't pull a new list when refreshing
+            ObservableCollection<Job> jobs = carouselStillinger.GetJobs();
             this.BeginRefresh();
 
             if (string.IsNullOrWhiteSpace(filter))
             {
-                this.ItemsSource = CarouselStillinger.JOBS;
+                this.ItemsSource = jobs;
             }
             else {
-                this.ItemsSource = CarouselStillinger.JOBS
+                this.ItemsSource = jobs
                         //.Where(x => x.companies[0].name.ToLower() :::: have to choose between one or the other with current linq statement -- how combine two wheres? Needs to be OR 
                         .Where(x => x.title.ToLower()
                         .Contains(filter.ToLower())
@@ -42,7 +48,6 @@ namespace KompetansetorgetXamarin.Controls
             }
 
             this.EndRefresh();
-            CarouselStillinger.pullList = true;
         }
 
     }

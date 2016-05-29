@@ -2,6 +2,7 @@
 using KompetansetorgetXamarin.Views;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ namespace KompetansetorgetXamarin.Controls
 {
     class SearchOppgaverListView : ListView
     {
+        private CarouselOppgaver carouselOppgaver; 
         public SearchOppgaverListView()
         {
            ItemSelected += (s, e) => {
@@ -22,17 +24,22 @@ namespace KompetansetorgetXamarin.Controls
             };
         }
 
+        public void SetCarouselOppgaver(CarouselOppgaver carouselOppgaver)
+        {
+            this.carouselOppgaver = carouselOppgaver;
+        }
+
         public void FilterOppgaver(string filter)
         {
-            CarouselOppgaver.pullList = false; //don't pull a new list when refreshing
+            ObservableCollection<Project> oppgaver = carouselOppgaver.GetProjects();
             this.BeginRefresh();
 
             if (string.IsNullOrWhiteSpace(filter))
             {
-                this.ItemsSource = CarouselOppgaver.oppgaver;
+                this.ItemsSource = oppgaver;
             }
             else {
-                this.ItemsSource = CarouselOppgaver.oppgaver
+                this.ItemsSource = oppgaver
                         //.Where(x => x.companies[0].name.ToLower() //have to choose between one or the other with current linq statement -- how combine two wheres? Needs to be OR 
                         .Where(x => x.title.ToLower()
                         .Contains(filter.ToLower())
@@ -41,7 +48,6 @@ namespace KompetansetorgetXamarin.Controls
             }
 
             this.EndRefresh();
-            CarouselOppgaver.pullList = true;
         }
 
     }

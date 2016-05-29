@@ -16,19 +16,18 @@ namespace KompetansetorgetXamarin.Views
     public partial class CarouselStillinger : BaseCarouselPage
     {
         VMStillingerSettings LISTINIT = new VMStillingerSettings();
-        public static ObservableCollection<Job> JOBS = new ObservableCollection<Job>();
+        public ObservableCollection<Job> JOBS = new ObservableCollection<Job>();
         ICommand refreshCommand;
         int currentPage = 0;
         string p0title = "Finn stillinger";
         string p1title = "Velg fagområder";
-        public static bool pullList = true;
+        //public static bool pullList = true;
 
         public CarouselStillinger()
         {
             InitializeComponent();
-            StillingList.IsRefreshing = true;
-            //AddData();  
-            StillingList.IsRefreshing = false;
+            StillingList.SetCarouselStillinger(this);
+            //StillingList.IsRefreshing = false;
             this.Title = p0title;
             StillingList.ItemsSource = JOBS;   // oppgave.companies[0].name  .logo
             StillingerSettings.ItemsSource = LISTINIT.stillingerSettings;
@@ -41,6 +40,11 @@ namespace KompetansetorgetXamarin.Views
                 StillingList.FilterOppgaver(søk.Text);
             };
 
+        }
+
+        public ObservableCollection<Job> GetJobs()
+        {
+            return JOBS;
         }
 
         void OnClick(object sender, EventArgs e)
@@ -126,7 +130,7 @@ namespace KompetansetorgetXamarin.Views
             //else if (pullList == true)
             //{
             LISTINIT.SaveSettings();
-            AddData();
+            await AddData();
 
             StillingList.IsRefreshing = false;
             //}
@@ -203,7 +207,7 @@ namespace KompetansetorgetXamarin.Views
             this.DisplayAlert("Selected!", "Stilling = " + e.Value, "OK");
         }
 
-        private async void AddData()
+        private async Task AddData()
         {
             //Dictionary<string, string> filter = new Dictionary<string, string>(); //contains only one item from each group
             //filter.Add("courses", "DAT-304");

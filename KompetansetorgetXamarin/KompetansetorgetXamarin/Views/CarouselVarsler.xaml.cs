@@ -23,7 +23,7 @@ namespace KompetansetorgetXamarin.Views
         ICommand refreshCommand;
         string p0title = "Dine varsler";
         string p1title = "Velg fagområder";
-        public static bool pullList = true;
+        //public static bool pullList = true;
 
 
         public CarouselVarsler()
