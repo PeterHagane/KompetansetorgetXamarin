@@ -55,14 +55,13 @@ namespace KompetansetorgetXamarin.Views
 
         void Sorter_OnTapped(object sender, EventArgs e)
         {
-            this.DisplayAlert("Selected!", "Fagområder get", "OK");
             bool alphabeticallyFirst = false;
             Sort();
         }
 
         void Sort()
         {
-
+            oppgaver.Reverse<Project>();
         }
 
         void SaveSettings(object sender, EventArgs e)

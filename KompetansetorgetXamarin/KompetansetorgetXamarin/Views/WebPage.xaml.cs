@@ -25,23 +25,13 @@ namespace KompetansetorgetXamarin.Views
             if (type == "job") {
                 this.type = "stilling";
                 this.title = "Stilling";
-                //this.Title = title;
+                this.Title = title;
 
             } else if(type == "project"){
                 this.type = "oppgaveforslag";
                 this.title = "Oppgaveforslag";
-                //this.Title = title;
+                this.Title = title;
             }
-            
-            //https://github.com/XLabs/Xamarin-Forms-Labs/wiki/HybridWebView
-            //https://github.com/XLabs/Xamarin-Forms-Labs/wiki/IOC
-
-            //TODO
-            //register IJsonSerializer as type of ServiceStack JSON serializer
-            //.Register<IJsonSerializer, Services.Serialization.ServiceStackV3.JsonSerializer>()
-
-            //load web view from the web
-            //this.hybridWebView.Uri = new Uri("https://github.com/XLabs/Xamarin-Forms-Labs/wiki/HybridWebView/");
 
             //Permissions:
             //In order for WebView to work, you must make sure that permissions are set for each platform. Note that on some platforms, WebView will work in debug mode, but not when built for release.That is because some permissions, like those for internet access on Android, are set by default by Xamarin Studio when in debug mode.
