@@ -11,13 +11,28 @@ namespace KompetansetorgetXamarin.Views
 {
     public partial class WebPage : ContentPage
     {
-        public WebPage()
+        private string url;
+        private string type;
+        private string title;
+
+        public WebPage(string type, string url)
         {
             InitializeComponent();
 
-            this.Title = "Stilling";
+            WebView.Source = url;
+            this.type = type;
 
+            if (type == "job") {
+                this.type = "stilling";
+                this.title = "Stilling";
+                //this.Title = title;
 
+            } else if(type == "project"){
+                this.type = "oppgaveforslag";
+                this.title = "Oppgaveforslag";
+                //this.Title = title;
+            }
+            
             //https://github.com/XLabs/Xamarin-Forms-Labs/wiki/HybridWebView
             //https://github.com/XLabs/Xamarin-Forms-Labs/wiki/IOC
 
@@ -35,6 +50,21 @@ namespace KompetansetorgetXamarin.Views
             //Windows Phone 8.1 – requires the Internet(Client & Server) capability when displaying network content.
             //Android – requires INTERNET only when displaying content from the network.Local content requires no special permissions.
             //iOS – requires no special permissions.
+        }
+        string getUrl() {
+            return url;
+        }
+
+        void LoadingSite(object sender, WebNavigatingEventArgs e)
+        {
+            this.Title = "Henter " + type + "...";
+            //LoadingLabel.IsVisible = true;
+        }
+
+        void SiteLoaded(object sender, WebNavigatedEventArgs e)
+        {
+            this.Title = title;
+            //LoadingLabel.IsVisible = false;
         }
     }
 }

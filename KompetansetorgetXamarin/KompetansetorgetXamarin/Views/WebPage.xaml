@@ -15,7 +15,9 @@
   
   <local:BaseContentPage.Content>
     <StackLayout>
-      <WebView x:Name="webview" Source="http://www.xamarin.com/"
+      <WebView x:Name="WebView"
+          Navigating="LoadingSite"
+          Navigated="SiteLoaded"
           HeightRequest="1000"
           WidthRequest="1000" />
     </StackLayout>

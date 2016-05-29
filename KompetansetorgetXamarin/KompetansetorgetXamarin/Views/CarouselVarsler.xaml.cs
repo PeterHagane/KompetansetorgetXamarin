@@ -79,8 +79,10 @@ namespace KompetansetorgetXamarin.Views
 
         private async void OpenAdvert(Varsel varsel)
         {
-            var WebPage = new WebPage();
-            await Navigation.PushAsync(WebPage);
+            var url = varsel.Webpage;
+            var type = varsel.Type;
+            var WebPage = new WebPage(type, url);
+            await Navigation.PushAsync(WebPage);  //opens new webpage in browser to given url
         }
 
         private void DeleteNotification(Varsel varsel)
