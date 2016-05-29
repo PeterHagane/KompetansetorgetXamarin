@@ -62,6 +62,7 @@
     <Compile Include="Controllers\StudentsController.cs" />
     <Compile Include="Controllers\StudyGroupsController.cs" />
     <Compile Include="Controls\SeparatorLine.cs" />
+    <Compile Include="ISplash.cs" />
     <Compile Include="Views\BaseCarouselPage.cs" />
     <Compile Include="Controls\ButtonShadow.cs" />
     <Compile Include="Controls\ButtonStack.cs" />
