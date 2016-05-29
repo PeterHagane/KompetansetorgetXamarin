@@ -41,6 +41,14 @@ namespace KompetansetorgetXamarin.Views
             //stillingSwitch.Toggled += stillingToggle;
             //oppgaveSwitch.Toggled += oppgaveToggle;
             //varselSwitch.Toggled += varselToggle;
+            varsler.Add(new Varsel("TEST", "TEST", "http://adila.prosjekt.uia.no/files/2015/02/UiA1.png"));
+
+            VarselList.ItemSelected += (sender, e) =>
+            {
+                Varsel d = (Varsel)e.SelectedItem;
+                DisplayAlert("ListView Item select", d.Text + " Selected", "Ok");
+
+            };
 
         }
 
