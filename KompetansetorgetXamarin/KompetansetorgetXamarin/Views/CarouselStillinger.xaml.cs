@@ -22,8 +22,6 @@ namespace KompetansetorgetXamarin.Views
        
         string p0title = "Finn stillinger";
         string p1title = "Velg fagområder";
-
-        bool descending = true;
         //public static bool pullList = true;
 
         public CarouselStillinger()
@@ -79,26 +77,37 @@ namespace KompetansetorgetXamarin.Views
             this.DisplayAlert("Selected!", tbi.Text, "OK");
         }
 
-        void Sorter_OnTapped(object sender, EventArgs e)
+        async void Sorter_OnTapped(object sender, EventArgs e)
         {
-            Sort();
+            var action = await DisplayActionSheet("Sorter stillinger", "Avbryt", null, "Nyeste", "Eldste", "Søknadsfrist - Nærmest", "Søknadsfrist - Fjerntliggende");
+            if (action != null) { 
+                Sort(action);
+            }
         }
 
-        void Sort()
+        void Sort(string action)
         {
-            StillingList.BeginRefresh();
-            if ( descending == true ) {
+            if (action == "Søknadsfrist - Nærmest")
+            {
                 StillingList.ItemsSource = JOBS
-                            .OrderBy(x => x.expiryDate);
-                descending = false;
+                    .OrderByDescending(x => x.expiryDate);
 
-            } else if ( descending == false ) {
-                StillingList.ItemsSource = JOBS
-                            .OrderByDescending(x => x.expiryDate);
-                descending = true;
             }
-
-            StillingList.EndRefresh();
+            else if (action == "Søknadsfrist - Fjerntliggende")
+            {
+                StillingList.ItemsSource = JOBS
+                    .OrderBy(x => x.expiryDate);
+            }
+            else if (action == "Nyeste")
+            {
+                StillingList.ItemsSource = JOBS
+                    .OrderByDescending(x => x.published);
+            }
+            else if (action == "Eldste")
+            {
+                StillingList.ItemsSource = JOBS
+                    .OrderBy(x => x.published);
+            }
         }
 
         void SwipeRight(object sender, EventArgs e)
@@ -271,7 +280,6 @@ namespace KompetansetorgetXamarin.Views
                     JOBS.Add(p);
                 }               
                 StillingList.ItemsSource = JOBS;
-                descending = true;
             }
 
             if (!Authenticater.Authorized)

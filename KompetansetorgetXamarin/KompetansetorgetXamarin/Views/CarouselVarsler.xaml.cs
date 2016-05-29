@@ -41,8 +41,6 @@ namespace KompetansetorgetXamarin.Views
             //oppgaveSwitch.Toggled += oppgaveToggle;
             //varselSwitch.Toggled += varselToggle;
             //varsler.Add(new Varsel("TEST", "TEST", "test, "http://adila.prosjekt.uia.no/files/2015/02/UiA1.png","asd","asd","http://www.google.com"));
-
-
             PopupMenu();
             InitializeSettings();
         }
