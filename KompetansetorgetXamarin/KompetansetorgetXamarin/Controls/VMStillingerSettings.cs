@@ -27,7 +27,11 @@ namespace KompetansetorgetXamarin.Controls
         public VMStillingerSettings()
         {
             studyDict = new Dictionary<string, string>();
+            InitializeSettings();
+        }
 
+        private void InitializeSettings()
+        {
             GetAllFilters();
             SetSettings();
 
@@ -35,7 +39,6 @@ namespace KompetansetorgetXamarin.Controls
             {
                 fagområdeSetting.OnToggled += ToggleSelection;
             }
-
         }
 
         public void ToggleSelection(object sender, EventArgs e)
@@ -66,7 +69,7 @@ namespace KompetansetorgetXamarin.Controls
             return checkedStudyGroups;
         }
 
-        public async void SetSettings()
+        void SetSettings()
         {
 
             if (stillingerSettings == null)
@@ -110,7 +113,7 @@ namespace KompetansetorgetXamarin.Controls
                 //CarouselStillinger.pullList = true; //set pullList to true, meaning that any refresh action will reload the list according to new settings
             //}
         }
-        public async void GetAllFilters()
+        void GetAllFilters()
         {
             DbStudyGroup sgc = new DbStudyGroup();
             studyGroupsFilter = sgc.GetAllStudyGroups();

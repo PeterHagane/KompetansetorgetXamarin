@@ -20,12 +20,12 @@ namespace KompetansetorgetXamarin.Views
     {
         VMOppgaverSettings listInit = new VMOppgaverSettings();
         //ObservableCollection<Oppgave> oppgaver = new ObservableCollection<Oppgave>();
-        public static ObservableCollection<Project> oppgaver = new ObservableCollection<Project>();
+        public ObservableCollection<Project> oppgaver = new ObservableCollection<Project>();
         /*Dictionary<string, string> filter = new Dictionary<string, string>();*/ //used in AddData;
         ICommand refreshCommand;
         string p0title = "Finn oppgaveforslag";
         string p1title = "Velg fagområder";
-        static public bool pullList = true;
+        //static public bool pullList = true;
         //string p2title = "Velg fagområder";
         //string p3title = "Velg emne";
 
@@ -33,9 +33,9 @@ namespace KompetansetorgetXamarin.Views
         {
             InitializeComponent();
             this.Title = p0title;
-            OppgaveList.IsRefreshing = true;
-            //AddData();
-            OppgaveList.IsRefreshing = false;
+            OppgaveList.SetCarouselOppgaver(this);
+            //OppgaveList.IsRefreshing = false;
+
             OppgaveList.ItemsSource = oppgaver;   // oppgave.companies[0].name  .logo
             oppgaverSettings.ItemsSource = listInit.oppgaveSettings;
             //OppgaverEmner.ItemsSource = listInit.coursesSettings;
@@ -46,6 +46,11 @@ namespace KompetansetorgetXamarin.Views
             {
                 OppgaveList.FilterOppgaver(søk.Text);
             };
+        }
+
+        public ObservableCollection<Project> GetProjects()
+        {
+            return oppgaver;
         }
 
         void Sorter_OnTapped(object sender, EventArgs e)
@@ -121,9 +126,9 @@ namespace KompetansetorgetXamarin.Views
         /// <summary>
         /// Handles refresh behaviour on button click
         /// </summary>
-        void Refresh_OnTapped(object sender, EventArgs e)
+        async Task Refresh_OnTapped(object sender, EventArgs e)
         {
-            ExcecuteRefreshCommand();
+           await ExcecuteRefreshCommand();
         }
 
 
@@ -153,7 +158,7 @@ namespace KompetansetorgetXamarin.Views
             System.Diagnostics.Debug.WriteLine("CarouselOppgaver - ExcecuteRefreshCommand - before oppgaver.Clear()");
           //  oppgaver.Clear();
             System.Diagnostics.Debug.WriteLine("CarouselOppgaver - ExcecuteRefreshCommand - before AddData()");
-            AddData();
+            await AddData();
             System.Diagnostics.Debug.WriteLine("CarouselOppgaver - ExcecuteRefreshCommand - before OppgaveList.ItemsSource = oppgaver");
 
             System.Diagnostics.Debug.WriteLine("CarouselOppgaver - ExcecuteRefreshCommand - before OppgaveList.IsRefreshing = false");
@@ -261,7 +266,7 @@ namespace KompetansetorgetXamarin.Views
         //    //((ListView)sender).SelectedItem = null; //uncomment line if you want to disable the visual selection state.
         //}
 
-        private async void AddData()
+        private async Task AddData()
         {
             //Dictionary<string, string> filter = new Dictionary<string, string>(); //contains only one item from each group
             //filter.Add("courses", "DAT-304");
