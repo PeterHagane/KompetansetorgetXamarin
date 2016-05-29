@@ -41,7 +41,7 @@ namespace KompetansetorgetXamarin.Views
             //stillingSwitch.Toggled += stillingToggle;
             //oppgaveSwitch.Toggled += oppgaveToggle;
             //varselSwitch.Toggled += varselToggle;
-            varsler.Add(new Varsel("TEST", "TEST", "http://adila.prosjekt.uia.no/files/2015/02/UiA1.png","asd","asd","www.google.com"));
+            //varsler.Add(new Varsel("TEST", "TEST", "http://adila.prosjekt.uia.no/files/2015/02/UiA1.png","asd","asd","www.google.com"));
 
             PopupMenu();
 
@@ -51,8 +51,45 @@ namespace KompetansetorgetXamarin.Views
             VarselList.ItemSelected += (sender, e) =>
             {
                 Varsel d = (Varsel)e.SelectedItem;
-                DisplayAlert("ListView Item select", d.Text + d.Uuid + d.Webpage + " Selected", "Ok");
+                var action = DisplayAlert(d.Text, "", "Slett varsel", "Se annonse");
+                if (action != null)
+                {
+                    Test(action, d);
+                }
+                
             };
+        }
+
+        async void Test(Task<bool> action, Varsel varsel)
+        {
+            bool action2 = await action;
+            if (action2)
+            {
+                DeleteNotification(varsel);
+            }
+
+            else
+            {
+                OpenAdvert(varsel);
+            }
+        }
+        private void OpenAdvert(Varsel varsel)
+        {
+            // varsel.Webpage;
+        }
+
+        private void DeleteNotification(Varsel varsel)
+        {
+            varsler.Remove(varsel);
+            DbNotification dbNotification = new DbNotification();
+            if (varsel.Type == "job")
+            {
+                dbNotification.DeleteNotificationBasedOnJob(varsel.Uuid);
+            }
+            else
+            {
+                dbNotification.DeleteNotificationBasedOnProject(varsel.Uuid);
+            }
         }
 
 

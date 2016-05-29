@@ -103,6 +103,7 @@ namespace KompetansetorgetXamarin
         {
             try
             {
+
                 /*
                 System.Diagnostics.Debug.WriteLine("PerformAuth2TestRequests before looop");
 
