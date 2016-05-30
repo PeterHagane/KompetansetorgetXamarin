@@ -43,30 +43,28 @@ namespace KompetansetorgetXamarin.Views
                 StillingList.FilterOppgaver(søk.Text);
             };
 
-            //PopupMenu();
+            PopupMenu();
+
 
         }
 
-        //void PopupMenu()
-        //{
-        //    StillingList.ItemSelected += (sender, e) =>
-        //    {
-        //        Varsel d = (Varsel)e.SelectedItem;
-        //        var action = DisplayAlert(d.Text, "", "Slett varsel", "Se annonse");
-        //        if (action != null)
-        //        {
-        //            DeleteOrOpen(action, d);
-        //        }
-        //    };
-        //}
+        void PopupMenu()
+        {
+            StillingList.ItemSelected += async (sender, e) =>
+            {
+                Job d = (Job)e.SelectedItem;
+                //var action = DisplayAlert(d.Text, d.JobTitle, "Slett varsel", "Se annonse");
+                await OpenAdvert(d);
+            };
+        }
 
-        //private async void OpenAdvert(Varsel varsel)
-        //{
-        //    var url = varsel.Webpage;
-        //    var type = varsel.Type;
-        //    var WebPage = new WebPage(type, url);
-        //    await Navigation.PushAsync(WebPage);  //opens new webpage in browser to given url
-        //}
+        private async Task OpenAdvert(Job stilling)
+        {
+            var url = stilling.webpage;
+            var type = "job";
+            var WebPage = new WebPage(type, url);
+            await Navigation.PushAsync(WebPage);  //opens new webpage in browser to given url
+        }
 
         public ObservableCollection<Job> GetJobs()
         {
@@ -172,17 +170,11 @@ namespace KompetansetorgetXamarin.Views
         /// </summary>
         async Task ExcecuteRefreshCommand()
         {
-            //if (pullList == false)
-            //{
-            //    StillingList.IsRefreshing = false;
-            //}
-            //else if (pullList == true)
-            //{
             StillingList.IsRefreshing = true;
             LISTINIT.SaveSettings();
             await AddData();
+            Sort(sort);
             StillingList.IsRefreshing = false;
-            //}
         }
 
         //Alters title on carouselpage by contentpage

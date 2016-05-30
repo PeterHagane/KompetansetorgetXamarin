@@ -44,6 +44,26 @@ namespace KompetansetorgetXamarin.Views
             {
                 OppgaveList.FilterOppgaver(søk.Text);
             };
+            PopupMenu();
+        }
+
+
+        void PopupMenu()
+        {
+            OppgaveList.ItemSelected += async (sender, e) =>
+            {
+                Project d = (Project)e.SelectedItem;
+                //var action = DisplayAlert(d.Text, d.JobTitle, "Slett varsel", "Se annonse");
+                await OpenAdvert(d);
+            };
+        }
+
+        private async Task OpenAdvert(Project oppgave)
+        {
+            var url = oppgave.webpage;
+            var type = "project";
+            var WebPage = new WebPage(type, url);
+            await Navigation.PushAsync(WebPage);  //opens new webpage in browser to given url
         }
 
         private void UpdateItemSource() 
@@ -146,9 +166,9 @@ namespace KompetansetorgetXamarin.Views
         /// <summary>
         /// Handles refresh behaviour on button click
         /// </summary>
-        async Task Refresh_OnTapped(object sender, EventArgs e)
+        void Refresh_OnTapped(object sender, EventArgs e)
         {
-           await ExcecuteRefreshCommand();
+           ExcecuteRefreshCommand();
         }
 
 
@@ -166,11 +186,9 @@ namespace KompetansetorgetXamarin.Views
         async Task ExcecuteRefreshCommand()
         {
             OppgaveList.IsRefreshing = true;
-            listInit.SaveSettings();
             await AddData();
             Sort();
             OppgaveList.IsRefreshing = false;
-            //}
         }
 
         //Alters title on carouselpage by contentpage
@@ -197,7 +215,6 @@ namespace KompetansetorgetXamarin.Views
             //    this.Title = p3title;
             //}
         }
-
 
         protected override void OnDisappearing()
         {

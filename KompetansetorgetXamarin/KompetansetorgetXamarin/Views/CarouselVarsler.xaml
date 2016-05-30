@@ -170,7 +170,7 @@
           
         </Grid>
 
-        <StackLayout BackgroundColor="#888888" HeightRequest="1" WidthRequest="700" Padding="0,0,0,0"/>
+        <!--<StackLayout BackgroundColor="#888888" HeightRequest="1" WidthRequest="700" Padding="0,0,0,0"/>-->
       <!--SelectedItem="{Binding SelectedCourse}"-->
       <!--SeparatorVisibility="None"-->
       
