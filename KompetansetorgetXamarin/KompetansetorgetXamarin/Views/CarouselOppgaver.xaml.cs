@@ -27,11 +27,13 @@ namespace KompetansetorgetXamarin.Views
         string p1title = "Velg fagområder";
         //static public bool pullList = true;
         //string p2title = "Velg fagområder";
-        //string p3title = "Velg emne";
+        //string p3title = "Velg emne";        
+        private bool sortDesc;
 
         public CarouselOppgaver()
         {
             InitializeComponent();
+            sortDesc = true;
             this.Title = p0title;
             OppgaveList.SetCarouselOppgaver(this);
             UpdateItemSource();
@@ -62,10 +64,24 @@ namespace KompetansetorgetXamarin.Views
 
         void Sorter_OnTapped(object sender, EventArgs e)
         {
-            oppgaver.Reverse<Project>();
-            var tmp = oppgaver.Reverse<Project>();
-            oppgaver = new ObservableCollection<Project>(tmp);
-            UpdateItemSource();
+            sortDesc = !sortDesc;
+            Sort();
+        }
+
+        void Sort()
+        {
+            if (sortDesc)
+            {
+                OppgaveList.ItemsSource = oppgaver
+                    .OrderByDescending(x => x.published);
+            }
+            else
+            {
+                OppgaveList.ItemsSource = oppgaver
+                    .OrderBy(x => x.published);
+            }
+            //UpdateItemSource();
+            OppgaveList.IsRefreshing = false;
         }
 
         void SaveSettings(object sender, EventArgs e)
@@ -148,23 +164,10 @@ namespace KompetansetorgetXamarin.Views
         /// </summary>
         async Task ExcecuteRefreshCommand()
         {
-            //if (pullList == false)
-            //{
-            //    OppgaveList.IsRefreshing = false;
-            //}
-            //else if (pullList == true)
-            //{
-            System.Diagnostics.Debug.WriteLine("CarouselOppgaver - ExcecuteRefreshCommand - before listInit.SaveSettings()");
+            OppgaveList.IsRefreshing = true;
             listInit.SaveSettings();
-            System.Diagnostics.Debug.WriteLine("CarouselOppgaver - ExcecuteRefreshCommand - before OppgaveList.ItemsSource = null;");
-            
-            System.Diagnostics.Debug.WriteLine("CarouselOppgaver - ExcecuteRefreshCommand - before oppgaver.Clear()");
-          //  oppgaver.Clear();
-            System.Diagnostics.Debug.WriteLine("CarouselOppgaver - ExcecuteRefreshCommand - before AddData()");
             await AddData();
-            System.Diagnostics.Debug.WriteLine("CarouselOppgaver - ExcecuteRefreshCommand - before OppgaveList.ItemsSource = oppgaver");
-
-            System.Diagnostics.Debug.WriteLine("CarouselOppgaver - ExcecuteRefreshCommand - before OppgaveList.IsRefreshing = false");
+            Sort();
             OppgaveList.IsRefreshing = false;
             //}
         }
@@ -290,22 +293,19 @@ namespace KompetansetorgetXamarin.Views
 
             if (!sameProjects)
             {
-                OppgaveList.ItemsSource = null;
+                //OppgaveList.ItemsSource = null;
                 oppgaver.Clear();
                 foreach (Project project in projects)
                 {
                     System.Diagnostics.Debug.WriteLine("project.title: " + project.title);
                     oppgaver.Add(project);
                 }
-                OppgaveList.ItemsSource = oppgaver;
+                //OppgaveList.ItemsSource = oppgaver;
             }
             if (!Authenticater.Authorized)
             {
                 GoToLogin();
             }
-
-            //    pullList = false;
-            //}
         }
     }
 }
