@@ -54,17 +54,17 @@ namespace KompetansetorgetXamarin.Views
 
         void InitializeSelectItemEventListener()
         {
-            OppgaveList.ItemSelected += async (sender, e) =>
+            OppgaveList.ItemSelected += (sender, e) =>
             {
                 Project d = (Project)e.SelectedItem;
                 //var action = DisplayAlert(d.Text, d.JobTitle, "Slett varsel", "Se annonse");
-                OppgaveList.SelectedItem = null;
                 OpenAdvert(d);
             };
         }
 
         private async Task OpenAdvert(Project oppgave)
         {
+            OppgaveList.SelectedItem = null;
             var url = oppgave.webpage;
             var type = "project";
             var WebPage = new WebPage(type, url);

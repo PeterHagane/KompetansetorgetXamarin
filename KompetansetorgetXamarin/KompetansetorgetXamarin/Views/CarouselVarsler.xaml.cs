@@ -61,21 +61,19 @@ namespace KompetansetorgetXamarin.Views
         {
             VarselList.ItemSelected += async (sender, e) =>
             {
-                Varsel d = (Varsel)e.SelectedItem;
-
-                var action = await DisplayActionSheet(d.JobTitle, "Avbryt", null, "Slett varsel", "Se annonse");
-
-                //VarselList.SelectedItem = null;
-
+                Varsel varsel = (Varsel)e.SelectedItem;
+                string jobTitle = varsel.JobTitle;
+                var action = await DisplayActionSheet(jobTitle, "Avbryt", null, "Slett varsel", "Se annonse");
                 if (action != null)
                 {
-                    DeleteOrOpen(action, d);
+                    await DeleteOrOpen(action, varsel);
                 }
+                Sort();
             };
         }
 
-        //async Task 
-        void DeleteOrOpen(string action, Varsel varsel)
+        //
+        async Task DeleteOrOpen(string action, Varsel varsel)
         {
             if (action == "Slett varsel")
             {
@@ -84,7 +82,7 @@ namespace KompetansetorgetXamarin.Views
             else if (action == "Se annonse")
             {
                 OpenAdvert(varsel);
-            }
+            }   
         }
 
         private async void OpenAdvert(Varsel varsel)

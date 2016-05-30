@@ -57,19 +57,18 @@ namespace KompetansetorgetXamarin.Views
 
         void InitializeSelectItemEventListener()
         {
-            StillingList.ItemSelected += async (sender, e) =>
+            StillingList.ItemSelected += (sender, e) =>
             {
                 
                 Job d = (Job)e.SelectedItem;
                 //var action = DisplayAlert(d.Text, d.JobTitle, "Slett varsel", "Se annonse");
-                StillingList.SelectedItem = null;
-                OpenAdvert(d);
-                
+                OpenAdvert(d); 
             };
         }
 
         private async Task OpenAdvert(Job stilling)
         {
+            StillingList.SelectedItem = null;
             var url = stilling.webpage;
             var type = "job";
             var webPage = new WebPage(type, url);
