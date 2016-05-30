@@ -238,6 +238,7 @@ namespace KompetansetorgetXamarin.Views
                     // LISTINIT.SaveSettings();
                     LISTINIT.PostToServer();
                     SaveToggle();
+                    ExcecuteRefreshCommand();
                 }
                 prevPage = 0;
 

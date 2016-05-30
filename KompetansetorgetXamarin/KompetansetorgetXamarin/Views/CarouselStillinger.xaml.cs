@@ -98,7 +98,7 @@ namespace KompetansetorgetXamarin.Views
 
         void Sort(string sort)
         {
-            if (sort == "Nærmeste søknadsfrist")
+            if (sort == "Tidligste søknadsfrist")
             {
                 StillingList.ItemsSource = JOBS
                     .OrderByDescending(x => x.expiryDate);
