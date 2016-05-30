@@ -24,14 +24,15 @@ namespace KompetansetorgetXamarin.Views
         string p0title = "Dine varsler";
         string p1title = "Varselinnstillinger";
         //public static bool pullList = true;
-
+        private bool sortDesc;
 
         public CarouselVarsler()
         {
             InitializeComponent();
+            sortDesc = true;
             GetStudentNotificationsPref();
             AddData();
-            VarselList.ItemsSource = varsler;
+            UpdateItemSource();
             this.Title = p0title;
             //OppgaverEmner.ItemsSource = LISTINIT.coursesSettings;
             VarselList.IsPullToRefreshEnabled = true;
@@ -41,10 +42,13 @@ namespace KompetansetorgetXamarin.Views
             //oppgaveSwitch.Toggled += oppgaveToggle;
             //varselSwitch.Toggled += varselToggle;
             varsler.Add(new Varsel("TEST", "TEST", "test", "http://adila.prosjekt.uia.no/files/2015/02/UiA1.png","asd","asd", "http://kompetansetorget.uia.no/oppgaver/blaase-isolasjon-bak-diffusjonsperre"));
-
-
             PopupMenu();
             InitializeSettings();
+        }
+
+        void UpdateItemSource()
+        {
+            VarselList.ItemsSource = varsler;
         }
 
         async Task InitializeSettings()
@@ -110,9 +114,23 @@ namespace KompetansetorgetXamarin.Views
 
         void Sorter_OnTapped(object sender, EventArgs e)
         {
-            this.DisplayAlert("Selected!", "Fagområder get", "OK");
-            bool alphabeticallyFirst = false;
+            sortDesc = !sortDesc;
             Sort();
+        }
+
+        void Sort()
+        {
+            if (sortDesc)
+            {
+                VarselList.ItemsSource = varsler
+                    .OrderByDescending(x => x.Published);
+            }
+            else
+            {
+                VarselList.ItemsSource = varsler
+                    .OrderBy(x => x.Published);
+            }
+            //UpdateItemSource();
         }
 
         void SaveSettings(object sender, EventArgs e)
@@ -124,10 +142,6 @@ namespace KompetansetorgetXamarin.Views
             this.DisplayAlert("Innstillinger lagret!", "Oppdatér for å få en ny liste.", "OK");
         }
 
-        void Sort()
-        {
-
-        }
 
         void SwipeRight(object sender, EventArgs e)
         {
@@ -197,20 +211,10 @@ namespace KompetansetorgetXamarin.Views
         /// </summary>
         async Task ExcecuteRefreshCommand()
         {
-            //if (pullList == false)
-            //{
-            //}
-            //else if (pullList == true)
-            //{
-            SaveToggle();
-          //  LISTINIT.SaveSettings();
-            LISTINIT.PostToServer();
             varsler.Clear();
-            VarselList.ItemsSource = null;
             AddData();
-            VarselList.ItemsSource = varsler;
+            Sort();
             VarselList.IsRefreshing = false;
-            //}
         }
 
         //Alters title on carouselpage by contentpage
@@ -322,8 +326,6 @@ namespace KompetansetorgetXamarin.Views
                 System.Diagnostics.Debug.WriteLine(
                     "ViktorTestView - NotificationsFromDb_OnClicked: notifications.Count = " + notifications.Count);
 
-
-
                 foreach (var n in notifications)
                 {
                     if (n is Job)
@@ -335,7 +337,7 @@ namespace KompetansetorgetXamarin.Views
                             string logo = job.companies[0].logo;
                             string varselText = "Ny stilling fra " + job.companies[0].name + "!";
                             string published = "Publisert " + DateTimeHandler.MakeDateTimeString(job.published);
-                            varsler.Add(new Varsel(varselText, job.title, published, logo, job.uuid, "job", job.webpage));
+                            varsler.Add(new Varsel(varselText, job.title, published, job.published, logo, job.uuid, "job", job.webpage));
                             // DO spesific Job code
                             //long date = job.expiryDate; // Will work
                             System.Diagnostics.Debug.WriteLine("job.title = " + job.title);
@@ -357,10 +359,9 @@ namespace KompetansetorgetXamarin.Views
                             string logo = project.companies[0].logo;
                             string varselText = "Ny oppgave fra " + project.companies[0].name + "!";
                             string published = "Publisert " + DateTimeHandler.MakeDateTimeString(project.published);
-                            varsler.Add(new Varsel(varselText, project.title, published, logo, project.uuid, "project", project.webpage));
+                            varsler.Add(new Varsel(varselText, project.title, published, project.published, logo, project.uuid, "project", project.webpage));
 
                             System.Diagnostics.Debug.WriteLine("project.title = " + project.title);
-
                             System.Diagnostics.Debug.WriteLine("project.companies.logo = " + project.companies[0].logo);
                         }
                         else
@@ -374,14 +375,9 @@ namespace KompetansetorgetXamarin.Views
                     {
                         GoToLogin();
                     }
-                    if (varsler != null)
-                    {
-                        System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter: jobs.Count(): " +
-                                                          notifications.Count());
-                    }
-                //    pullList = false;
-                //}
-            }
+
+                    
+                }
         }
     }
 }

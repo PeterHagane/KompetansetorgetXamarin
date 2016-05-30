@@ -22,13 +22,13 @@ namespace KompetansetorgetXamarin.Views
        
         string p0title = "Finn stillinger";
         string p1title = "Velg fagområder";
-
-        bool descending = true;
+        private string sort;
         //public static bool pullList = true;
 
         public CarouselStillinger()
         {
             InitializeComponent();
+            sort = "Nyeste";
             StillingList.SetCarouselStillinger(this);
             //StillingList.IsRefreshing = false;
             this.Title = p0title;
@@ -79,26 +79,38 @@ namespace KompetansetorgetXamarin.Views
             this.DisplayAlert("Selected!", tbi.Text, "OK");
         }
 
-        void Sorter_OnTapped(object sender, EventArgs e)
+        async void Sorter_OnTapped(object sender, EventArgs e)
         {
-            Sort();
+            string action = await DisplayActionSheet("Sorter etter:", "Avbryt", null, "Nyeste", "Eldste", "Nærmeste søknadsfrist", "Seneste søknadsfrist");
+            if (action != null) {
+                sort = action;
+                Sort(sort);
+            }
         }
 
-        void Sort()
+        void Sort(string sort)
         {
-            StillingList.BeginRefresh();
-            if ( descending == true ) {
+            if (sort == "Nærmeste søknadsfrist")
+            {
                 StillingList.ItemsSource = JOBS
-                            .OrderBy(x => x.expiryDate);
-                descending = false;
+                    .OrderByDescending(x => x.expiryDate);
 
-            } else if ( descending == false ) {
-                StillingList.ItemsSource = JOBS
-                            .OrderByDescending(x => x.expiryDate);
-                descending = true;
             }
-
-            StillingList.EndRefresh();
+            else if (sort == "Seneste søknadsfrist")
+            {
+                StillingList.ItemsSource = JOBS
+                    .OrderBy(x => x.expiryDate);
+            }
+            else if (sort == "Nyeste")
+            {
+                StillingList.ItemsSource = JOBS
+                    .OrderByDescending(x => x.published);
+            }
+            else if (sort == "Eldste")
+            {
+                StillingList.ItemsSource = JOBS
+                    .OrderBy(x => x.published);
+            }
         }
 
         void SwipeRight(object sender, EventArgs e)
@@ -166,9 +178,9 @@ namespace KompetansetorgetXamarin.Views
             //}
             //else if (pullList == true)
             //{
+            StillingList.IsRefreshing = true;
             LISTINIT.SaveSettings();
             await AddData();
-
             StillingList.IsRefreshing = false;
             //}
         }
@@ -276,9 +288,9 @@ namespace KompetansetorgetXamarin.Views
                 {
                     //JOBS.Clear();
                     JOBS.Add(p);
-                }               
-                StillingList.ItemsSource = JOBS;
-                descending = true;
+                }
+                Sort(sort);
+                //StillingList.ItemsSource = JOBS;
             }
 
             if (!Authenticater.Authorized)

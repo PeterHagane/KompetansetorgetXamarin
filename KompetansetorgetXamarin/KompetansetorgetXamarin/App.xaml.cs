@@ -67,8 +67,7 @@ namespace KompetansetorgetXamarin
             JobTypesController jtc = new JobTypesController();
             CoursesController cc = new CoursesController();
             if (dbLocation.GetAllLocations().Count != 0)
-            {
-
+            {           
                 lc.CompareServerHash();
                 sgc.CompareServerHash();
                 jtc.CompareServerHash();

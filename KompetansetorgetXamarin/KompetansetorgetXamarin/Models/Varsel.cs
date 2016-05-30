@@ -8,11 +8,12 @@ namespace KompetansetorgetXamarin.Models
 {
     class Varsel
     {
-        public Varsel(string varselText, string jobTitle, string published, string logo, string uuid, string type, string webpage)
+        public Varsel(string varselText, string jobTitle, string published, long dateTime, string logo, string uuid, string type, string webpage)
         {
             this.Text = varselText;
             this.JobTitle = jobTitle;
             this.Detail = published;
+            this.Published = dateTime;
             this.Image = logo;
             this.Uuid = uuid;
             this.Type = type;
@@ -23,6 +24,8 @@ namespace KompetansetorgetXamarin.Models
         public string JobTitle { get; set; }
 
         public string Detail { private set; get; }
+
+        public long Published { get; set; }
 
         public string Image { private set; get; }
 
