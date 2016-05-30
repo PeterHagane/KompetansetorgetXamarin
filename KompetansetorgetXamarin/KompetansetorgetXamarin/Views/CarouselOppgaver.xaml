@@ -167,11 +167,12 @@
     </local:BaseContentPage.ToolbarItems>
     
     <ContentPage.Padding>
-      <OnPlatform x:TypeArguments="Thickness" iOS="15,5,15,0" Android="15,5,15,0" />
+      <OnPlatform x:TypeArguments="Thickness" iOS="15,15,15,0" Android="15,15,15,0" />
     </ContentPage.Padding>
 
+    <!--<Picker x:Name="CoursePicker" SelectedIndex="{Binding CourseIndex}" />-->
     <StackLayout>
-      <Picker x:Name="CoursePicker" SelectedIndex="{Binding CourseIndex}" />
+      
       <!--SelectedItem="{Binding SelectedCourse}"-->
       <!--SeparatorVisibility="None"--> 
       <ListView x:Name="oppgaverSettings">

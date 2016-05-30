@@ -62,7 +62,8 @@ namespace KompetansetorgetXamarin.Views
                 
                 Job d = (Job)e.SelectedItem;
                 //var action = DisplayAlert(d.Text, d.JobTitle, "Slett varsel", "Se annonse");
-                await OpenAdvert(d);
+                StillingList.SelectedItem = null;
+                OpenAdvert(d);
                 
             };
         }

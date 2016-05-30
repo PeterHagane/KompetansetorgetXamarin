@@ -41,7 +41,7 @@ namespace KompetansetorgetXamarin.Views
             //stillingSwitch.Toggled += stillingToggle;
             //oppgaveSwitch.Toggled += oppgaveToggle;
             //varselSwitch.Toggled += varselToggle;
-            //varsler.Add(new Varsel("TEST", "TEST", "test", 1, "http://adila.prosjekt.uia.no/files/2015/02/UiA1.png","asd","asd", "http://kompetansetorget.uia.no/oppgaver/blaase-isolasjon-bak-diffusjonsperre"));
+            varsler.Add(new Varsel("TEST", "TEST", "test", 1, "http://adila.prosjekt.uia.no/files/2015/02/UiA1.png","asd","asd", "http://kompetansetorget.uia.no/oppgaver/blaase-isolasjon-bak-diffusjonsperre"));
             PopupMenu();
             InitializeSettings();
         }
@@ -57,12 +57,15 @@ namespace KompetansetorgetXamarin.Views
             StillingerSettings.ItemsSource = LISTINIT.varslerSettings;
         }
 
-        void PopupMenu() {
+        void PopupMenu()
+        {
             VarselList.ItemSelected += async (sender, e) =>
             {
                 Varsel d = (Varsel)e.SelectedItem;
-                //var action = DisplayAlert(d.Text, d.JobTitle, "Slett varsel", "Se annonse");
+
                 var action = await DisplayActionSheet(d.JobTitle, "Avbryt", null, "Slett varsel", "Se annonse");
+
+                //VarselList.SelectedItem = null;
 
                 if (action != null)
                 {
@@ -71,8 +74,9 @@ namespace KompetansetorgetXamarin.Views
             };
         }
 
-        async Task DeleteOrOpen(string action, Varsel varsel)
-        {           
+        //async Task 
+        void DeleteOrOpen(string action, Varsel varsel)
+        {
             if (action == "Slett varsel")
             {
                 DeleteNotification(varsel);
@@ -136,7 +140,7 @@ namespace KompetansetorgetXamarin.Views
         void SaveSettings(object sender, EventArgs e)
         {
             SaveToggle();
-           // LISTINIT.SaveSettings();
+            // LISTINIT.SaveSettings();
             LISTINIT.PostToServer();
 
             this.DisplayAlert("Innstillinger lagret!", "Oppdatér for å få en ny liste.", "OK");
@@ -231,7 +235,7 @@ namespace KompetansetorgetXamarin.Views
 
                 if (prevPage == 1)
                 {
-                   // LISTINIT.SaveSettings();
+                    // LISTINIT.SaveSettings();
                     LISTINIT.PostToServer();
                     SaveToggle();
                 }
@@ -253,7 +257,7 @@ namespace KompetansetorgetXamarin.Views
 
         protected override void OnDisappearing()
         {
-         ///   LISTINIT.SaveSettings(); //saves the settings when pressing the up button/leaving the page
+            ///   LISTINIT.SaveSettings(); //saves the settings when pressing the up button/leaving the page
             LISTINIT.PostToServer();
             SaveToggle();
         }
@@ -319,65 +323,65 @@ namespace KompetansetorgetXamarin.Views
             //}
             //else if (pullList == true)
             //{
-                System.Diagnostics.Debug.WriteLine("ViktorTestView - NotificationsFromDb_OnClicked: Initiated");
-                NotificationsController nc = new NotificationsController();
-                List<Advert> notifications = nc.GetNotificationList();
-                
-                System.Diagnostics.Debug.WriteLine(
-                    "ViktorTestView - NotificationsFromDb_OnClicked: notifications.Count = " + notifications.Count);
+            System.Diagnostics.Debug.WriteLine("ViktorTestView - NotificationsFromDb_OnClicked: Initiated");
+            NotificationsController nc = new NotificationsController();
+            List<Advert> notifications = nc.GetNotificationList();
 
-                foreach (var n in notifications)
+            System.Diagnostics.Debug.WriteLine(
+                "ViktorTestView - NotificationsFromDb_OnClicked: notifications.Count = " + notifications.Count);
+
+            foreach (var n in notifications)
+            {
+                if (n is Job)
                 {
-                    if (n is Job)
+                    Job job = (Job)n;
+
+                    if (job.companies != null && job.companies[0].logo != null)
                     {
-                        Job job = (Job)n;
-
-                        if (job.companies != null && job.companies[0].logo != null)
-                        {
-                            string logo = job.companies[0].logo;
-                            string varselText = "Ny stilling fra " + job.companies[0].name + "!";
-                            string published = "Publisert " + DateTimeHandler.MakeDateTimeString(job.published);
-                            varsler.Add(new Varsel(varselText, job.title, published, job.published, logo, job.uuid, "job", job.webpage));
-                            // DO spesific Job code
-                            //long date = job.expiryDate; // Will work
-                            System.Diagnostics.Debug.WriteLine("job.title = " + job.title);
-                            System.Diagnostics.Debug.WriteLine("job.companies.logo = " + job.companies[0].logo);
-                        }
-                        else
-                        {
-                            System.Diagnostics.Debug.WriteLine("job.companies = null");
-                        }
-                        System.Diagnostics.Debug.WriteLine("job.expiryDate = " + job.expiryDate);
-
+                        string logo = job.companies[0].logo;
+                        string varselText = "Ny stilling fra " + job.companies[0].name + "!";
+                        string published = "Publisert " + DateTimeHandler.MakeDateTimeString(job.published);
+                        varsler.Add(new Varsel(varselText, job.title, published, job.published, logo, job.uuid, "job", job.webpage));
+                        // DO spesific Job code
+                        //long date = job.expiryDate; // Will work
+                        System.Diagnostics.Debug.WriteLine("job.title = " + job.title);
+                        System.Diagnostics.Debug.WriteLine("job.companies.logo = " + job.companies[0].logo);
                     }
-                    else if (n is Project)
+                    else
                     {
-                        // Do spesific Project  code.
-                        Project project = (Project)n;
-                        if (project.companies != null && project.companies[0].logo != null)
-                        {
-                            string logo = project.companies[0].logo;
-                            string varselText = "Ny oppgave fra " + project.companies[0].name + "!";
-                            string published = "Publisert " + DateTimeHandler.MakeDateTimeString(project.published);
-                            varsler.Add(new Varsel(varselText, project.title, published, project.published, logo, project.uuid, "project", project.webpage));
-
-                            System.Diagnostics.Debug.WriteLine("project.title = " + project.title);
-                            System.Diagnostics.Debug.WriteLine("project.companies.logo = " + project.companies[0].logo);
-                        }
-                        else
-                        {
-                            System.Diagnostics.Debug.WriteLine("project.companies = null");
-                        }
-                        System.Diagnostics.Debug.WriteLine("project.companies.logo = " + project.companies[0].logo);
-                        System.Diagnostics.Debug.WriteLine("project.published = " + project.published);
+                        System.Diagnostics.Debug.WriteLine("job.companies = null");
                     }
-                    if (!Authenticater.Authorized)
-                    {
-                        GoToLogin();
-                    }
+                    System.Diagnostics.Debug.WriteLine("job.expiryDate = " + job.expiryDate);
 
-                    
                 }
+                else if (n is Project)
+                {
+                    // Do spesific Project  code.
+                    Project project = (Project)n;
+                    if (project.companies != null && project.companies[0].logo != null)
+                    {
+                        string logo = project.companies[0].logo;
+                        string varselText = "Ny oppgave fra " + project.companies[0].name + "!";
+                        string published = "Publisert " + DateTimeHandler.MakeDateTimeString(project.published);
+                        varsler.Add(new Varsel(varselText, project.title, published, project.published, logo, project.uuid, "project", project.webpage));
+
+                        System.Diagnostics.Debug.WriteLine("project.title = " + project.title);
+                        System.Diagnostics.Debug.WriteLine("project.companies.logo = " + project.companies[0].logo);
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine("project.companies = null");
+                    }
+                    System.Diagnostics.Debug.WriteLine("project.companies.logo = " + project.companies[0].logo);
+                    System.Diagnostics.Debug.WriteLine("project.published = " + project.published);
+                }
+                if (!Authenticater.Authorized)
+                {
+                    GoToLogin();
+                }
+
+
+            }
         }
     }
 }
