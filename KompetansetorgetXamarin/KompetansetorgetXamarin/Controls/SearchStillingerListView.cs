@@ -15,13 +15,13 @@ namespace KompetansetorgetXamarin.Controls
         private CarouselStillinger carouselStillinger;
         public SearchStillingerListView()
         {
-            ItemSelected += (s, e) => {
-                if (SelectedItem == null)
-                    return;
-                var selected = (Job)e.SelectedItem;
-                SelectedItem = null;
-                //Navigation.PushAsync (new CampusLocationPage (selected));
-            };
+            //ItemSelected += (s, e) => {
+            //    if (SelectedItem == null)
+            //        return;
+            //    var selected = (Job)e.SelectedItem;
+            //    SelectedItem = null;
+            //    //Navigation.PushAsync (new (selected));
+            //};
         }
 
         public void SetCarouselStillinger(CarouselStillinger carouselStillinger)

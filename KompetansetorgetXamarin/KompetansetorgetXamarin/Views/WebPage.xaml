@@ -13,18 +13,19 @@
     </ToolbarItem>
   </local:BaseContentPage.ToolbarItems>-->
 
-  <local:BaseContentPage.Content>
-    <AbsoluteLayout>
+  <ContentPage.Content>
+    
       <WebView x:Name="WebView"
-            AbsoluteLayout.LayoutBounds ="0, 0, 100, 100"
-            AbsoluteLayout.LayoutFlags = "WidthProportional, HeightProportional"
-            
             Navigating="LoadingSite"
             Navigated="SiteLoaded"
             HeightRequest="1000"
             WidthRequest="1000" />
-    </AbsoluteLayout>
-  </local:BaseContentPage.Content>
+    
+    <!--AbsoluteLayout.LayoutBounds ="0, 0, 100, 100"
+            AbsoluteLayout.LayoutFlags = "WidthProportional, HeightProportional"-->
+  </ContentPage.Content>
 
 
 </ContentPage>
+
+<!--<StackLayout></StackLayout>-->

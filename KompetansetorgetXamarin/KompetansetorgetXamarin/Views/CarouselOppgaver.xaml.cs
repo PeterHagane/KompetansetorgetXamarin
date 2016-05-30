@@ -55,6 +55,7 @@ namespace KompetansetorgetXamarin.Views
                 Project d = (Project)e.SelectedItem;
                 //var action = DisplayAlert(d.Text, d.JobTitle, "Slett varsel", "Se annonse");
                 await OpenAdvert(d);
+                SelectedItem = null;
             };
         }
 

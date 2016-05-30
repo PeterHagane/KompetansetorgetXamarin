@@ -15,13 +15,13 @@ namespace KompetansetorgetXamarin.Controls
         private CarouselOppgaver carouselOppgaver; 
         public SearchOppgaverListView()
         {
-           ItemSelected += (s, e) => {
-                if (SelectedItem == null)
-                    return;
-                var selected = (Project)e.SelectedItem;
-                SelectedItem = null;
-                //Navigation.PushAsync (new thispage (selected));
-            };
+           //ItemSelected += (s, e) => {
+           //     if (SelectedItem == null)
+           //         return;
+           //     var selected = (Project)e.SelectedItem;
+           //     SelectedItem = null;
+           //     //Navigation.PushAsync (new thispage (selected));
+           // };
         }
 
         public void SetCarouselOppgaver(CarouselOppgaver carouselOppgaver)
