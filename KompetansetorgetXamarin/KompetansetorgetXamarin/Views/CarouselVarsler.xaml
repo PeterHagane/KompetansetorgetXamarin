@@ -21,14 +21,14 @@
       <ToolbarItem Name="User" Activated="Logout"  Order="Primary" Priority="1">
         <ToolbarItem.Icon>
           <OnPlatform x:TypeArguments="FileImageSource"
-                      Android="User.png" />
+                      Android="LogoutWhite.png" />
         </ToolbarItem.Icon>
       </ToolbarItem>
 
       <ToolbarItem Name="Innstillinger" Activated="SwipeRight"  Order="Primary" Priority="2">
         <ToolbarItem.Icon>
           <OnPlatform x:TypeArguments="FileImageSource"
-                      Android="ArrowWhiteRight.png" />
+                      Android="SettingsWhite.png" />
         </ToolbarItem.Icon>
       </ToolbarItem>
     </local:BaseContentPage.ToolbarItems>
@@ -89,17 +89,17 @@
 
   <local:BaseContentPage Padding="0,0,0,0">
     <local:BaseContentPage.ToolbarItems>
-      <ToolbarItem Name="Lagre innstillinger" Activated="SaveSettings"  Order="Primary" Priority="0">
+      <!--<ToolbarItem Name="Lagre innstillinger" Activated="SaveSettings"  Order="Primary" Priority="0">
         <ToolbarItem.Icon>
           <OnPlatform x:TypeArguments="FileImageSource"
                       Android="SaveWhite.png" />
         </ToolbarItem.Icon>
-      </ToolbarItem>
+      </ToolbarItem>-->
 
       <ToolbarItem Name="Logg ut" Activated="Logout"  Order="Primary" Priority="1">
         <ToolbarItem.Icon>
           <OnPlatform x:TypeArguments="FileImageSource"
-                      Android="User.png" />
+                      Android="LogoutWhite.png" />
         </ToolbarItem.Icon>
       </ToolbarItem>
 

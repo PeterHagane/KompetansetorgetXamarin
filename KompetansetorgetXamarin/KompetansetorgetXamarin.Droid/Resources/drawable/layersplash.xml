@@ -6,7 +6,7 @@
   </item>
   <item >
     <bitmap android:src="@drawable/kompetansetorget_logo_dark"
-     android:gravity="fill_horizontal"
+     android:gravity="center"
      />
   </item>
 </layer-list>

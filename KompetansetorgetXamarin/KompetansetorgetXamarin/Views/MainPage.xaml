@@ -9,7 +9,7 @@
     <ToolbarItem Name="User" Activated="Logout"  Order="Primary" Priority="1">
       <ToolbarItem.Icon>
         <OnPlatform x:TypeArguments="FileImageSource"
-                    Android="User.png" />
+                    Android="LogoutWhite.png" />
       </ToolbarItem.Icon>
     </ToolbarItem>
   </local:BaseContentPage.ToolbarItems>
