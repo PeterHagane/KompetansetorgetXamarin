@@ -126,15 +126,16 @@ namespace KompetansetorgetXamarin.Views
             ToolbarItem tbi = (ToolbarItem)sender;
             Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
             {
-                if (CurrentPage == this.Children[3])
-                {
-                    this.CurrentPage = this.Children[2];
-                }
-                else if (CurrentPage == this.Children[2])
-                {
-                    this.CurrentPage = this.Children[1];
-                }
-                else if (CurrentPage == this.Children[1])
+                //if (CurrentPage == this.Children[3])
+                //{
+                //    this.CurrentPage = this.Children[2];
+                //}
+                //else if (CurrentPage == this.Children[2])
+                //{
+                //    this.CurrentPage = this.Children[1];
+                //}
+                //else
+                if (CurrentPage == this.Children[1])
                 {
                     this.CurrentPage = this.Children[0];
                 }
@@ -221,6 +222,12 @@ namespace KompetansetorgetXamarin.Views
             //}
             //listInit.SaveSettings();
             return true;
+        }
+
+        void SaveSettings(object sender, EventArgs e)
+        {
+            LISTINIT.SaveSettings();
+            this.DisplayAlert("Innstillinger lagret!", "Oppdatér for å få nye stillinger", "OK");
         }
 
         public void getFilter()

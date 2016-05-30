@@ -12,15 +12,18 @@
       </ToolbarItem.Icon>
     </ToolbarItem>
   </local:BaseContentPage.ToolbarItems>-->
-  
+
   <local:BaseContentPage.Content>
-    <StackLayout>
+    <AbsoluteLayout>
       <WebView x:Name="WebView"
-          Navigating="LoadingSite"
-          Navigated="SiteLoaded"
-          HeightRequest="1000"
-          WidthRequest="1000" />
-    </StackLayout>
+            AbsoluteLayout.LayoutBounds ="0, 0, 100, 100"
+            AbsoluteLayout.LayoutFlags = "WidthProportional, HeightProportional"
+            
+            Navigating="LoadingSite"
+            Navigated="SiteLoaded"
+            HeightRequest="1000"
+            WidthRequest="1000" />
+    </AbsoluteLayout>
   </local:BaseContentPage.Content>
 
 

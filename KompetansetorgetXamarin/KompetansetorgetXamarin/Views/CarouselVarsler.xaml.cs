@@ -22,7 +22,7 @@ namespace KompetansetorgetXamarin.Views
         ObservableCollection<Varsel> varsler = new ObservableCollection<Varsel>();
         ICommand refreshCommand;
         string p0title = "Dine varsler";
-        string p1title = "Velg fagområder";
+        string p1title = "Varselinnstillinger";
         //public static bool pullList = true;
 
 
@@ -40,7 +40,7 @@ namespace KompetansetorgetXamarin.Views
             //stillingSwitch.Toggled += stillingToggle;
             //oppgaveSwitch.Toggled += oppgaveToggle;
             //varselSwitch.Toggled += varselToggle;
-            //varsler.Add(new Varsel("TEST", "TEST", "test, "http://adila.prosjekt.uia.no/files/2015/02/UiA1.png","asd","asd","http://www.google.com"));
+            varsler.Add(new Varsel("TEST", "TEST", "test", "http://adila.prosjekt.uia.no/files/2015/02/UiA1.png","asd","asd", "http://kompetansetorget.uia.no/oppgaver/blaase-isolasjon-bak-diffusjonsperre"));
 
 
             PopupMenu();
@@ -154,15 +154,16 @@ namespace KompetansetorgetXamarin.Views
             ToolbarItem tbi = (ToolbarItem)sender;
             Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
             {
-                if (CurrentPage == this.Children[3])
-                {
-                    this.CurrentPage = this.Children[2];
-                }
-                else if (CurrentPage == this.Children[2])
-                {
-                    this.CurrentPage = this.Children[1];
-                }
-                else if (CurrentPage == this.Children[1])
+                //if (CurrentPage == this.Children[3])
+                //{
+                //    this.CurrentPage = this.Children[2];
+                //}
+                //else if (CurrentPage == this.Children[2])
+                //{
+                //    this.CurrentPage = this.Children[1];
+                //}
+                //else 
+                if (CurrentPage == this.Children[1])
                 {
                     this.CurrentPage = this.Children[0];
                 }

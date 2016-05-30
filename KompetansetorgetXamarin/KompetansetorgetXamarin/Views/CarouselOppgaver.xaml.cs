@@ -67,7 +67,7 @@ namespace KompetansetorgetXamarin.Views
         void SaveSettings(object sender, EventArgs e)
         {
             listInit.SaveSettings();
-            this.DisplayAlert("Innstillinger lagret!", "Oppdatér for å få en ny liste.", "OK");
+            this.DisplayAlert("Innstillinger lagret!", "Oppdatér for å få inn nye oppgaver.", "OK");
         }
 
 
@@ -106,15 +106,16 @@ namespace KompetansetorgetXamarin.Views
             ToolbarItem tbi = (ToolbarItem)sender;
             Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
             {
-                if (CurrentPage == this.Children[3])
-                {
-                    this.CurrentPage = this.Children[2];
-                }
-                else if (CurrentPage == this.Children[2])
-                {
-                    this.CurrentPage = this.Children[1];
-                }
-                else if (CurrentPage == this.Children[1])
+                //if (CurrentPage == this.Children[3])
+                //{
+                //    this.CurrentPage = this.Children[2];
+                //}
+                //else if (CurrentPage == this.Children[2])
+                //{
+                //    this.CurrentPage = this.Children[1];
+                //}
+                //else 
+                if (CurrentPage == this.Children[1])
                 {
                     this.CurrentPage = this.Children[0];
                 }
@@ -198,22 +199,9 @@ namespace KompetansetorgetXamarin.Views
 
         protected override bool OnBackButtonPressed() //behaviour of HARDWARE back button, not the up button.
         {
-            //var p0 = this.Children[0];
-            //var p1 = this.Children[1];
-
+            listInit.SaveSettings();
             if (CurrentPage.SendBackButtonPressed()) return true;
-
-            //if (CurrentPage == p1)
-            //{
-            //    this.CurrentPage = p0;
-            //    listInit.SaveSettings();
-            //}
-            //else if (CurrentPage == p0)
-            //{
-                return false;
-            //}
-            //listInit.SaveSettings();
-            //return true;
+            return true;
         }
 
         public void OnMore(object sender, EventArgs e)
