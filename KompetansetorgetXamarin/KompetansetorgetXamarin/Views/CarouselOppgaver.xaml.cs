@@ -209,6 +209,7 @@ namespace KompetansetorgetXamarin.Views
             {
                 this.Title = p0title;
                 listInit.SaveSettings();  //saves settings when going to p0
+                ExcecuteRefreshCommand();
             }
             else if (CurrentPage == this.Children[1])
             {

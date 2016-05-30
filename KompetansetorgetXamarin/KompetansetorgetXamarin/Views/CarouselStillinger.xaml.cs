@@ -180,7 +180,6 @@ namespace KompetansetorgetXamarin.Views
         async Task ExcecuteRefreshCommand()
         {
             StillingList.IsRefreshing = true;
-            LISTINIT.SaveSettings();
             await AddData();
             Sort(sort);
             StillingList.IsRefreshing = false;
@@ -198,6 +197,7 @@ namespace KompetansetorgetXamarin.Views
             {
                 this.Title = p0title;
                 LISTINIT.SaveSettings();
+                ExcecuteRefreshCommand();
             }
             else if (CurrentPage == this.Children[1])
             {
