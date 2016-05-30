@@ -261,25 +261,25 @@ namespace KompetansetorgetXamarin.Views
             SaveToggle();
         }
 
-        protected override bool OnBackButtonPressed() //behaviour of HARDWARE back button, not the up button.
-        {
-            //var p0 = this.Children[0];
-            //var p1 = this.Children[1];
+        //protected override bool OnBackButtonPressed() //behaviour of HARDWARE back button, not the up button.
+        //{
+        //    //var p0 = this.Children[0];
+        //    //var p1 = this.Children[1];
 
-            if (CurrentPage.SendBackButtonPressed()) return true;
+        //    if (CurrentPage.SendBackButtonPressed()) return true;
 
-            //if (CurrentPage == p1)
-            //{
-            //    this.CurrentPage = p0;
-            //    listInit.SaveSettings();
-            //}
-            //else if (CurrentPage == p0)
-            //{
-            //    return false;
-            //}
-            //listInit.SaveSettings();
-            return true;
-        }
+        //    //if (CurrentPage == p1)
+        //    //{
+        //    //    this.CurrentPage = p0;
+        //    //    listInit.SaveSettings();
+        //    //}
+        //    //else if (CurrentPage == p0)
+        //    //{
+        //    //    return false;
+        //    //}
+        //    //listInit.SaveSettings();
+        //    return true;
+        //}
 
         void SwitchToggle(object sender, ToggledEventArgs e)
         {

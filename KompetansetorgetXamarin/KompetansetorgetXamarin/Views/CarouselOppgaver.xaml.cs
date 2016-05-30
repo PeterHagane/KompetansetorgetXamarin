@@ -228,12 +228,12 @@ namespace KompetansetorgetXamarin.Views
             listInit.SaveSettings(); //saves the settings when pressing the up button/leaving the page
         }
 
-        protected override bool OnBackButtonPressed() //behaviour of HARDWARE back button, not the up button.
-        {
-            listInit.SaveSettings();
-            if (CurrentPage.SendBackButtonPressed()) return true;
-            return true;
-        }
+        //protected override bool OnBackButtonPressed() //behaviour of HARDWARE back button, not the up button.
+        //{
+        //    listInit.SaveSettings();
+        //    if (CurrentPage.SendBackButtonPressed()) return true;
+        //    return true;
+        //}
 
         public void OnMore(object sender, EventArgs e)
         {
