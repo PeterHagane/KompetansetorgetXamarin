@@ -122,6 +122,7 @@ namespace KompetansetorgetXamarin
                 */
                 Uri requestLocalToken = new Uri(AuthProvider.ApiRequests + account.Properties["access_token"]);
                 System.Diagnostics.Debug.WriteLine("Requesting local token");
+                System.Diagnostics.Debug.WriteLine("Using access_token: " + account.Properties["access_token"]);
                 OAuth2Request request1 = new OAuth2Request("GET", requestLocalToken, null, account);
                 //OAuth2Request request1 = new OAuth2Request("GET", requestLocalToken, null, null);
 
@@ -141,12 +142,13 @@ namespace KompetansetorgetXamarin
                     localToken = responseDict["access_token"];
                     username = responseDict["userName"];
                     System.Diagnostics.Debug.WriteLine("username: " + username);
-                    System.Diagnostics.Debug.WriteLine("access_token: " + localToken);
+                    System.Diagnostics.Debug.WriteLine("localToken: " + localToken);
 
                     StudentsController sc = new StudentsController();
                     DbStudent dbStudent = new DbStudent();
                     if (dbStudent.CheckIfStudentExist(username))
                     {
+                        System.Diagnostics.Debug.WriteLine("Student did exist");
                         Student student = dbStudent.GetStudent(username);
                         student.accessToken = localToken;
                         dbStudent.UpdateStudent(student);
@@ -155,6 +157,7 @@ namespace KompetansetorgetXamarin
                     }
                     else
                     {
+                        System.Diagnostics.Debug.WriteLine("Student did not exist");
                         dbStudent.DeleteAllStudents();
                         Student student = new Student();
                         student.username = username;

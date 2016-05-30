@@ -32,30 +32,38 @@ namespace KompetansetorgetXamarin.Views
             StillingList.SetCarouselStillinger(this);
             //StillingList.IsRefreshing = false;
             this.Title = p0title;
-            StillingList.ItemsSource = JOBS;   // oppgave.companies[0].name  .logo
-            StillingerSettings.ItemsSource = LISTINIT.stillingerSettings;
             //OppgaverEmner.ItemsSource = LISTINIT.coursesSettings;
-            StillingList.IsPullToRefreshEnabled = true;
-            
+            StillingList.IsPullToRefreshEnabled = true;         
             StillingList.RefreshCommand = RefreshCommand;
             søk.TextChanged += (sender, e) => StillingList.FilterOppgaver(søk.Text);
             søk.SearchButtonPressed += (sender, e) => {
                 StillingList.FilterOppgaver(søk.Text);
             };
+            InitializeSelectItemEventListener();                      
 
-            PopupMenu();
-
-
+            UpdateItemSource();
         }
 
-        void PopupMenu()
+        private async Task UpdateItemSource()
+        {
+            //OppgaveList.IsRefreshing = false;
+            StillingList.IsRefreshing = true;
+            StillingerSettings.ItemsSource = LISTINIT.stillingerSettings;
+            await AddData();
+            StillingList.ItemsSource = JOBS;   // oppgave.companies[0].name  .logo
+            //OppgaverEmner.ItemsSource = listInit.coursesSettings;
+            StillingList.IsRefreshing = false;
+        }
+
+        void InitializeSelectItemEventListener()
         {
             StillingList.ItemSelected += async (sender, e) =>
             {
+                
                 Job d = (Job)e.SelectedItem;
                 //var action = DisplayAlert(d.Text, d.JobTitle, "Slett varsel", "Se annonse");
                 await OpenAdvert(d);
-                SelectedItem = null;
+                
             };
         }
 
@@ -63,8 +71,8 @@ namespace KompetansetorgetXamarin.Views
         {
             var url = stilling.webpage;
             var type = "job";
-            var WebPage = new WebPage(type, url);
-            await Navigation.PushAsync(WebPage);  //opens new webpage in browser to given url
+            var webPage = new WebPage(type, url);
+            await Navigation.PushAsync(webPage);  //opens new webpage in browser to given url
         }
 
         public ObservableCollection<Job> GetJobs()

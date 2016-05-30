@@ -35,21 +35,24 @@ namespace KompetansetorgetXamarin.Views
             InitializeComponent();
             sortDesc = true;
             this.Title = p0title;
+            
             OppgaveList.SetCarouselOppgaver(this);
-            UpdateItemSource();
             OppgaveList.RefreshCommand = RefreshCommand;
             OppgaveList.IsPullToRefreshEnabled = true;
+            
+
             søk.TextChanged += (sender, e) => OppgaveList.FilterOppgaver(søk.Text);
             søk.SearchButtonPressed += (sender, e) =>
             {
                 OppgaveList.FilterOppgaver(søk.Text);
-                Sort();
             };
-            PopupMenu();
+            InitializeSelectItemEventListener();
+
+            UpdateItemSource();
         }
 
 
-        void PopupMenu()
+        void InitializeSelectItemEventListener()
         {
             OppgaveList.ItemSelected += async (sender, e) =>
             {
@@ -68,15 +71,16 @@ namespace KompetansetorgetXamarin.Views
             await Navigation.PushAsync(WebPage);  //opens new webpage in browser to given url
         }
 
-        private void UpdateItemSource() 
+        private async Task UpdateItemSource() 
         {
-            //OppgaveList.IsRefreshing = false;
-
-            OppgaveList.ItemsSource = oppgaver;   // oppgave.companies[0].name  .logo
+            OppgaveList.IsRefreshing = true;
             oppgaverSettings.ItemsSource = listInit.oppgaveSettings;
+            await AddData();
+            OppgaveList.ItemsSource = oppgaver;   // oppgave.companies[0].name  .logo
+            OppgaveList.IsRefreshing = false;
             //OppgaverEmner.ItemsSource = listInit.coursesSettings;
-            
-            
+
+
         }
 
         public ObservableCollection<Project> GetProjects()
