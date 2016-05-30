@@ -43,6 +43,7 @@ namespace KompetansetorgetXamarin.Views
             søk.SearchButtonPressed += (sender, e) =>
             {
                 OppgaveList.FilterOppgaver(søk.Text);
+                Sort();
             };
             PopupMenu();
         }

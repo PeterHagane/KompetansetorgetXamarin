@@ -32,7 +32,7 @@ namespace KompetansetorgetXamarin.Controls
         public void FilterOppgaver(string filter)
         {
             ObservableCollection<Job> jobs = carouselStillinger.GetJobs();
-            this.BeginRefresh();
+            this.IsRefreshing = true;
 
             if (string.IsNullOrWhiteSpace(filter))
             {
@@ -47,7 +47,7 @@ namespace KompetansetorgetXamarin.Controls
 
             }
 
-            this.EndRefresh();
+            this.IsRefreshing = false;
         }
 
     }
