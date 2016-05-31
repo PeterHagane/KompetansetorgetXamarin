@@ -68,9 +68,11 @@ namespace KompetansetorgetXamarin.Views
                 {
                     await DeleteOrOpen(action, varsel);
                 }
-                Sort();
+                //Sort();
+                ExcecuteRefreshCommand();
             };
         }
+
 
         //
         async Task DeleteOrOpen(string action, Varsel varsel)
