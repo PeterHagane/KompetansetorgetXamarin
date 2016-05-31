@@ -290,7 +290,7 @@ namespace KompetansetorgetXamarin.Controllers
                 return null;
             }
 
-            string sortBy = "-publish";
+            string sortBy = "publish";
             string queryParams = CreateQueryParams(studyGroups, sortBy, filter);
             Uri url = new Uri(Adress + queryParams);
             System.Diagnostics.Debug.WriteLine("GetJobsBasedOnFilter - url: " + url.ToString());

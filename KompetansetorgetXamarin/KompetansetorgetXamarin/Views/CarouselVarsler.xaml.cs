@@ -63,7 +63,7 @@ namespace KompetansetorgetXamarin.Views
             {
                 Varsel varsel = (Varsel)e.SelectedItem;
                 string jobTitle = varsel.JobTitle;
-                var action = await DisplayActionSheet(jobTitle, "Avbryt", null, "Slett varsel", "Se annonse");
+                var action = await DisplayActionSheet(jobTitle, "Avbryt", null, "Se annonse", "Slett varsel");
                 if (action != null)
                 {
                     await DeleteOrOpen(action, varsel);

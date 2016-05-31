@@ -88,7 +88,7 @@ namespace KompetansetorgetXamarin.Views
 
         async void Sorter_OnTapped(object sender, EventArgs e)
         {
-            string action = await DisplayActionSheet("Sorter etter:", "Avbryt", null, "Nyeste", "Eldste", "Nærmeste søknadsfrist", "Seneste søknadsfrist");
+            string action = await DisplayActionSheet("Sorter etter:", "Avbryt", null, "Nyeste", "Eldste", "Tidligste søknadsfrist", "Seneste søknadsfrist");
             if (action != null) {
                 sort = action;
                 Sort(sort);
