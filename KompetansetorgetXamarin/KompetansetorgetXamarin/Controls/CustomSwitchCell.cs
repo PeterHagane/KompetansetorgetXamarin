@@ -26,6 +26,7 @@ namespace KompetansetorgetXamarin.Controls
 
             var NameLabel = new Label();
             NameLabel.HorizontalOptions = LayoutOptions.FillAndExpand;
+            NameLabel.VerticalOptions = LayoutOptions.CenterAndExpand;
             NameLabel.FontSize = Device.GetNamedSize(NamedSize.Default, typeof(Label));
             NameLabel.LineBreakMode = LineBreakMode.NoWrap;
             NameLabel.TextColor = Color.Black;
@@ -35,6 +36,7 @@ namespace KompetansetorgetXamarin.Controls
 
             var ToggleSwitch = new Switch();
             ToggleSwitch.HorizontalOptions = LayoutOptions.End;
+            ToggleSwitch.VerticalOptions = LayoutOptions.CenterAndExpand;
             ToggleSwitch.SetBinding(Switch.IsToggledProperty, "IsSelected");
             stack.Children.Add(ToggleSwitch);
 

@@ -12,8 +12,44 @@ using Xamarin.Forms;
 /// </summary>
 namespace KompetansetorgetXamarin.Controls
 {
-    class CustomImageCell : ImageCell
+    class CustomImageCell : ViewCell
     {
+        //public CustomImageCell() {
+        //    var stack = new StackLayout()
+        //{
+        //    Orientation = StackOrientation.Horizontal,
+        //    Padding = new Thickness(30, 0, 30, 5),
+        //    Spacing = 0
+        //};
+
+        //var NameLabel = new Label();
+        //NameLabel.HorizontalOptions = LayoutOptions.FillAndExpand;
+        //    NameLabel.VerticalOptions = LayoutOptions.CenterAndExpand;
+        //    NameLabel.FontSize = Xamarin.Forms.Device.GetNamedSize(NamedSize.Default, typeof(Label));
+        //    NameLabel.LineBreakMode = LineBreakMode.NoWrap;
+        //    NameLabel.TextColor = Color.Black;
+        //    NameLabel.SetBinding(Label.TextProperty, "Name");
+
+        //    stack.Children.Add(NameLabel);
+
+        //    var ToggleSwitch = new Switch();
+        //ToggleSwitch.HorizontalOptions = LayoutOptions.End;
+        //    ToggleSwitch.VerticalOptions = LayoutOptions.CenterAndExpand;
+        //    ToggleSwitch.SetBinding(Switch.IsToggledProperty, "IsSelected");
+        //    stack.Children.Add(ToggleSwitch);
+
+
+
+
+
+
+
+        //    View = stack;
+
+
+        //}
+
+
         //public CustomImageCell() {
         //    var moreAction = new MenuItem { Text = "Se annonse" };
         //    moreAction.SetBinding(MenuItem.CommandParameterProperty, new Binding("."));
