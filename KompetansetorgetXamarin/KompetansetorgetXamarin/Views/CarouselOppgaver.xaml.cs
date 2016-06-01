@@ -23,7 +23,7 @@ namespace KompetansetorgetXamarin.Views
         public ObservableCollection<Project> oppgaver = new ObservableCollection<Project>();
         /*Dictionary<string, string> filter = new Dictionary<string, string>();*/ //used in AddData;
         ICommand refreshCommand;
-        string p0title = "Finn oppgaveforslag";
+        string p0title = "Oppgaveforslag";
         string p1title = "Velg fagområder";
         //static public bool pullList = true;
         //string p2title = "Velg fagområder";

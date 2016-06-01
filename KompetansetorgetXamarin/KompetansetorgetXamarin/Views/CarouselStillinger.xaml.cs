@@ -23,6 +23,7 @@ namespace KompetansetorgetXamarin.Views
         string p0title = "Finn stillinger";
         string p1title = "Velg fagområder";
         private string sort;
+        int prevPage = 0;
         //public static bool pullList = true;
 
         public CarouselStillinger()
@@ -189,7 +190,7 @@ namespace KompetansetorgetXamarin.Views
         public new event EventHandler CurrentPageChanged;
         protected override void OnCurrentPageChanged()
         {
-            int prevPage = 0;
+            
             EventHandler changed = CurrentPageChanged;
             if (changed != null)
                 changed(this, EventArgs.Empty);
@@ -198,10 +199,12 @@ namespace KompetansetorgetXamarin.Views
                 this.Title = p0title;
                 LISTINIT.SaveSettings();
                 ExcecuteRefreshCommand();
+                
             }
             else if (CurrentPage == this.Children[1])
             {
                 this.Title = p1title;
+                prevPage = 1;
             }
             //add in case of more pages
             //else if (CurrentPage == this.Children[2]) {

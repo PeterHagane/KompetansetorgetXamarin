@@ -12,7 +12,7 @@ using Xamarin.Forms;
 /// </summary>
 namespace KompetansetorgetXamarin.Controls
 {
-    class CustomImageCell : ViewCell
+    class CustomImageCell : ImageCell
     {
         //public CustomImageCell() {
         //    var stack = new StackLayout()

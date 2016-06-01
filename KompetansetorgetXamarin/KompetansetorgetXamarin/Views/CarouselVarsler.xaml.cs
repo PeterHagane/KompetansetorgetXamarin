@@ -25,6 +25,7 @@ namespace KompetansetorgetXamarin.Views
         string p1title = "Varselinnstillinger";
         //public static bool pullList = true;
         private bool sortDesc;
+        int prevPage = 0;
 
         public CarouselVarsler()
         {
@@ -41,7 +42,7 @@ namespace KompetansetorgetXamarin.Views
             //stillingSwitch.Toggled += stillingToggle;
             //oppgaveSwitch.Toggled += oppgaveToggle;
             //varselSwitch.Toggled += varselToggle;
-            //varsler.Add(new Varsel("TEST", "TEST", "test", 1, "http://adila.prosjekt.uia.no/files/2015/02/UiA1.png","asd","asd", "http://kompetansetorget.uia.no/oppgaver/blaase-isolasjon-bak-diffusjonsperre"));
+            varsler.Add(new Varsel("TEST", "TEST", "test", 1, "http://adila.prosjekt.uia.no/files/2015/02/UiA1.png", "asd", "asd", "http://kompetansetorget.uia.no/oppgaver/blaase-isolasjon-bak-diffusjonsperre"));
             PopupMenu();
             InitializeSettings();
         }
@@ -84,7 +85,7 @@ namespace KompetansetorgetXamarin.Views
             else if (action == "Se annonse")
             {
                 OpenAdvert(varsel);
-            }   
+            }
         }
 
         private async void OpenAdvert(Varsel varsel)
@@ -111,14 +112,14 @@ namespace KompetansetorgetXamarin.Views
 
         private async void DeleteAllNotifications(object sender, EventArgs e)
         {
-                    var action = await DisplayActionSheet("Slett alle varsler", "Avbryt", null, "Slett varsel");
-                    if (action != null && action == "Slett varsel")
-                    {
-                        DbNotification dbNotification = new DbNotification();
-                        dbNotification.DeleteAllNotifications();
-                    }
-                    //Sort();
-                    ExcecuteRefreshCommand();
+            var action = await DisplayActionSheet("Slett alle varsler", "Avbryt", null, "Slett varsel");
+            if (action != null && action == "Slett varsel")
+            {
+                DbNotification dbNotification = new DbNotification();
+                dbNotification.DeleteAllNotifications();
+            }
+            //Sort();
+            ExcecuteRefreshCommand();
         }
 
         void OnClick(object sender, EventArgs e)
@@ -236,7 +237,6 @@ namespace KompetansetorgetXamarin.Views
         public new event EventHandler CurrentPageChanged;
         protected override void OnCurrentPageChanged()
         {
-            int prevPage = 0;
             EventHandler changed = CurrentPageChanged;
             if (changed != null)
                 changed(this, EventArgs.Empty);
