@@ -57,19 +57,18 @@ namespace KompetansetorgetXamarin.Views
 
         void InitializeSelectItemEventListener()
         {
-            StillingList.ItemSelected += async (sender, e) =>
+            StillingList.ItemSelected += (sender, e) =>
             {
                 
                 Job d = (Job)e.SelectedItem;
                 //var action = DisplayAlert(d.Text, d.JobTitle, "Slett varsel", "Se annonse");
-                StillingList.SelectedItem = null;
-                OpenAdvert(d);
-                
+                OpenAdvert(d); 
             };
         }
 
         private async Task OpenAdvert(Job stilling)
         {
+            StillingList.SelectedItem = null;
             var url = stilling.webpage;
             var type = "job";
             var webPage = new WebPage(type, url);
@@ -89,7 +88,7 @@ namespace KompetansetorgetXamarin.Views
 
         async void Sorter_OnTapped(object sender, EventArgs e)
         {
-            string action = await DisplayActionSheet("Sorter etter:", "Avbryt", null, "Nyeste", "Eldste", "Nærmeste søknadsfrist", "Seneste søknadsfrist");
+            string action = await DisplayActionSheet("Sorter etter:", "Avbryt", null, "Nyeste", "Eldste", "Tidligste søknadsfrist", "Seneste søknadsfrist");
             if (action != null) {
                 sort = action;
                 Sort(sort);
@@ -98,7 +97,7 @@ namespace KompetansetorgetXamarin.Views
 
         void Sort(string sort)
         {
-            if (sort == "Nærmeste søknadsfrist")
+            if (sort == "Tidligste søknadsfrist")
             {
                 StillingList.ItemsSource = JOBS
                     .OrderByDescending(x => x.expiryDate);
@@ -218,25 +217,25 @@ namespace KompetansetorgetXamarin.Views
             LISTINIT.SaveSettings(); //saves the settings when pressing the up button/leaving the page
         }
 
-        protected override bool OnBackButtonPressed() //behaviour of HARDWARE back button, not the up button.
-        {
-            //var p0 = this.Children[0];
-            //var p1 = this.Children[1];
+        //protected override bool OnBackButtonPressed() //behaviour of HARDWARE back button, not the up button.
+        //{
+        //    //var p0 = this.Children[0];
+        //    //var p1 = this.Children[1];
 
-            if (CurrentPage.SendBackButtonPressed()) return true;
+        //    if (CurrentPage.SendBackButtonPressed()) return true;
 
-            //if (CurrentPage == p1)
-            //{
-            //    this.CurrentPage = p0;
-            //    listInit.SaveSettings();
-            //}
-            //else if (CurrentPage == p0)
-            //{
-            //    return false;
-            //}
-            //listInit.SaveSettings();
-            return true;
-        }
+        //    //if (CurrentPage == p1)
+        //    //{
+        //    //    this.CurrentPage = p0;
+        //    //    listInit.SaveSettings();
+        //    //}
+        //    //else if (CurrentPage == p0)
+        //    //{
+        //    //    return false;
+        //    //}
+        //    //listInit.SaveSettings();
+        //    return true;
+        //}
 
         void SaveSettings(object sender, EventArgs e)
         {

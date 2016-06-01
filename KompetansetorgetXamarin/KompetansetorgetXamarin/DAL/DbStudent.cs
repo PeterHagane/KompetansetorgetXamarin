@@ -283,7 +283,7 @@ namespace KompetansetorgetXamarin.DAL
             lock (DbContext.locker)
             {
                 System.Diagnostics.Debug.WriteLine("DbStudent - DeleteAllStudents: Before delete.");
-                Db.Execute("delete from " + "Student");
+                Db.Execute("delete from Student");
                 System.Diagnostics.Debug.WriteLine("DbStudent - DeleteAllStudents: After delete.");
             }
         }

@@ -21,12 +21,14 @@ namespace KompetansetorgetXamarin.Droid
     //upgraded to XForms, old inheritance is global::Xamarin.Forms.Platform.Android.FormsApplicationActivity
 
     {
+        //App app;
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
 
             global::Xamarin.Forms.Forms.Init(this, bundle);
             UAuth.Auth.auth = new UAuthImpl.Auth(this);
+            //app = new App();
             LoadApplication(new App());
             // This check get run once every startup
             
@@ -40,6 +42,11 @@ namespace KompetansetorgetXamarin.Droid
            // SetActionBar();
 
         }
+
+       // protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
+       // {
+       //     app.SetNavPageToNotificationList();
+       //}
 
         public void SetActionBar() {
             var upArrow = Resources.GetDrawable(Resource.Drawable.ArrowWhiteLeft);

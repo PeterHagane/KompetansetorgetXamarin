@@ -54,17 +54,17 @@ namespace KompetansetorgetXamarin.Views
 
         void InitializeSelectItemEventListener()
         {
-            OppgaveList.ItemSelected += async (sender, e) =>
+            OppgaveList.ItemSelected += (sender, e) =>
             {
                 Project d = (Project)e.SelectedItem;
                 //var action = DisplayAlert(d.Text, d.JobTitle, "Slett varsel", "Se annonse");
-                OppgaveList.SelectedItem = null;
                 OpenAdvert(d);
             };
         }
 
         private async Task OpenAdvert(Project oppgave)
         {
+            OppgaveList.SelectedItem = null;
             var url = oppgave.webpage;
             var type = "project";
             var WebPage = new WebPage(type, url);
@@ -228,12 +228,12 @@ namespace KompetansetorgetXamarin.Views
             listInit.SaveSettings(); //saves the settings when pressing the up button/leaving the page
         }
 
-        protected override bool OnBackButtonPressed() //behaviour of HARDWARE back button, not the up button.
-        {
-            listInit.SaveSettings();
-            if (CurrentPage.SendBackButtonPressed()) return true;
-            return true;
-        }
+        //protected override bool OnBackButtonPressed() //behaviour of HARDWARE back button, not the up button.
+        //{
+        //    listInit.SaveSettings();
+        //    if (CurrentPage.SendBackButtonPressed()) return true;
+        //    return true;
+        //}
 
         public void OnMore(object sender, EventArgs e)
         {

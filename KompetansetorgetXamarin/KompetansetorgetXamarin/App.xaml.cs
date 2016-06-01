@@ -83,7 +83,18 @@ namespace KompetansetorgetXamarin
             
         }
 
-         
+        public void SetNavPageToNotificationList()
+        {
+            DbStudent dbStudent = new DbStudent();
+            Student student = dbStudent.GetStudent();
+
+            if (student == null || student.accessToken == null)
+            {
+                Authenticater.Authorized = false;
+            }
+            UpdateAllFilters();
+            NavPage = new NavigationPage(new CarouselVarsler());
+        }
 
         protected override void OnSleep()
         {

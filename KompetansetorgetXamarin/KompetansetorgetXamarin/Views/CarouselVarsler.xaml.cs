@@ -41,7 +41,7 @@ namespace KompetansetorgetXamarin.Views
             //stillingSwitch.Toggled += stillingToggle;
             //oppgaveSwitch.Toggled += oppgaveToggle;
             //varselSwitch.Toggled += varselToggle;
-            varsler.Add(new Varsel("TEST", "TEST", "test", 1, "http://adila.prosjekt.uia.no/files/2015/02/UiA1.png","asd","asd", "http://kompetansetorget.uia.no/oppgaver/blaase-isolasjon-bak-diffusjonsperre"));
+            //varsler.Add(new Varsel("TEST", "TEST", "test", 1, "http://adila.prosjekt.uia.no/files/2015/02/UiA1.png","asd","asd", "http://kompetansetorget.uia.no/oppgaver/blaase-isolasjon-bak-diffusjonsperre"));
             PopupMenu();
             InitializeSettings();
         }
@@ -61,21 +61,21 @@ namespace KompetansetorgetXamarin.Views
         {
             VarselList.ItemSelected += async (sender, e) =>
             {
-                Varsel d = (Varsel)e.SelectedItem;
-
-                var action = await DisplayActionSheet(d.JobTitle, "Avbryt", null, "Slett varsel", "Se annonse");
-
-                //VarselList.SelectedItem = null;
-
+                Varsel varsel = (Varsel)e.SelectedItem;
+                string jobTitle = varsel.JobTitle;
+                var action = await DisplayActionSheet(jobTitle, "Avbryt", null, "Se annonse", "Slett varsel");
                 if (action != null)
                 {
-                    DeleteOrOpen(action, d);
+                    await DeleteOrOpen(action, varsel);
                 }
+                //Sort();
+                ExcecuteRefreshCommand();
             };
         }
 
-        //async Task 
-        void DeleteOrOpen(string action, Varsel varsel)
+
+        //
+        async Task DeleteOrOpen(string action, Varsel varsel)
         {
             if (action == "Slett varsel")
             {
@@ -84,7 +84,7 @@ namespace KompetansetorgetXamarin.Views
             else if (action == "Se annonse")
             {
                 OpenAdvert(varsel);
-            }
+            }   
         }
 
         private async void OpenAdvert(Varsel varsel)
@@ -109,6 +109,17 @@ namespace KompetansetorgetXamarin.Views
             }
         }
 
+        private async void DeleteAllNotifications(object sender, EventArgs e)
+        {
+                    var action = await DisplayActionSheet("Slett alle varsler", "Avbryt", null, "Slett varsel");
+                    if (action != null && action == "Slett varsel")
+                    {
+                        DbNotification dbNotification = new DbNotification();
+                        dbNotification.DeleteAllNotifications();
+                    }
+                    //Sort();
+                    ExcecuteRefreshCommand();
+        }
 
         void OnClick(object sender, EventArgs e)
         {
@@ -238,6 +249,7 @@ namespace KompetansetorgetXamarin.Views
                     // LISTINIT.SaveSettings();
                     LISTINIT.PostToServer();
                     SaveToggle();
+                    ExcecuteRefreshCommand();
                 }
                 prevPage = 0;
 
@@ -262,25 +274,25 @@ namespace KompetansetorgetXamarin.Views
             SaveToggle();
         }
 
-        protected override bool OnBackButtonPressed() //behaviour of HARDWARE back button, not the up button.
-        {
-            //var p0 = this.Children[0];
-            //var p1 = this.Children[1];
+        //protected override bool OnBackButtonPressed() //behaviour of HARDWARE back button, not the up button.
+        //{
+        //    //var p0 = this.Children[0];
+        //    //var p1 = this.Children[1];
 
-            if (CurrentPage.SendBackButtonPressed()) return true;
+        //    if (CurrentPage.SendBackButtonPressed()) return true;
 
-            //if (CurrentPage == p1)
-            //{
-            //    this.CurrentPage = p0;
-            //    listInit.SaveSettings();
-            //}
-            //else if (CurrentPage == p0)
-            //{
-            //    return false;
-            //}
-            //listInit.SaveSettings();
-            return true;
-        }
+        //    //if (CurrentPage == p1)
+        //    //{
+        //    //    this.CurrentPage = p0;
+        //    //    listInit.SaveSettings();
+        //    //}
+        //    //else if (CurrentPage == p0)
+        //    //{
+        //    //    return false;
+        //    //}
+        //    //listInit.SaveSettings();
+        //    return true;
+        //}
 
         void SwitchToggle(object sender, ToggledEventArgs e)
         {

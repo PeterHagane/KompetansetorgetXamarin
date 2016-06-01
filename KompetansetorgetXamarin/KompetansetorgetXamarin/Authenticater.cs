@@ -13,6 +13,11 @@ using UAuth;
 
 namespace KompetansetorgetXamarin
 {
+    /// <summary>
+    /// Based on https://github.com/BSalita/XamarinAuthInForms/blob/master/OAuthForms1/OAuthForms1/OAuthForms1/Authorize.cs 
+    /// If Uninet requires more parameters then Google login, look this repo for inspiritation: 
+    /// https://github.com/BSalita/XamarinAuthInForms/tree/master/OAuthForms1/OAuthForms1/OAuthForms1
+    /// </summary>
     public class Authenticater
     {
         public static bool Authorized = true;
