@@ -109,6 +109,17 @@ namespace KompetansetorgetXamarin.Views
             }
         }
 
+        private async void DeleteAllNotifications(object sender, EventArgs e)
+        {
+                    var action = await DisplayActionSheet("Slett alle varsler", "Avbryt", null, "Slett varsel");
+                    if (action != null && action == "Slett varsel")
+                    {
+                        DbNotification dbNotification = new DbNotification();
+                        dbNotification.DeleteAllNotifications();
+                    }
+                    //Sort();
+                    ExcecuteRefreshCommand();
+        }
 
         void OnClick(object sender, EventArgs e)
         {

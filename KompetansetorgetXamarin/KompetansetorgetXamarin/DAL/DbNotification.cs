@@ -130,5 +130,18 @@ namespace KompetansetorgetXamarin.DAL
                            "WHERE Notification.jobUuid = ?", uuid);
             }
         }
+
+        /// <summary>
+        /// Delete all Notification.
+        /// This method will not effect the row in the Job table.
+        /// </summary>
+        public void DeleteAllNotifications()
+        {
+            System.Diagnostics.Debug.WriteLine("DbNotification - DeleteNotificationBasedOnJob: Trying to delete all notifications");
+            lock (DbContext.locker)
+            {
+                Db.Execute("DELETE FROM Notification");
+            }
+        }
     }
 }
