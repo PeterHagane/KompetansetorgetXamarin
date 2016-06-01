@@ -257,6 +257,7 @@
     <AndroidResource Include="Resources\drawable-xhdpi\FilterWhite.png" />
     <AndroidResource Include="Resources\drawable-hdpi\SettingsWhite.png" />
     <AndroidResource Include="Resources\drawable-hdpi\SortSort.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\Trash.png" />
     <Content Include="Resources\drawable-xhdpi\KTbanner.jpg" />
     <AndroidResource Include="Resources\drawable-xhdpi\icon.png" />
     <AndroidResource Include="Resources\drawable-xxhdpi\ArrowBlackLeft.png" />
@@ -274,6 +275,7 @@
     <AndroidResource Include="Resources\drawable-xxhdpi\FilterWhite.png" />
     <AndroidResource Include="Resources\drawable-xhdpi\SettingsWhite.png" />
     <AndroidResource Include="Resources\drawable-xhdpi\SortSort.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\Trash.png" />
     <Content Include="Resources\drawable-xxhdpi\KTbanner.jpg" />
     <AndroidResource Include="Resources\drawable-xxhdpi\icon.png" />
     <AndroidResource Include="Resources\drawable\ArrowBlackLeft.png" />
@@ -291,6 +293,7 @@
     <AndroidResource Include="Resources\drawable\FilterWhite.png" />
     <AndroidResource Include="Resources\drawable-xxhdpi\SettingsWhite.png" />
     <AndroidResource Include="Resources\drawable-xxhdpi\SortSort.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\Trash.png" />
     <Content Include="Resources\drawable\KTbanner.jpg" />
     <AndroidResource Include="Resources\drawable\icon.png" />
     <AndroidResource Include="Resources\drawable\User.png" />
@@ -302,6 +305,7 @@
     <AndroidResource Include="Resources\drawable\LogoutWhite.png" />
     <AndroidResource Include="Resources\drawable\SettingsWhite.png" />
     <AndroidResource Include="Resources\drawable\SortSort.png" />
+    <AndroidResource Include="Resources\drawable\Trash.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\KompetansetorgetXamarin\KompetansetorgetXamarin.csproj">

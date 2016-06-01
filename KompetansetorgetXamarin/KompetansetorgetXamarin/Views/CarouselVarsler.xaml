@@ -55,7 +55,7 @@
                Grid.Column="0"
                Grid.ColumnSpan="2"/>-->
 
-        <StackLayout x:Name="Sorter"
+        <StackLayout x:Name="Empty"
                      Grid.Row="0"
                      Grid.Column="2"
                      Grid.ColumnSpan="1">
