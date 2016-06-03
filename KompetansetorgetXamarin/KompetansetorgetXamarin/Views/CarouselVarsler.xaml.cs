@@ -42,7 +42,6 @@ namespace KompetansetorgetXamarin.Views
             //stillingSwitch.Toggled += stillingToggle;
             //oppgaveSwitch.Toggled += oppgaveToggle;
             //varselSwitch.Toggled += varselToggle;
-            varsler.Add(new Varsel("TEST", "TEST", "test", 1, "http://adila.prosjekt.uia.no/files/2015/02/UiA1.png", "asd", "asd", "http://kompetansetorget.uia.no/oppgaver/blaase-isolasjon-bak-diffusjonsperre"));
             PopupMenu();
             InitializeSettings();
         }
@@ -112,7 +111,7 @@ namespace KompetansetorgetXamarin.Views
 
         private async void DeleteAllNotifications(object sender, EventArgs e)
         {
-            var action = await DisplayActionSheet("Slett alle varsler", "Avbryt", null, "Slett varsel");
+            var action = await DisplayActionSheet("Slett alle varsler", "Avbryt", null, "OK");
             if (action != null && action == "Slett varsel")
             {
                 DbNotification dbNotification = new DbNotification();
