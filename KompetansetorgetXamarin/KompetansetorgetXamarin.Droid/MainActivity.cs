@@ -15,7 +15,7 @@ using XLabs.Forms;
 
 namespace KompetansetorgetXamarin.Droid
 {                                                                           //MainLauncher = true
-    [Activity(Label = "KompetansetorgetXamarin", Icon = "@drawable/icon", Theme = "@style/CustomActionBarTheme",
+    [Activity(Label = "Kompetansetorget", Icon = "@drawable/icon", Theme = "@style/CustomActionBarTheme",
         ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity : XFormsApplicationDroid
     //upgraded to XForms, old inheritance is global::Xamarin.Forms.Platform.Android.FormsApplicationActivity

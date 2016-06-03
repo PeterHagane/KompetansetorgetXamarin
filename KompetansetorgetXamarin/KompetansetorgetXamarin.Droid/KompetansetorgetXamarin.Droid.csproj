@@ -258,6 +258,9 @@
     <AndroidResource Include="Resources\drawable-hdpi\SettingsWhite.png" />
     <AndroidResource Include="Resources\drawable-hdpi\SortSort.png" />
     <AndroidResource Include="Resources\drawable-hdpi\Trash.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\Stillinger.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\varsler.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\Oppgaver.png" />
     <Content Include="Resources\drawable-xhdpi\KTbanner.jpg" />
     <AndroidResource Include="Resources\drawable-xhdpi\icon.png" />
     <AndroidResource Include="Resources\drawable-xxhdpi\ArrowBlackLeft.png" />
@@ -276,6 +279,9 @@
     <AndroidResource Include="Resources\drawable-xhdpi\SettingsWhite.png" />
     <AndroidResource Include="Resources\drawable-xhdpi\SortSort.png" />
     <AndroidResource Include="Resources\drawable-xhdpi\Trash.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\Stillinger.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\varsler.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\Oppgaver.png" />
     <Content Include="Resources\drawable-xxhdpi\KTbanner.jpg" />
     <AndroidResource Include="Resources\drawable-xxhdpi\icon.png" />
     <AndroidResource Include="Resources\drawable\ArrowBlackLeft.png" />
@@ -294,6 +300,9 @@
     <AndroidResource Include="Resources\drawable-xxhdpi\SettingsWhite.png" />
     <AndroidResource Include="Resources\drawable-xxhdpi\SortSort.png" />
     <AndroidResource Include="Resources\drawable-xxhdpi\Trash.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\Stillinger.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\varsler.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\Oppgaver.png" />
     <Content Include="Resources\drawable\KTbanner.jpg" />
     <AndroidResource Include="Resources\drawable\icon.png" />
     <AndroidResource Include="Resources\drawable\User.png" />
@@ -306,6 +315,9 @@
     <AndroidResource Include="Resources\drawable\SettingsWhite.png" />
     <AndroidResource Include="Resources\drawable\SortSort.png" />
     <AndroidResource Include="Resources\drawable\Trash.png" />
+    <AndroidResource Include="Resources\drawable\varsler.png" />
+    <AndroidResource Include="Resources\drawable\Stillinger.png" />
+    <AndroidResource Include="Resources\drawable\Oppgaver.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\KompetansetorgetXamarin\KompetansetorgetXamarin.csproj">

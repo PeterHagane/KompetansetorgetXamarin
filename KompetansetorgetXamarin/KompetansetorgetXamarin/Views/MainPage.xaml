@@ -45,9 +45,11 @@
             </TapGestureRecognizer>
           </local:ButtonStack.GestureRecognizers>
           <Label Text="Vis varsler" Style="{DynamicResource buttonLabelStyle}"/>
-          <Image Source="ArrowBlackLeft.png"  Style="{DynamicResource buttonImageStyle}"/>
+          <Image Source="varsler.png"  Style="{DynamicResource buttonImageStyle}"/>
         </local:ButtonStack>
       </local:ButtonShadow>
+
+      <!--ArrowBlackLeft.png-->
 
       <local:ButtonShadow BorderRadius="17" Padding ="2,2,2,7" Style="{DynamicResource buttonShadowStyle}">
         <local:ButtonStack x:Name="StillingerStackButton" Style="{DynamicResource buttonStackStyle}">
@@ -56,7 +58,7 @@
             </TapGestureRecognizer>
           </local:ButtonStack.GestureRecognizers>
           <Label Text="Finn stillinger" Style="{DynamicResource buttonLabelStyle}"/>
-          <Image Source="ArrowBlackLeft.png"  Style="{DynamicResource buttonImageStyle}"/>
+          <Image Source="Stillinger.png"  Style="{DynamicResource buttonImageStyle}"/>
         </local:ButtonStack>
       </local:ButtonShadow>
       
@@ -67,7 +69,7 @@
             </TapGestureRecognizer>
           </local:ButtonStack.GestureRecognizers>
           <Label Text="Finn oppgaveforslag" Style="{DynamicResource buttonLabelStyle}"/>
-          <Image Source="ArrowBlackLeft.png"  Style="{DynamicResource buttonImageStyle}"/>
+          <Image Source="Oppgaver.png"  Style="{DynamicResource buttonImageStyle}"/>
         </local:ButtonStack>
       </local:ButtonShadow>
 
