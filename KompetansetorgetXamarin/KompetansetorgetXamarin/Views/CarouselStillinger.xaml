@@ -55,7 +55,7 @@
           <ColumnDefinition Width="45" />
         </Grid.ColumnDefinitions>
 
-        <SearchBar x:Name="søk" Placeholder="Sok" HeightRequest="35"
+        <SearchBar x:Name="søk" Placeholder="Søk" HeightRequest="35"
                Grid.Row="0"
                Grid.Column="0"
                Grid.ColumnSpan="2"/>

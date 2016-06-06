@@ -112,7 +112,7 @@ namespace KompetansetorgetXamarin.Views
         private async void DeleteAllNotifications(object sender, EventArgs e)
         {
             var action = await DisplayActionSheet("Slett alle varsler", "Avbryt", null, "OK");
-            if (action != null && action == "Slett varsel")
+            if (action != null && action == "OK")
             {
                 DbNotification dbNotification = new DbNotification();
                 dbNotification.DeleteAllNotifications();
